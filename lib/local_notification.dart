@@ -12,9 +12,9 @@ class LocalNotification {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     final DarwinInitializationSettings initializationSettingsDarwin =
-        DarwinInitializationSettings();
+        const DarwinInitializationSettings();
     final LinuxInitializationSettings initializationSettingsLinux =
-        LinuxInitializationSettings(defaultActionName: 'Open notification');
+        const LinuxInitializationSettings(defaultActionName: 'Open notification');
     final InitializationSettings initializationSettings =
         InitializationSettings(
             android: initializationSettingsAndroid,
@@ -23,7 +23,7 @@ class LocalNotification {
             linux: initializationSettingsLinux);
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (detail) => null,
+      onDidReceiveNotificationResponse: (detail) {},
     );
   }
 

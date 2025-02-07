@@ -50,8 +50,8 @@ void main() async {
 
     // print('fcm Token: $fcmToken');
 
-    final FCMService _fcmService = FCMService();
-    await _fcmService.saveOrUpdateFCMToken();
+    final FCMService fcmService = FCMService();
+    await fcmService.saveOrUpdateFCMToken();
   }
 
   // runApp(const MaterialApp(

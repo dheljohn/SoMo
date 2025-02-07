@@ -75,6 +75,9 @@
 //   }
 // }
 
+
+import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/historySection.dart';
@@ -92,17 +95,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final AppBar appBar = AppBar(
-    title: const Text('Soilidity'),
-    centerTitle: true,
-    backgroundColor: Colors.green,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(25),
-        bottomRight: Radius.circular(25),
-      ),
+final AppBar appBar = AppBar(
+  title: const Text('SOMO', style: TextStyle(color: Colors.white)),
+  centerTitle: true,
+  backgroundColor: const Color.fromARGB(255, 125, 171, 124),
+  shape: const RoundedRectangleBorder(
+    borderRadius: BorderRadius.only(
+      bottomLeft: Radius.circular(25),
+      bottomRight: Radius.circular(25),
     ),
-  );
+  ),
+  iconTheme: const IconThemeData(color: Colors.white),
+);
+
 
   int _currentIndex = 0;
   double humidity_v = 0.0;
@@ -121,7 +126,7 @@ class _HomeState extends State<Home> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       _fetchDataFromFirebase();
     });
   }
@@ -133,17 +138,17 @@ class _HomeState extends State<Home> {
   }
 
   void _fetchDataFromFirebase() {
-    DatabaseReference _humidityRef =
+    DatabaseReference humidityRef =
         FirebaseDatabase.instance.ref().child('Humidity/humidity');
-    DatabaseReference _temperatureRef =
+    DatabaseReference temperatureRef =
         FirebaseDatabase.instance.ref().child('Temperature/temperature');
-    DatabaseReference _moistureAvgRef =
+    DatabaseReference moistureAvgRef =
         FirebaseDatabase.instance.ref().child('Moisture/Average');
-    DatabaseReference _moistureDataRef =
+    DatabaseReference moistureDataRef =
         FirebaseDatabase.instance.ref().child('Moisture');
 
     // Fetch Humidity
-    _humidityRef.once().then((event) {
+    humidityRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         humidity_v = value;
@@ -151,7 +156,7 @@ class _HomeState extends State<Home> {
     });
 
     // Fetch Temperature
-    _temperatureRef.once().then((event) {
+    temperatureRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         temperature_v = value;
@@ -159,7 +164,7 @@ class _HomeState extends State<Home> {
     });
 
     // Fetch Moisture Average
-    _moistureAvgRef.once().then((event) {
+    moistureAvgRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         moisture_a = value;
@@ -167,7 +172,7 @@ class _HomeState extends State<Home> {
     });
 
     // Fetch Moisture Data
-    _moistureDataRef.once().then((event) {
+    moistureDataRef.once().then((event) {
       final value = event.snapshot.value as Map?;
       if (value != null) {
         double moisture1 =
@@ -208,31 +213,34 @@ class _HomeState extends State<Home> {
         appBar: appBar,
         body: IndexedStack(
           index: _currentIndex,
-          children: [const DashB(), const ReportScreen()],
+          children: const [DashB(), ReportScreen()],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard),
-              label: 'Dashboard',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history),
-              label: 'History',
-            ),
-          ],
-        ),
+      bottomNavigationBar: MotionTabBar(
+  labels: ['Dashboard', 'History'],
+  initialSelectedTab: 'Dashboard',
+  icons: [Icons.dashboard, Icons.history],
+  tabSize: 50,
+  tabBarHeight: 60,
+  textStyle: TextStyle(
+    color: Color.fromARGB(255, 53, 51, 51),
+    fontWeight: FontWeight.bold,
+  ),
+  tabIconColor: Colors.grey,
+  tabIconSelectedColor: Colors.white,
+  tabBarColor: Color.fromARGB(255, 255, 255, 255),
+  tabSelectedColor:  const Color.fromARGB(255, 125, 171, 124),
+  onTabItemSelected: (index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  },
+),
+
       ),
     );
   }
 
   navBar() {
-    return Navbar();
+    return const Navbar();
   }
 }
