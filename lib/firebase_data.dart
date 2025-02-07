@@ -31,7 +31,7 @@ class _FirebaseDataState extends State<FirebaseData> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       _fetchDataFromFirebase();
     });
   }
@@ -43,17 +43,17 @@ class _FirebaseDataState extends State<FirebaseData> {
   }
 
   void _fetchDataFromFirebase() {
-    DatabaseReference _humidityRef =
+    DatabaseReference humidityRef =
         FirebaseDatabase.instance.ref().child('Humidity/humidity');
-    DatabaseReference _temperatureRef =
+    DatabaseReference temperatureRef =
         FirebaseDatabase.instance.ref().child('Temperature/temperature');
-    DatabaseReference _moistureAvgRef =
+    DatabaseReference moistureAvgRef =
         FirebaseDatabase.instance.ref().child('Moisture/Average');
-    DatabaseReference _moistureDataRef =
+    DatabaseReference moistureDataRef =
         FirebaseDatabase.instance.ref().child('Moisture');
 
     // Fetch Humidity
-    _humidityRef.once().then((event) {
+    humidityRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         humidity_v = value;
@@ -61,7 +61,7 @@ class _FirebaseDataState extends State<FirebaseData> {
     });
 
     // Fetch Temperature
-    _temperatureRef.once().then((event) {
+    temperatureRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         temperature_v = value;
@@ -69,7 +69,7 @@ class _FirebaseDataState extends State<FirebaseData> {
     });
 
     // Fetch Moisture Average
-    _moistureAvgRef.once().then((event) {
+    moistureAvgRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         moisture_a = value;
@@ -77,7 +77,7 @@ class _FirebaseDataState extends State<FirebaseData> {
     });
 
     // Fetch Moisture Data
-    _moistureDataRef.once().then((event) {
+    moistureDataRef.once().then((event) {
       final value = event.snapshot.value as Map?;
       if (value != null) {
         double moisture1 =
@@ -119,7 +119,7 @@ class _FirebaseDataState extends State<FirebaseData> {
             moistureS2: moisture_s2,
             moistureS3: moisture_s3,
             moistureS4: moisture_s4,
-            child: ReportScreen(),
+            child: const ReportScreen(),
           );
         } else {
           return const CircularProgressIndicator();

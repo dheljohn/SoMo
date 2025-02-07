@@ -6,13 +6,13 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 class Gauges extends StatelessWidget {
   final DataProvider dataProvider;
 
-  const Gauges({required this.dataProvider, Key? key}) : super(key: key);
+  const Gauges({required this.dataProvider, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
+Row(
           children: [
             Expanded(
               child: Container(
@@ -174,7 +174,7 @@ class Gauges extends StatelessWidget {
             ),
           ],
         ),
-        Row(
+Row(
           children: [
             Expanded(
               child: Container(
@@ -286,7 +286,7 @@ class Gauges extends StatelessWidget {
             ),
           ],
         ),
-        Row(
+Row(
           children: [
             Expanded(
               child: Container(

@@ -28,7 +28,7 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   void _startLogging() {
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       _checkSensorReadings();
     });
   }

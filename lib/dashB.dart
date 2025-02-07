@@ -47,13 +47,14 @@ class _DashBState extends State<DashB> {
           Container(
             margin: EdgeInsets.all(5),
             height: MediaQuery.of(context).size.height * 0.2,
+
             child: const Row(
               children: [
                 Expanded(child: HelperMsg()),
               ],
             ),
           ),
-          Center(
+Center(
             child: Container(
               margin: EdgeInsets.all(5),
               height: MediaQuery.of(context).size.height * 0.1,

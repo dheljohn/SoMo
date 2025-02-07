@@ -6,43 +6,64 @@ class Navbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: const Color.fromARGB(255, 125, 171, 124),
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-              child: Center(
-            child: Text(
-              "APP NAME",
-              style: TextStyle(fontSize: 35),
+          DrawerHeader(
+            child: Center(
+              child: Image.asset(
+                'assets/logo.png', 
+                width: 200,
+                height: 200,
+              ),
             ),
-          )),
-          ListTile(
-            leading: const Icon(Icons.favorite),
-            title: Text('Favorite'),
-            onTap: () => null,
           ),
           ListTile(
-            leading: Icon(Icons.book),
-            title: Text('Manual'),
-            onTap: () => null,
+            leading: const Icon(Icons.favorite, color: Colors.white),
+            title: const Text('Favorite', style: TextStyle(color: Colors.white)),
+            onTap: () {},
           ),
           ListTile(
-            leading: Icon(Icons.stacked_bar_chart),
-            title: Text('Report'),
-            onTap: () => null,
+            leading: const Icon(Icons.book, color: Colors.white),
+            title: const Text('Manual', style: TextStyle(color: Colors.white)),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ManualPage()),
+              );
+            },
           ),
           ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
-            onTap: () => null,
+            leading: const Icon(Icons.stacked_bar_chart, color: Colors.white),
+            title: const Text('Report', style: TextStyle(color: Colors.white)),
+            onTap: () {},
           ),
           ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Exit'),
-            onTap: () => null,
+            leading: const Icon(Icons.settings, color: Colors.white),
+            title: const Text('Settings', style: TextStyle(color: Colors.white)),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.exit_to_app, color: Colors.white),
+            title: const Text('Exit', style: TextStyle(color: Colors.white)),
+            onTap: () {},
           ),
         ],
       ),
+    );
+  }
+}
+
+// Sample ManualPage to navigate to
+class ManualPage extends StatelessWidget {
+  const ManualPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Manual")),
+      body: const Center(child: Text("Manual Page Content")),
     );
   }
 }
