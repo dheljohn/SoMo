@@ -1,10 +1,8 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:soil_monitoring_app/home.dart';
-import 'package:soil_monitoring_app/local_notification.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:soil_monitoring_app/fcm_service.dart';
+import 'package:soil_monitoring_app/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

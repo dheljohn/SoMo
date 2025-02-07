@@ -1,10 +1,10 @@
 import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:soil_monitoring_app/helpmsg.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart'; // Import the new file
+import 'package:soil_monitoring_app/helpmsg.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -45,26 +45,32 @@ class _DashBState extends State<DashB> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: const EdgeInsets.all(5),
-            height: MediaQuery.of(context).size.height * 0.4,
+            margin: EdgeInsets.all(5),
+            height: MediaQuery.of(context).size.height * 0.2,
+
             child: const Row(
               children: [
-                Expanded(
-                    child:
-                        HelperMsg()), // Ensure HelperMsg takes up available space
+                Expanded(child: HelperMsg()),
               ],
             ),
           ),
-          Gauges(dataProvider: dataProvider), // Use the Gauges widget
-          const SizedBox(height: 10),
-          Container(
-            color: Colors.red,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.2,
-              child: const Row(),
+Center(
+            child: Container(
+              margin: EdgeInsets.all(5),
+              height: MediaQuery.of(context).size.height * 0.1,
+              child: Image.asset('lib/assets/images/image.png'),
             ),
           ),
+          Gauges(dataProvider: dataProvider), // Use the Gauges widget
+          SizedBox(height: 10),
+          // Container(
+          //   color: Colors.red,
+          //   child: SizedBox(
+          //     width: MediaQuery.of(context).size.width,
+          //     height: MediaQuery.of(context).size.height * 0.2,
+          //     child: Row(),
+          //   ),
+          // ),
         ],
       ),
     );
