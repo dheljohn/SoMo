@@ -6,17 +6,17 @@ import 'package:soil_monitoring_app/data_provider.dart';
 class Gauges extends StatelessWidget {
   final DataProvider dataProvider;
 
-  const Gauges({required this.dataProvider, Key? key}) : super(key: key);
+  const Gauges({required this.dataProvider, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
-          child: Container(
+          child: SizedBox(
             height: 150,
             child: SfRadialGauge(
-              title: GaugeTitle(text: 'Humidity'),
+              title: const GaugeTitle(text: 'Humidity'),
               axes: <RadialAxis>[
                 RadialAxis(
                   showTicks: false,
@@ -65,7 +65,7 @@ class Gauges extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Container(
+          child: SizedBox(
             height: 150,
             child: SfRadialGauge(
               title: const GaugeTitle(text: 'Temperature'),
@@ -117,7 +117,7 @@ class Gauges extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Container(
+          child: SizedBox(
             height: 150,
             child: SfRadialGauge(
               title: const GaugeTitle(

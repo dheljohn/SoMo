@@ -45,7 +45,7 @@ class _DashBState extends State<DashB> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: EdgeInsets.all(5),
+            margin: const EdgeInsets.all(5),
             height: MediaQuery.of(context).size.height * 0.4,
             child: const Row(
               children: [
@@ -56,13 +56,13 @@ class _DashBState extends State<DashB> {
             ),
           ),
           Gauges(dataProvider: dataProvider), // Use the Gauges widget
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Container(
             color: Colors.red,
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.2,
-              child: Row(),
+              child: const Row(),
             ),
           ),
         ],

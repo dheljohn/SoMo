@@ -8,35 +8,35 @@ void fetchDataFromFirebase({
   required Function(double) updateMoistureAverage,
   required Function(double, double, double, double) updateMoistureData,
 }) {
-  DatabaseReference _humidityRef =
+  DatabaseReference humidityRef =
       FirebaseDatabase.instance.ref().child('Humidity/humidity');
-  DatabaseReference _temperatureRef =
+  DatabaseReference temperatureRef =
       FirebaseDatabase.instance.ref().child('Temperature/temperature');
-  DatabaseReference _moistureAvgRef =
+  DatabaseReference moistureAvgRef =
       FirebaseDatabase.instance.ref().child('Moisture/Average');
-  DatabaseReference _moistureDataRef =
+  DatabaseReference moistureDataRef =
       FirebaseDatabase.instance.ref().child('Moisture');
 
   // Fetch Humidity
-  _humidityRef.once().then((event) {
+  humidityRef.once().then((event) {
     double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
     updateHumidity(value);
   });
 
   // Fetch Temperature
-  _temperatureRef.once().then((event) {
+  temperatureRef.once().then((event) {
     double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
     updateTemperature(value);
   });
 
   // Fetch Moisture Average
-  _moistureAvgRef.once().then((event) {
+  moistureAvgRef.once().then((event) {
     double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
     updateMoistureAverage(value);
   });
 
   // Fetch Moisture Data and Update Chart
-  _moistureDataRef.once().then((event) {
+  moistureDataRef.once().then((event) {
     final value = event.snapshot.value as Map<dynamic, dynamic>?;
     if (value != null) {
       final timestamp = DateTime.now();

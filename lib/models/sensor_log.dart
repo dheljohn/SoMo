@@ -18,11 +18,11 @@ class SensorLog {
   // CopyWith method to create a new instance with updated fields
   SensorLog copyWith({DateTime? endTimestamp}) {
     return SensorLog(
-      startTimestamp: this.startTimestamp,
+      startTimestamp: startTimestamp,
       endTimestamp: endTimestamp ?? this.endTimestamp,
-      sensorId: this.sensorId,
-      description: this.description,
-      status: this.status,
+      sensorId: sensorId,
+      description: description,
+      status: status,
     );
   }
 

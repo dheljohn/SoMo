@@ -46,12 +46,12 @@ class _HelperMsgState extends State<HelperMsg> {
     }
 
     // Fixed header message
-    Widget fixedHeader = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+    Widget fixedHeader = const Padding(
+      padding: EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         children: [
           Icon(Icons.face, color: Colors.black),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Expanded(
             child: Text(
               "Vin D. Helper",
