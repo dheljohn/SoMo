@@ -54,7 +54,7 @@ class _HelperMsgState extends State<HelperMsg> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              "Vin D. Helper",
+              "SOMMO",
               style: TextStyle(color: Colors.black, fontSize: 16),
             ),
           ),

@@ -1,13 +1,13 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
-import 'package:soil_monitoring_app/firebase_data.dart';
-import 'package:soil_monitoring_app/firebase_service.dart';
+import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/log_generator.dart';
 import 'package:soil_monitoring_app/models/sensor_log.dart';
-import 'package:csv/csv.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-import 'dart:async';
-import 'package:soil_monitoring_app/data_provider.dart';
 
 class ReportScreen extends StatefulWidget {
   const ReportScreen({super.key});
@@ -98,18 +98,43 @@ class _ReportScreenState extends State<ReportScreen> {
         'Sensor ID',
         'Description',
         'Status'
-      ], // Header
+      ],
       ...sensorLogs.map((log) => log.toCsv())
     ];
 
-    String csv = const ListToCsvConverter().convert(csvData);
-    final directory = await getApplicationDocumentsDirectory();
-    final path = '${directory.path}/sensor_logs.csv';
-    final file = File(path);
-    await file.writeAsString(csv);
+    String csvString = const ListToCsvConverter().convert(csvData);
 
-    // Optionally, share the file
-    // Share.shareFiles([path], text: 'Sensor Logs');
+    try {
+      if (await Permission.storage.request().isGranted) {
+        Directory directory = Directory('/storage/emulated/0/Download');
+        if (!directory.existsSync()) {
+          directory.createSync(recursive: true);
+        }
+
+        final String path = '${directory.path}/sensor_logs.csv';
+        final File file = File(path);
+        await file.writeAsString(csvString);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("CSV file saved to: $path")),
+        );
+
+        print("CSV file saved at: $path");
+
+        // ✅ Automatically open the file
+        await OpenFile.open(path);
+      } else {
+        print("Storage permission denied!");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Permission denied to save file")),
+        );
+      }
+    } catch (e) {
+      print("Error exporting CSV: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to export CSV")),
+      );
+    }
   }
 
   @override
@@ -124,28 +149,36 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columns: const [
-            DataColumn(label: Text('Start Timestamp')),
-            DataColumn(label: Text('End Timestamp')),
-            DataColumn(label: Text('Sensor ID')),
-            DataColumn(label: Text('Description')),
-            DataColumn(label: Text('Status')),
-          ],
-          rows: sensorLogs.map((log) {
-            return DataRow(cells: [
-              DataCell(Text(
-                  log.startTimestamp.toIso8601String())), // Start Timestamp
-              DataCell(Text(log.endTimestamp?.toIso8601String() ??
-                  'ongoing')), // End Timestamp
-              DataCell(Text(log.sensorId)),
-              DataCell(Text(log.description)),
-              DataCell(Text(log.status)),
-            ]);
-          }).toList(),
-        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical, // ✅ Allow vertical scrolling
+                child: DataTable(
+                  columns: const [
+                    DataColumn(label: Text('Start Timestamp')),
+                    DataColumn(label: Text('End Timestamp')),
+                    DataColumn(label: Text('Sensor ID')),
+                    DataColumn(label: Text('Description')),
+                    DataColumn(label: Text('Status')),
+                  ],
+                  rows: sensorLogs.map((log) {
+                    return DataRow(cells: [
+                      DataCell(Text(log.startTimestamp.toIso8601String())),
+                      DataCell(Text(
+                          log.endTimestamp?.toIso8601String() ?? 'ongoing')),
+                      DataCell(Text(log.sensorId)),
+                      DataCell(Text(log.description)),
+                      DataCell(Text(log.status)),
+                    ]);
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
