@@ -12,14 +12,14 @@ class Gauges extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-         SizedBox(height: 50,),
+SizedBox(height: 50,),
         Row(
           children: [
             Expanded(
               child: Container(
                 height: 150,
                 child: SfRadialGauge(
-                  title: const GaugeTitle(
+title: const GaugeTitle(
                       text: 'Soil Moisture S1',
                       textStyle: TextStyle(fontSize: 15)),
                   axes: <RadialAxis>[
@@ -31,7 +31,7 @@ class Gauges extends StatelessWidget {
                       interval: 10,
                       pointers: <GaugePointer>[
                         RangePointer(
-                            value: dataProvider.moistureS1,
+                          value: dataProvider.moistureS1,
                             color: Colors.blue,
                             enableAnimation: true,
                             cornerStyle: gauges.CornerStyle.bothCurve),
@@ -50,6 +50,7 @@ class Gauges extends StatelessWidget {
                         else
                           RangePointer(
                               value: dataProvider.moistureS1,
+
                               color: Colors.green,
                               enableAnimation: true,
                               cornerStyle: gauges.CornerStyle.bothCurve),
@@ -57,7 +58,8 @@ class Gauges extends StatelessWidget {
                       annotations: <GaugeAnnotation>[
                         GaugeAnnotation(
                           widget: Text(
-                            "${dataProvider.moistureS1}%",
+                             "${dataProvider.moistureS1}%",
+
                             style: const TextStyle(fontSize: 20),
                           ),
                           positionFactor: 0.0,
@@ -74,6 +76,7 @@ class Gauges extends StatelessWidget {
                 height: 150,
                 child: SfRadialGauge(
                   title: const GaugeTitle(
+
                       text: 'Soil Moisture S2',
                       textStyle: TextStyle(fontSize: 15)),
                   axes: <RadialAxis>[
@@ -125,7 +128,8 @@ class Gauges extends StatelessWidget {
             ),
           ],
         ),
-        Row(
+         Row(
+
           children: [
             Expanded(
               child: Container(

@@ -44,7 +44,7 @@ class _DashBState extends State<DashB> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-        
+
           Center(
             // child: Container(
             //   margin: EdgeInsets.all(5),
@@ -63,7 +63,23 @@ class _DashBState extends State<DashB> {
               ],
             ),
           ),
-          SizedBox(height: 20),
+                    SizedBox(height: 20),
+
+          /* eto yung image na may interpretation ng values 
+          Center(
+            child: Container(
+              margin: EdgeInsets.all(5),
+              height: MediaQuery.of(context).size.height * 0.1,
+              child: Image.asset('lib/assets/images/image.png'),
+            ),
+          ),
+          Gauges(dataProvider: dataProvider), // Use the Gauges widget
+          SizedBox(height: 10),
+          */
+          
+          
+          
+          
           // Container(
           //   color: Colors.red,
           //   child: SizedBox(

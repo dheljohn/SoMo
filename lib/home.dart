@@ -74,8 +74,8 @@
 //     );
 //   }
 // }
-
 import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
@@ -83,6 +83,8 @@ import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
 import 'package:soil_monitoring_app/navBar.dart';
+import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
+import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

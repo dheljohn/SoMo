@@ -44,9 +44,7 @@ class _HelperMsgState extends State<HelperMsg> {
         ),
       );
     }
-
-    // Fixed header message
-   Widget fixedHeader = Padding(
+    Widget fixedHeader = Padding(
   padding: const EdgeInsets.symmetric(vertical: 5.0),
   child: Row(
     children: [
@@ -54,7 +52,9 @@ class _HelperMsgState extends State<HelperMsg> {
         'assets/somo.png', 
         width: 25, 
         height: 25,
-       
+
+    // Fixed header message
+
       ),
       const SizedBox(width: 8),
       const Expanded(
