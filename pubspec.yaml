@@ -56,6 +56,7 @@ dependencies:
   flutter_downloader: ^1.11.8
   motion_tab_bar: ^2.0.4
   motion_tab_bar_v2: ^0.3.0
+  carousel_slider: ^5.0.0
 
   
   
@@ -86,7 +87,11 @@ flutter:
   assets:
     - lib\assets\images\image.png
     - assets/logo.png
-
+    - assets/somo.png
+    - assets/jenny.png
+    - assets/jm.png
+    - assets/marvin.png
+    - assets/edhel.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

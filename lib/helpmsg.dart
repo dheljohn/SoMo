@@ -44,23 +44,29 @@ class _HelperMsgState extends State<HelperMsg> {
         ),
       );
     }
+    Widget fixedHeader = Padding(
+  padding: const EdgeInsets.symmetric(vertical: 5.0),
+  child: Row(
+    children: [
+      Image.asset(
+        'assets/somo.png', 
+        width: 25, 
+        height: 25,
 
     // Fixed header message
-    Widget fixedHeader = const Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        children: [
-          Icon(Icons.face, color: Colors.black),
-          SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              "SOMMO",
-              style: TextStyle(color: Colors.black, fontSize: 16),
-            ),
-          ),
-        ],
+
       ),
-    );
+      const SizedBox(width: 8),
+      const Expanded(
+        child: Text(
+          "Somo ur guide hehehhe",
+          style: TextStyle(color: const Color.fromARGB(255, 125, 171, 124), fontSize: 16),
+        ),
+      ),
+    ],
+  ),
+);
+
 
     // Interpret humidity value
     if (humidityValue <= 30) {

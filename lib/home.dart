@@ -74,12 +74,11 @@
 //     );
 //   }
 // }
-
-
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
 import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
@@ -96,8 +95,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 final AppBar appBar = AppBar(
-  title: const Text('SOMO', style: TextStyle(color: Colors.white)),
-  centerTitle: true,
   backgroundColor: const Color.fromARGB(255, 125, 171, 124),
   shape: const RoundedRectangleBorder(
     borderRadius: BorderRadius.only(
@@ -106,7 +103,18 @@ final AppBar appBar = AppBar(
     ),
   ),
   iconTheme: const IconThemeData(color: Colors.white),
+  title: Row(
+    children: [
+      const SizedBox(width: 80), 
+      Image.asset(
+        'assets/logo.png',
+        width: 100,
+        height: 100,
+      ),
+    ],
+  ),
 );
+
 
 
   int _currentIndex = 0;
@@ -126,7 +134,7 @@ final AppBar appBar = AppBar(
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
       _fetchDataFromFirebase();
     });
   }
@@ -138,17 +146,17 @@ final AppBar appBar = AppBar(
   }
 
   void _fetchDataFromFirebase() {
-    DatabaseReference humidityRef =
+    DatabaseReference _humidityRef =
         FirebaseDatabase.instance.ref().child('Humidity/humidity');
-    DatabaseReference temperatureRef =
+    DatabaseReference _temperatureRef =
         FirebaseDatabase.instance.ref().child('Temperature/temperature');
-    DatabaseReference moistureAvgRef =
+    DatabaseReference _moistureAvgRef =
         FirebaseDatabase.instance.ref().child('Moisture/Average');
-    DatabaseReference moistureDataRef =
+    DatabaseReference _moistureDataRef =
         FirebaseDatabase.instance.ref().child('Moisture');
 
     // Fetch Humidity
-    humidityRef.once().then((event) {
+    _humidityRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         humidity_v = value;
@@ -156,7 +164,7 @@ final AppBar appBar = AppBar(
     });
 
     // Fetch Temperature
-    temperatureRef.once().then((event) {
+    _temperatureRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         temperature_v = value;
@@ -164,7 +172,7 @@ final AppBar appBar = AppBar(
     });
 
     // Fetch Moisture Average
-    moistureAvgRef.once().then((event) {
+    _moistureAvgRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         moisture_a = value;
@@ -172,7 +180,7 @@ final AppBar appBar = AppBar(
     });
 
     // Fetch Moisture Data
-    moistureDataRef.once().then((event) {
+    _moistureDataRef.once().then((event) {
       final value = event.snapshot.value as Map?;
       if (value != null) {
         double moisture1 =
@@ -213,34 +221,33 @@ final AppBar appBar = AppBar(
         appBar: appBar,
         body: IndexedStack(
           index: _currentIndex,
-          children: const [DashB(), ReportScreen()],
+          children: [const DashB(), const ReportScreen()],
         ),
-      bottomNavigationBar: MotionTabBar(
-  labels: ['Dashboard', 'History'],
-  initialSelectedTab: 'Dashboard',
-  icons: [Icons.dashboard, Icons.history],
-  tabSize: 50,
-  tabBarHeight: 60,
-  textStyle: TextStyle(
-    color: Color.fromARGB(255, 53, 51, 51),
-    fontWeight: FontWeight.bold,
-  ),
-  tabIconColor: Colors.grey,
-  tabIconSelectedColor: Colors.white,
-  tabBarColor: Color.fromARGB(255, 255, 255, 255),
-  tabSelectedColor:  const Color.fromARGB(255, 125, 171, 124),
-  onTabItemSelected: (index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  },
-),
-
+        bottomNavigationBar: MotionTabBar(
+          labels: ['Dashboard', 'History'],
+          initialSelectedTab: 'Dashboard',
+          icons: [Icons.dashboard, Icons.history],
+          tabSize: 50,
+          tabBarHeight: 60,
+          textStyle: TextStyle(
+            color: Color.fromARGB(255, 53, 51, 51),
+            fontWeight: FontWeight.bold,
+          ),
+          tabIconColor: Colors.grey,
+          tabIconSelectedColor: Colors.white,
+          tabBarColor: Color.fromARGB(255, 255, 255, 255),
+          tabSelectedColor: const Color.fromARGB(255, 125, 171, 124),
+          onTabItemSelected: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+        ),
       ),
     );
   }
 
   navBar() {
-    return const Navbar();
+    return Navbar();
   }
 }
