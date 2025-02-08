@@ -48,13 +48,13 @@ class _ReportScreenState extends State<ReportScreen> {
     }
 
     Map<String, double> sensorReadings = {
-      'Sensor 1': dataProvider.temperatureValue,
-      'Sensor 2': dataProvider.humidityValue,
-      'Sensor 3': dataProvider.moistureA,
-      'Sensor 4': dataProvider.moistureS1,
-      'Sensor 5': dataProvider.moistureS2,
-      'Sensor 6': dataProvider.moistureS3,
-      'Sensor 7': dataProvider.moistureS4,
+      'Temperature': dataProvider.temperatureValue,
+      'Humidity': dataProvider.humidityValue,
+      'AVG Soil Moisture': dataProvider.moistureA,
+      'SM Sensor 1': dataProvider.moistureS1,
+      'SM Sensor 2': dataProvider.moistureS2,
+      'SM Sensor 3': dataProvider.moistureS3,
+      'SM Sensor 4': dataProvider.moistureS4,
     };
 
     print('Sensor Readings: $sensorReadings');
