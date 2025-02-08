@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:soil_monitoring_app/developer_page.dart';
 
 class Navbar extends StatelessWidget {
   const Navbar({super.key});
@@ -21,16 +22,16 @@ class Navbar extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.favorite, color: Colors.white),
-            title: const Text('Favorite', style: TextStyle(color: Colors.white)),
+            title: const Text('Manual', style: TextStyle(color: Colors.white)),
             onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.book, color: Colors.white),
-            title: const Text('Manual', style: TextStyle(color: Colors.white)),
+            title: const Text('Developers', style: TextStyle(color: Colors.white)),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ManualPage()),
+                MaterialPageRoute(builder: (context) => const DeveloperPage()),
               );
             },
           ),

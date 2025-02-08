@@ -46,21 +46,27 @@ class _HelperMsgState extends State<HelperMsg> {
     }
 
     // Fixed header message
-    Widget fixedHeader = const Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        children: [
-          Icon(Icons.face, color: Colors.black),
-          SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              "Vin D. Helper",
-              style: TextStyle(color: Colors.black, fontSize: 16),
-            ),
-          ),
-        ],
+   Widget fixedHeader = Padding(
+  padding: const EdgeInsets.symmetric(vertical: 5.0),
+  child: Row(
+    children: [
+      Image.asset(
+        'assets/somo.png', 
+        width: 25, 
+        height: 25,
+       
       ),
-    );
+      const SizedBox(width: 8),
+      const Expanded(
+        child: Text(
+          "Somo ur guide hehehhe",
+          style: TextStyle(color: const Color.fromARGB(255, 125, 171, 124), fontSize: 16),
+        ),
+      ),
+    ],
+  ),
+);
+
 
     // Interpret humidity value
     if (humidityValue <= 30) {
