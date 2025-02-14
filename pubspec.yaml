@@ -57,6 +57,7 @@ dependencies:
   motion_tab_bar: ^2.0.4
   motion_tab_bar_v2: ^0.3.0
   carousel_slider: ^5.0.0
+  timezone: ^0.10.0
 
   
   

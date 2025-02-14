@@ -1,90 +1,13 @@
-// import 'package:flutter/material.dart';
-// import 'package:soil_monitoring_app/dashB.dart';
-// import 'package:soil_monitoring_app/local_notification.dart';
-// import 'package:soil_monitoring_app/navBar.dart';
-// import 'package:soil_monitoring_app/historySection.dart';
-
-// class Home extends StatefulWidget {
-//   const Home({super.key});
-
-//   @override
-//   State<Home> createState() => _HomeState();
-// }
-
-// class _HomeState extends State<Home> {
-//   var APPBAR = AppBar(
-//     title: const Text('Soilidity'),
-//     centerTitle: true,
-//     backgroundColor: Colors.green,
-//     shape: const RoundedRectangleBorder(
-//         borderRadius: BorderRadius.only(
-//       bottomLeft: Radius.circular(25),
-//       bottomRight: Radius.circular(25),
-//     )),
-//   );
-
-//   int _currentIndex = 0;
-//   List<Widget> body = [const DashB(), const ReportScreen()];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     double screenWidth = MediaQuery.of(context).size.width;
-//     double screenHeight = MediaQuery.of(context).size.height;
-
-//     // Adjust AppBar title and padding for different screen sizes
-//     TextStyle appBarTextStyle = TextStyle(
-//       fontSize: screenWidth < 600 ? 18 : 24, // Smaller font for smaller screens
-//       fontWeight: FontWeight.bold,
-//     );
-
-//     return Scaffold(
-//       drawer: Navbar(),
-//       appBar: AppBar(
-//         title: Text('Soilidity', style: appBarTextStyle),
-//         centerTitle: true,
-//         backgroundColor: Colors.green,
-//         shape: const RoundedRectangleBorder(
-//           borderRadius: BorderRadius.only(
-//             bottomLeft: Radius.circular(25),
-//             bottomRight: Radius.circular(25),
-//           ),
-//         ),
-//       ),
-//       body: Center(
-//         child: body[_currentIndex],
-//       ),
-//       bottomNavigationBar: BottomNavigationBar(
-//         currentIndex: _currentIndex,
-//         onTap: (int newIndex) {
-//           setState(() {
-//             _currentIndex = newIndex;
-//           });
-//         },
-//         items: const [
-//           BottomNavigationBarItem(
-//             label: 'Dashboard',
-//             icon: Icon(Icons.dashboard),
-//           ),
-//           BottomNavigationBarItem(
-//             label: 'History',
-//             icon: Icon(Icons.history_rounded),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
 import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
 import 'package:soil_monitoring_app/navBar.dart';
-import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
-import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -94,28 +17,29 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-final AppBar appBar = AppBar(
-  backgroundColor: const Color.fromARGB(255, 125, 171, 124),
-  shape: const RoundedRectangleBorder(
-    borderRadius: BorderRadius.only(
-      bottomLeft: Radius.circular(25),
-      bottomRight: Radius.circular(25),
-    ),
-  ),
-  iconTheme: const IconThemeData(color: Colors.white),
-  title: Row(
-    children: [
-      const SizedBox(width: 80), 
-      Image.asset(
-        'assets/logo.png',
-        width: 100,
-        height: 100,
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  final AppBar appBar = AppBar(
+    backgroundColor: const Color.fromARGB(255, 125, 171, 124),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(25),
+        bottomRight: Radius.circular(25),
       ),
-    ],
-  ),
-);
-
-
+    ),
+    iconTheme: const IconThemeData(color: Colors.white),
+    title: Row(
+      children: [
+        const SizedBox(width: 80),
+        Image.asset(
+          'assets/logo.png',
+          width: 100,
+          height: 100,
+        ),
+      ],
+    ),
+  );
 
   int _currentIndex = 0;
   double humidity_v = 0.0;
@@ -130,6 +54,7 @@ final AppBar appBar = AppBar(
   @override
   void initState() {
     super.initState();
+    _initializeNotifications();
     _startTimer();
   }
 
@@ -143,6 +68,35 @@ final AppBar appBar = AppBar(
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  void _initializeNotifications() {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    final InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  Future<void> _showNotification(String message) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'soil_monitoring_channel',
+      'Soil Monitoring Alerts',
+      importance: Importance.high,
+      priority: Priority.high,
+      playSound: true,
+    );
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'SOMO ',
+      message,
+      platformChannelSpecifics,
+    );
   }
 
   void _fetchDataFromFirebase() {
@@ -177,6 +131,13 @@ final AppBar appBar = AppBar(
       setState(() {
         moisture_a = value;
       });
+
+      // Check for Dry or Wet conditions
+      if (value < 40) {
+        _showNotification('Soil moisture is too dry! Consider watering.');
+      } else if (value > 80) {
+        _showNotification('Soil is too wet! Consider reducing watering.');
+      }
     });
 
     // Fetch Moisture Data
@@ -202,6 +163,13 @@ final AppBar appBar = AppBar(
           moisture_s3 = moisture3;
           moisture_s4 = moisture4;
         });
+        // Check individual sensor readings
+        if (moisture1 < 40 ||
+            moisture2 < 40 ||
+            moisture3 < 40 ||
+            moisture4 < 40) {
+          _showNotification('One of the sensors detected dry soil.');
+        }
       }
     });
   }
@@ -221,7 +189,7 @@ final AppBar appBar = AppBar(
         appBar: appBar,
         body: IndexedStack(
           index: _currentIndex,
-          children: [const DashB(), const ReportScreen()],
+          children: [const DashB(), SensorHistoryScreen()],
         ),
         bottomNavigationBar: MotionTabBar(
           labels: ['Dashboard', 'History'],
