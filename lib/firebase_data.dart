@@ -119,7 +119,7 @@ class _FirebaseDataState extends State<FirebaseData> {
             moistureS2: moisture_s2,
             moistureS3: moisture_s3,
             moistureS4: moisture_s4,
-            child: const ReportScreen(),
+            child: SensorHistoryScreen(),
           );
         } else {
           return const CircularProgressIndicator();
