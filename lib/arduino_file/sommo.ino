@@ -28,6 +28,7 @@
 
 const char* wifiList[][3] = {
   {"HG8145V5_D400A", "jcww2myE"},
+  {"HUAWEI-D8kG", "ana@36546"},
   {"Carlo", "carlfrancis0205"},
   {"Kaida", "Kaida123"},
   {"Hotspot", "12468642369485"},
@@ -59,15 +60,15 @@ const int numNetworks = sizeof(wifiList) / sizeof(wifiList[0]);
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
-
 FB_Firestore firestore;
 
-
+// Variables for Firebase Realtime Database
 unsigned long sendDataPrevMillis = 0;
 int count = 0;
 bool signupOK = false;
 
-int sensorPin1 = 34;  // Soil moisture sensor connected to GPIO 34
+// Pins for Soil Moisture Sensors
+int sensorPin1 = 34;
 int sensorPin2 = 35;
 int sensorPin3 = 33;
 int sensorPin4 = 32;
@@ -77,7 +78,6 @@ DHT dht(DHTPIN, DHTTYPE);
 
 void connectToWiFi() {
   //to connect to any wifi by trying 1by1
-  
   
   WiFi.mode(WIFI_STA);
 
@@ -120,17 +120,27 @@ void readAndDisplaySensorValues() {
   //Serial.println(WiFi.localIP()); 
   
   // Read soil moisture sensor values
-int sensorValue1 = analogRead(sensorPin1);
-int moisturePercent1 = map(sensorValue1, 0, 4095, 100, 0);  // Map to reverse 0-100%
+  // Analog sensor values are 0-4095, map to 0-100% moisture level
+  // Reverse mapping: 0% moisture = 4095, 100% moisture = 0
+  // 100% moisture = wet soil, 0% moisture = dry soil
+  // The moisture level is inversely proportional to the sensor value
+  // The higher the sensor value, the lower the moisture level
+  // The lower the sensor value, the higher the moisture level
+  // The sensor value is read from the analog pin of the ESP32
+  // The moisture level is calculated using the map function
+  // The map function maps the sensor value from 0-4095 to 100-0
+  // 100% moisture = 0 sensor value, 0% moisture = 4095 sensor value
+  int sensorValue1 = analogRead(sensorPin1);
+  int moisturePercent1 = map(sensorValue1, 0, 4095, 100, 0);  // Map to reverse 0-100%
 
-int sensorValue2 = analogRead(sensorPin2);
-int moisturePercent2 = map(sensorValue2, 0, 4095, 100, 0);  // Map to reverse 0-100%
+  int sensorValue2 = analogRead(sensorPin2);
+  int moisturePercent2 = map(sensorValue2, 0, 4095, 100, 0);  // Map to reverse 0-100%
 
-int sensorValue3 = analogRead(sensorPin3);
-int moisturePercent3 = map(sensorValue3, 0, 4095, 100, 0);  // Map to reverse 0-100%
+  int sensorValue3 = analogRead(sensorPin3);
+  int moisturePercent3 = map(sensorValue3, 0, 4095, 100, 0);  // Map to reverse 0-100%
 
-int sensorValue4 = analogRead(sensorPin4);
-int moisturePercent4 = map(sensorValue4, 0, 4095, 100, 0);  // Map to reverse 0-100%
+  int sensorValue4 = analogRead(sensorPin4);
+  int moisturePercent4 = map(sensorValue4, 0, 4095, 100, 0);  // Map to reverse 0-100%
 
   float temperature = dht.readTemperature();  // Read temperature
   float humidity = dht.readHumidity();  // Read humidity
@@ -229,20 +239,21 @@ int moisturePercent4 = map(sensorValue4, 0, 4095, 100, 0);  // Map to reverse 0-
 } //new added
 
 
-//FIRESTORE PART F*******************************!!!!!!!
+// Firestore starts here!!!!!!!
+// This for setting the time no need na sa RTC component instead we using network time protocol
 void setupTime() {
     if (WiFi.status() != WL_CONNECTED) {
         Serial.println("WiFi not connected! Cannot sync time.");
         return;
     }
     const long gmtOffset_sec = 8 * 3600; // GMT+8 (Philippines, Singapore, etc.)
-const int daylightOffset_sec = 0;    // No DST in many countries
+    const int daylightOffset_sec = 0;    // No DST in many countries
 
-configTime(gmtOffset_sec, daylightOffset_sec, "pool.ntp.org");
+    configTime(gmtOffset_sec, daylightOffset_sec, "pool.ntp.org");
 
-configTime(0, 0, "time.google.com");
-configTime(0, 0, "time.nist.gov");
-configTime(0, 0, "asia.pool.ntp.org"); // Best for Southeast Asia
+    configTime(0, 0, "time.google.com");
+    configTime(0, 0, "time.nist.gov");
+    configTime(0, 0, "asia.pool.ntp.org"); // Best for Southeast Asia
 
     Serial.println("Syncing time...");
 
@@ -264,9 +275,8 @@ configTime(0, 0, "asia.pool.ntp.org"); // Best for Southeast Asia
     }
 }
 
-
-
-String getDateString() {
+  //Getting the Date and Time here 
+  String getDateString() {
     time_t now = time(nullptr);
     struct tm timeInfo;
     localtime_r(&now, &timeInfo);
@@ -275,7 +285,7 @@ String getDateString() {
     return String(buffer);
 }
 
-String getTimeString() {
+  String getTimeString() {
     time_t now = time(nullptr);
     struct tm timeInfo;
     localtime_r(&now, &timeInfo);
@@ -284,13 +294,15 @@ String getTimeString() {
     return String(buffer);
 }
 
-void saveDailyLogToFirestore(float temperature, float humidity, float avgMoisture, 
+
+  // Connecting and creating logs storing to Firestore
+  void saveDailyLogToFirestore(float temperature, float humidity, float avgMoisture, 
                              int moisture1, int moisture2, int moisture3, int moisture4) {
     FirebaseJson json;
     
     // Get current date and time
     String dateString = getDateString();
-    String timeString = getTimeString();  // Define this function below
+    String timeString = getTimeString();  
 
     // Get time in ISO 8601 format
     time_t now = time(nullptr);
@@ -316,6 +328,7 @@ void saveDailyLogToFirestore(float temperature, float humidity, float avgMoistur
     String collectionPath = "DailyLogs/" + dateString + "/logs";
     String documentPath = timeString;
 
+    // Creating document and collection logs to the firestore
     if (firestore.createDocument(&fbdo, "test-monitor-reui", "", collectionPath.c_str(), documentPath.c_str(), jsonString.c_str(), "")) {
         Serial.println("Daily log saved: " + collectionPath + "/" + documentPath);
     } else {
@@ -323,20 +336,6 @@ void saveDailyLogToFirestore(float temperature, float humidity, float avgMoistur
     }
 }
 
-
-    // FirebaseJson content;
-    // content.set("fields/temperature/doubleValue", temperature);
-    // content.set("fields/humidity/doubleValue", humidity);
-    // content.set("fields/average_moisture/doubleValue", avgMoisture);
-
-    // String documentPath = "SensorLogs/" + String(millis()); // Unique document ID
-
-    // Serial.println("Writing to Firestore...");
-    // if (Firebase.Firestore.createDocument(&fbdo, "test-monitor-reui", "", documentPath.c_str(), content)) {
-    //     Serial.println("Firestore Write Successful");
-    // } else {
-    //     Serial.println("Firestore Write Failed: " + fbdo.errorReason());
-    // }
 
 
 void setup(){
@@ -367,37 +366,51 @@ void setup(){
   Firebase.reconnectWiFi(true);
 }
 
+
 void loop() {
+  // Storing For Realtime
     if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 2000 || sendDataPrevMillis == 0)) {
         sendDataPrevMillis = millis();
-
         readAndDisplaySensorValues();
     }
 
-    // Firestore logging every 10 minutes
+    // Get current time for 
     time_t now = time(nullptr);
     struct tm timeInfo;
     localtime_r(&now, &timeInfo);
 
+    int currentHour = timeInfo.tm_hour;
     int currentMinute = timeInfo.tm_min;
     static int lastLoggedMinute = -1;
+    static int lastLoggedHour = -1;
 
-    if (currentMinute % 2 == 0 && lastLoggedMinute != currentMinute) {
-        lastLoggedMinute = currentMinute;  // Mark this minute as logged
 
-        // Read sensor values
-        float temperature = dht.readTemperature();
-        float humidity = dht.readHumidity();
-        int moisture1 = map(analogRead(sensorPin1), 0, 4095, 100, 0);
-        int moisture2 = map(analogRead(sensorPin2), 0, 4095, 100, 0);
-        int moisture3 = map(analogRead(sensorPin3), 0, 4095, 100, 0);
-        int moisture4 = map(analogRead(sensorPin4), 0, 4095, 100, 0);
-        float avgMoisture = (moisture1 + moisture2 + moisture3 + moisture4) / 4.0;
+    // Trying logging every 10 minutes if it will store
+    // if (currentMinute % 10 == 0 && lastLoggedMinute != currentMinute) {
+    //     lastLoggedMinute = currentMinute;  // Mark this minute as logged
+    //     logSensorDataToFirestore();  // Call function to log sensor data
+    //     Serial.println("Firestore log saved (every 10 min).");
+    // }
 
-        // Save log to Firestore
-        saveDailyLogToFirestore(temperature, humidity, avgMoisture, moisture1, moisture2, moisture3, moisture4);
-
-        Serial.println("Firestore log saved (every 10 min).");
+    // Specific time logging (8 AM, 11 AM, 3 PM, 5 PM)
+    // Trying out calling specif hour if it will actually store the part
+    if ((currentHour == 8 || currentHour == 11 || currentHour == 12 ||currentHour == 13 || currentHour == 15 || currentHour == 17 || currentHour == 20) && lastLoggedHour != currentHour && currentMinute == 0) {
+        lastLoggedHour = currentHour;  // Prevent multiple logs in the same hour
+        logSensorDataToFirestore();  
+        Serial.println("Firestore log saved (Scheduled Time).");
     }
 }
 
+// Function to log sensor data to Firestore
+// Just calling this function inside the loop function
+void logSensorDataToFirestore() {
+    float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
+    int moisture1 = map(analogRead(sensorPin1), 0, 4095, 100, 0);
+    int moisture2 = map(analogRead(sensorPin2), 0, 4095, 100, 0);
+    int moisture3 = map(analogRead(sensorPin3), 0, 4095, 100, 0);
+    int moisture4 = map(analogRead(sensorPin4), 0, 4095, 100, 0);
+    float avgMoisture = (moisture1 + moisture2 + moisture3 + moisture4) / 4.0;
+
+    saveDailyLogToFirestore(temperature, humidity, avgMoisture, moisture1, moisture2, moisture3, moisture4);
+}
