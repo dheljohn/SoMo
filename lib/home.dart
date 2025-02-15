@@ -8,6 +8,8 @@ import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
 import 'package:soil_monitoring_app/navBar.dart';
+import 'package:soil_monitoring_app/tutorial.dart';
+
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,6 +19,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool showOverlay = true;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -41,7 +44,7 @@ class _HomeState extends State<Home> {
     ),
   );
 
-  int _currentIndex = 0;
+  int _currentIndex = 1;
   double humidity_v = 0.0;
   double temperature_v = 0.0;
   double moisture_a = 0.0;
@@ -59,7 +62,7 @@ class _HomeState extends State<Home> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       _fetchDataFromFirebase();
     });
   }
@@ -73,7 +76,7 @@ class _HomeState extends State<Home> {
   void _initializeNotifications() {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -100,17 +103,17 @@ class _HomeState extends State<Home> {
   }
 
   void _fetchDataFromFirebase() {
-    DatabaseReference _humidityRef =
+    DatabaseReference humidityRef =
         FirebaseDatabase.instance.ref().child('Humidity/humidity');
-    DatabaseReference _temperatureRef =
+    DatabaseReference temperatureRef =
         FirebaseDatabase.instance.ref().child('Temperature/temperature');
-    DatabaseReference _moistureAvgRef =
+    DatabaseReference moistureAvgRef =
         FirebaseDatabase.instance.ref().child('Moisture/Average');
-    DatabaseReference _moistureDataRef =
+    DatabaseReference moistureDataRef =
         FirebaseDatabase.instance.ref().child('Moisture');
 
     // Fetch Humidity
-    _humidityRef.once().then((event) {
+    humidityRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         humidity_v = value;
@@ -118,7 +121,7 @@ class _HomeState extends State<Home> {
     });
 
     // Fetch Temperature
-    _temperatureRef.once().then((event) {
+    temperatureRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         temperature_v = value;
@@ -126,7 +129,7 @@ class _HomeState extends State<Home> {
     });
 
     // Fetch Moisture Average
-    _moistureAvgRef.once().then((event) {
+    moistureAvgRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         moisture_a = value;
@@ -141,7 +144,7 @@ class _HomeState extends State<Home> {
     });
 
     // Fetch Moisture Data
-    _moistureDataRef.once().then((event) {
+    moistureDataRef.once().then((event) {
       final value = event.snapshot.value as Map?;
       if (value != null) {
         double moisture1 =
@@ -174,6 +177,7 @@ class _HomeState extends State<Home> {
     });
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return DataProvider(
@@ -187,35 +191,90 @@ class _HomeState extends State<Home> {
       child: Scaffold(
         drawer: navBar(),
         appBar: appBar,
-        body: IndexedStack(
-          index: _currentIndex,
-          children: [const DashB(), SensorHistoryScreen()],
+        body: Stack(
+          children: [
+            //  Container(
+            //   color: const Color.fromARGB(255, 218, 216, 216), 
+            // ),
+            IndexedStack(
+              index: _currentIndex,
+              children: [TutorialScreen(), const DashB(), const SensorHistoryScreen()],
+            ),
+           
+           
+                    ],
+                  ),
+  
+  bottomNavigationBar: Container(
+
+    margin: const EdgeInsets.fromLTRB(13, 13, 13, 8),
+
+  decoration: BoxDecoration(
+    color: const Color.fromARGB(255, 125, 171, 124), 
+    borderRadius: BorderRadius.circular(30), 
+  ),
+  child: Theme(
+    data: Theme.of(context).copyWith(
+      splashFactory: NoSplash.splashFactory, 
+    ),
+    child: BottomNavigationBar(
+      backgroundColor: Colors.transparent, 
+      elevation: 0, 
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor:  const Color.fromARGB(255, 125, 171, 124), 
+      unselectedItemColor: Colors.white70, 
+      showSelectedLabels: false, 
+      showUnselectedLabels: false, 
+      currentIndex: _currentIndex,
+      onTap: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      items: [
+        BottomNavigationBarItem(
+          icon: _buildIcon(Icons.help, 0, _currentIndex),
+          label: 'Tutorial',
         ),
-        bottomNavigationBar: MotionTabBar(
-          labels: ['Dashboard', 'History'],
-          initialSelectedTab: 'Dashboard',
-          icons: [Icons.dashboard, Icons.history],
-          tabSize: 50,
-          tabBarHeight: 60,
-          textStyle: TextStyle(
-            color: Color.fromARGB(255, 53, 51, 51),
-            fontWeight: FontWeight.bold,
-          ),
-          tabIconColor: Colors.grey,
-          tabIconSelectedColor: Colors.white,
-          tabBarColor: Color.fromARGB(255, 255, 255, 255),
-          tabSelectedColor: const Color.fromARGB(255, 125, 171, 124),
-          onTabItemSelected: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
+        BottomNavigationBarItem(
+          icon: _buildIcon(Icons.dashboard, 1, _currentIndex),
+          label: 'Dashboard',
         ),
+        BottomNavigationBarItem(
+          icon: _buildIcon(Icons.history, 2, _currentIndex),
+          label: 'History',
+        ),
+      ],
+    ),
+    
+  ),
+),
       ),
     );
   }
 
+
+   
+  
+
+  
+ Widget _buildIcon(IconData iconData, int index, int _currentIndex) {
+  bool isSelected = _currentIndex == index;
+  return AnimatedContainer(
+    duration: const Duration(milliseconds: 300), 
+    curve: Curves.easeInOut, 
+    padding: const EdgeInsets.all(5),
+    decoration: BoxDecoration(
+      color: isSelected ? Colors.white : Colors.transparent, 
+      shape: BoxShape.circle, // Circle shape
+    ),
+    child: Icon(
+      iconData,
+      color: isSelected ?  const Color.fromARGB(255, 125, 171, 124) : Colors.white, // Icon color
+    ),
+  );
+}
   navBar() {
-    return Navbar();
+    return const Navbar();
   }
 }

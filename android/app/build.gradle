@@ -13,7 +13,7 @@ android {
     namespace = "com.example.soil_monitoring_app"
     compileSdk = flutter.compileSdkVersion
     
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
     defaultConfig {
     multiDexEnabled true
     } //local notif s

@@ -244,82 +244,84 @@ title: const GaugeTitle(
 
         SizedBox(height: 20,),
         
-       Row(
-  mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
-  children: [
-    Container(
-      height: 70,
-      width: 110, 
-      decoration: BoxDecoration(
-        color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.blue),
-      ),
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Humidity',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            '${dataProvider.humidityValue}%',
-            style: TextStyle(fontSize: 18, color: Colors.blue),
-          ),
-        ],
-      ),
+    Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 20.0), // Adds space on left and right
+  child: Container(
+    height: 70,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      color: const Color.fromARGB(255, 236, 238, 230),
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: Colors.grey.shade300),
     ),
-    SizedBox(width: 10), 
-    Container(
-      height: 70,
-      width: 110, 
-      decoration: BoxDecoration(
-        color: Colors.orange.shade50,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.orange),
-      ),
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Temperature',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        // Humidity Section
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Humidity',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: const Color.fromARGB(255, 111, 114, 111)),
+              ),
+              Text(
+                '${dataProvider.humidityValue}%',
+                style: TextStyle(fontSize: 18, color: Colors.blue),
+              ),
+            ],
           ),
-          Text(
-            '${dataProvider.temperatureValue}°C',
-            style: TextStyle(fontSize: 18, color: Colors.orange),
+        ),
+        // Divider
+        Container(
+          height: 40,
+          width: 1,
+          color: Colors.grey.shade300,
+        ),
+        // Temperature Section
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Temperature',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: const Color.fromARGB(255, 111, 114, 111)),
+              ),
+              Text(
+                '${dataProvider.temperatureValue}°C',
+                style: TextStyle(fontSize: 18, color: Colors.orange),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        // Divider
+        Container(
+          height: 40,
+          width: 1,
+          color: Colors.grey.shade300,
+        ),
+        // Soil Moisture Section
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Soil Moisture',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: const Color.fromARGB(255, 111, 114, 111)),
+              ),
+              Text(
+                '${dataProvider.moistureA}%',
+                style: TextStyle(fontSize: 18, color: Colors.green),
+              ),
+            ],
+          ),
+        ),
+      ],
     ),
-    SizedBox(width: 10), 
-    Container(
-      height: 70,
-      width: 110, 
-      decoration: BoxDecoration(
-        color: Colors.green.shade50,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.green),
-      ),
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Soil Moisture',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            '${dataProvider.moistureA}%',
-            style: TextStyle(fontSize: 18, color: Colors.green),
-          ),
-        ],
-      ),
-    ),
-  ],
-),
+  ),
+)
+
 
 
       ],

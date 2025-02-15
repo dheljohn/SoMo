@@ -45,7 +45,7 @@ class _DashBState extends State<DashB> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          Center(
+          const Center(
             // child: Container(
             //   margin: EdgeInsets.all(5),
             //   height: MediaQuery.of(context).size.height * 0.1,
@@ -53,9 +53,9 @@ class _DashBState extends State<DashB> {
             // ),
           ),
           Gauges(dataProvider: dataProvider), // Use the Gauges widget
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
             Container(
-            margin: EdgeInsets.all(5),
+            margin: const EdgeInsets.all(5),
             height: MediaQuery.of(context).size.height * 0.2,
             child: const Row(
               children: [
@@ -63,7 +63,7 @@ class _DashBState extends State<DashB> {
               ],
             ),
           ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
           /* eto yung image na may interpretation ng values 
           Center(

@@ -8,6 +8,8 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SensorHistoryScreen extends StatefulWidget {
+  const SensorHistoryScreen({super.key});
+
   @override
   _SensorHistoryScreenState createState() => _SensorHistoryScreenState();
 }
@@ -84,18 +86,18 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sensor History'),
+        title: const Text('Sensor History'),
         actions: [
           IconButton(
-            icon: Icon(Icons.download),
+            icon: const Icon(Icons.download),
             onPressed: _downloadCSV,
           ),
         ],
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _logs.isEmpty
-              ? Center(child: Text('No sensor history available.'))
+              ? const Center(child: Text('No sensor history available.'))
               : ListView.builder(
                   itemCount: _logs.length,
                   itemBuilder: (context, index) {
@@ -112,7 +114,7 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text('Sensor Log Details'),
+                              title: const Text('Sensor Log Details'),
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +147,7 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text('Close'),
+                                  child: const Text('Close'),
                                 ),
                               ],
                             );
