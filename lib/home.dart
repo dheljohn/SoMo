@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
 import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
@@ -24,14 +23,17 @@ class _HomeState extends State<Home> {
       FlutterLocalNotificationsPlugin();
 
   final AppBar appBar = AppBar(
-    backgroundColor: const Color.fromARGB(255, 125, 171, 124),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(25),
-        bottomRight: Radius.circular(25),
-      ),
+    backgroundColor: const Color.fromARGB(255, 247, 246, 237),
+
+    // shape: const RoundedRectangleBorder(
+    //   borderRadius: BorderRadius.only(
+    //     bottomLeft: Radius.circular(25),
+    //     bottomRight: Radius.circular(25),
+    //   ),
+    // ),
+    iconTheme: const IconThemeData(
+      color: Color.fromARGB(255, 42, 83, 39),
     ),
-    iconTheme: const IconThemeData(color: Colors.white),
     title: Row(
       children: [
         const SizedBox(width: 80),
@@ -194,51 +196,64 @@ class _HomeState extends State<Home> {
         body: Stack(
           children: [
             //  Container(
-            //   color: const Color.fromARGB(255, 218, 216, 216), 
+
+            //   color: const Color.fromARGB(255, 218, 216, 216),
             // ),
             IndexedStack(
               index: _currentIndex,
-              children: [TutorialScreen(), const DashB(), const SensorHistoryScreen()],
+              children: [
+                TutorialScreen(),
+                const DashB(),
+                SensorHistoryScreen()
+              ],
             ),
-           
-           
-                    ],
-                  ),
-  
-  bottomNavigationBar: Container(
-
-    margin: const EdgeInsets.fromLTRB(13, 13, 13, 8),
-
-  decoration: BoxDecoration(
-    color: const Color.fromARGB(255, 125, 171, 124), 
-    borderRadius: BorderRadius.circular(30), 
-  ),
-  child: Theme(
-    data: Theme.of(context).copyWith(
-      splashFactory: NoSplash.splashFactory, 
-    ),
-    child: BottomNavigationBar(
-      backgroundColor: Colors.transparent, 
-      elevation: 0, 
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor:  const Color.fromARGB(255, 125, 171, 124), 
-      unselectedItemColor: Colors.white70, 
-      showSelectedLabels: false, 
-      showUnselectedLabels: false, 
-      currentIndex: _currentIndex,
-      onTap: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      items: [
-        BottomNavigationBarItem(
-          icon: _buildIcon(Icons.help, 0, _currentIndex),
-          label: 'Tutorial',
+          ],
         ),
-        BottomNavigationBarItem(
-          icon: _buildIcon(Icons.dashboard, 1, _currentIndex),
-          label: 'Dashboard',
+        bottomNavigationBar: Container(
+          margin: const EdgeInsets.fromLTRB(13, 13, 13, 8),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Color.fromARGB(255, 42, 83, 39),
+              width: 2,
+            ),
+            color: const Color.fromARGB(255, 100, 122, 99),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              splashFactory: NoSplash.splashFactory,
+            ),
+            child: BottomNavigationBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: const Color.fromARGB(255, 125, 171, 124),
+              unselectedItemColor: Colors.white70,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              currentIndex: _currentIndex,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              items: [
+                BottomNavigationBarItem(
+                  icon: _buildIcon(Icons.help, 0, _currentIndex),
+                  label: 'Tutorial',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon(Icons.dashboard, 1, _currentIndex),
+                  label: 'Dashboard',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon(Icons.history, 2, _currentIndex),
+                  label: 'History',
+                ),
+              ],
+            ),
+          ),
+
         ),
         BottomNavigationBarItem(
           icon: _buildIcon(Icons.history, 2, _currentIndex),
@@ -253,27 +268,26 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Widget _buildIcon(IconData iconData, int index, int _currentIndex) {
+    bool isSelected = _currentIndex == index;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.white : Colors.transparent,
+        shape: BoxShape.circle, // Circle shape
+      ),
+      child: Icon(
+        iconData,
+        color: isSelected
+            ? const Color.fromARGB(255, 125, 171, 124)
+            : Colors.white, // Icon color
+      ),
+    );
+  }
 
-   
-  
 
-  
- Widget _buildIcon(IconData iconData, int index, int _currentIndex) {
-  bool isSelected = _currentIndex == index;
-  return AnimatedContainer(
-    duration: const Duration(milliseconds: 300), 
-    curve: Curves.easeInOut, 
-    padding: const EdgeInsets.all(5),
-    decoration: BoxDecoration(
-      color: isSelected ? Colors.white : Colors.transparent, 
-      shape: BoxShape.circle, // Circle shape
-    ),
-    child: Icon(
-      iconData,
-      color: isSelected ?  const Color.fromARGB(255, 125, 171, 124) : Colors.white, // Icon color
-    ),
-  );
-}
   navBar() {
     return const Navbar();
   }

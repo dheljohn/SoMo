@@ -58,8 +58,9 @@ dependencies:
   motion_tab_bar_v2: ^0.4.0
   carousel_slider: ^5.0.0
   timezone: ^0.10.0
-  video_player: ^2.5.5
-  url_launcher: ^6.0.20
+  video_player: ^2.9.2
+  url_launcher: ^6.3.1
+
 
   
   
