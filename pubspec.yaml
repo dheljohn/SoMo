@@ -58,6 +58,8 @@ dependencies:
   motion_tab_bar_v2: ^0.3.0
   carousel_slider: ^5.0.0
   timezone: ^0.10.0
+  video_player: ^2.9.2
+  url_launcher: ^6.3.1
 
   
   
@@ -93,6 +95,9 @@ flutter:
     - assets/jm.png
     - assets/marvin.png
     - assets/edhel.png
+    - assets/github.png
+    - assets/linked.png
+    - assets/fb.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

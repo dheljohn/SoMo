@@ -22,6 +22,9 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
     _fetchLogs();
   }
 
+  final CollectionReference logsRef =
+      FirebaseFirestore.instance.collection('sensor_logs');
+
   void _fetchLogs() {
     FirebaseFirestore.instance
         .collectionGroup('logs')
@@ -80,8 +83,33 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
     return "Invalid date";
   }
 
+  String _formatDate(dynamic timestamp) {
+    if (timestamp is Timestamp) {
+      DateTime dateTime = timestamp.toDate();
+      return DateFormat('MMM dd, yyyy').format(dateTime);
+    }
+    return "Invalid date";
+  }
+
+  String _formatTime(dynamic timestamp) {
+    if (timestamp is Timestamp) {
+      DateTime dateTime = timestamp.toDate();
+      return DateFormat('h:mm a').format(dateTime);
+    }
+    return "Invalid time";
+  }
+
   @override
   Widget build(BuildContext context) {
+    Map<String, List<DocumentSnapshot>> groupedLogs = {};
+    for (var log in _logs) {
+      String date = _formatDate(log['timestamp']);
+      if (!groupedLogs.containsKey(date)) {
+        groupedLogs[date] = [];
+      }
+      groupedLogs[date]!.add(log);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Sensor History'),
@@ -96,64 +124,102 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
           ? Center(child: CircularProgressIndicator())
           : _logs.isEmpty
               ? Center(child: Text('No sensor history available.'))
-              : ListView.builder(
-                  itemCount: _logs.length,
-                  itemBuilder: (context, index) {
-                    Map<String, dynamic> data =
-                        _logs[index].data() as Map<String, dynamic>;
-                    return ListTile(
-                      title: Text(
-                          "Temperature: ${data['temperature']}°C, Humidity: ${data['humidity']}%"),
-                      subtitle: Text(
-                          "Soil Moisture: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}"),
-                      trailing: Text(_formatTimestamp(data['timestamp'])),
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text('Sensor Log Details'),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Temperature: ${data['temperature']}°C',
-                                  ),
-                                  Text(
-                                    'Humidity: ${data['humidity']}%',
-                                  ),
-                                  Text(
-                                    'Soil Moisture 1: ${data['moisture_1']}',
-                                  ),
-                                  Text(
-                                    'Soil Moisture 2: ${data['moisture_2']}',
-                                  ),
-                                  Text(
-                                    'Soil Moisture 3: ${data['moisture_3']}',
-                                  ),
-                                  Text(
-                                    'Soil Moisture 4: ${data['moisture_4']}',
-                                  ),
-                                  Text(
-                                    'Timestamp: ${_formatTimestamp(data['timestamp'])}',
-                                  ),
-                                ],
+              : ListView(
+                  children: groupedLogs.entries.map((entry) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            entry.key,
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        ...entry.value.map((log) {
+                          Map<String, dynamic> data =
+                              log.data() as Map<String, dynamic>;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            child: Card(
+                              color: const Color.fromARGB(255, 249, 249, 249),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
                               ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Close'),
+                              child: ListTile(
+                                title: Text(
+                                  _formatTime(data['timestamp']),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
+                                  ),
                                 ),
-                              ],
-                            );
-                          },
-                        );
-                      },
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 8.0),
+                                    Text(
+                                      "Soil Moisture: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}",
+                                      style: TextStyle(fontSize: 14.0),
+                                    ),
+                                    Text(
+                                      "Temperature: ${data['temperature']}°C",
+                                      style: TextStyle(fontSize: 14.0),
+                                    ),
+                                    Text(
+                                      "Humidity: ${data['humidity']}%",
+                                      style: TextStyle(fontSize: 14.0),
+                                    ),
+                                  ],
+                                ),
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text('Sensor Log Details'),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                'Temperature: ${data['temperature']}°C'),
+                                            Text(
+                                                'Humidity: ${data['humidity']}%'),
+                                            Text(
+                                                'Soil Moisture 1: ${data['moisture_1']}'),
+                                            Text(
+                                                'Soil Moisture 2: ${data['moisture_2']}'),
+                                            Text(
+                                                'Soil Moisture 3: ${data['moisture_3']}'),
+                                            Text(
+                                                'Soil Moisture 4: ${data['moisture_4']}'),
+                                            Text(
+                                                'Time: ${_formatTime(data['timestamp'])}'),
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text('Close'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        }).toList()
+                      ],
                     );
-                  },
+                  }).toList(),
                 ),
     );
   }
