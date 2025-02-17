@@ -219,6 +219,7 @@ class Gauges extends StatelessWidget {
             ),
           ],
         ),
+
       ],
     );
   }

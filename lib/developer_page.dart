@@ -8,14 +8,18 @@ class DeveloperPage extends StatefulWidget {
   State<DeveloperPage> createState() => _DeveloperPageState();
 }
 
+
 class _DeveloperPageState extends State<DeveloperPage>
     with SingleTickerProviderStateMixin {
+
   final List<Map<String, dynamic>> developers = [
     {
       'name': 'Joanna Marie',
       'role': 'Developer',
+
       'description':
           'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+
       'image': 'assets/jm.png',
       'position': {'top': -10.0, 'left': 45.0, 'width': 100.0, 'height': 150.0},
       'links': {
@@ -27,8 +31,10 @@ class _DeveloperPageState extends State<DeveloperPage>
     {
       'name': 'Edhel John ',
       'role': 'Developer',
+
       'description':
           'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+
       'image': 'assets/edhel.png',
       'position': {'top': -5.0, 'left': 45.0, 'width': 90.0, 'height': 145.0},
       'links': {
@@ -40,8 +46,10 @@ class _DeveloperPageState extends State<DeveloperPage>
     {
       'name': 'Jenny Lyn ',
       'role': 'Tambay',
+
       'description':
           'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+
       'image': 'assets/jenny.png',
       'position': {'top': -10.0, 'left': 1.0, 'width': 160.0, 'height': 150.0},
       'links': {
@@ -53,8 +61,10 @@ class _DeveloperPageState extends State<DeveloperPage>
     {
       'name': 'Marvin ',
       'role': 'Project Manager',
+
       'description':
           'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+
       'image': 'assets/marvin.png',
       'position': {'top': -38.0, 'left': 17.0, 'width': 120.0, 'height': 175.0},
       'links': {
@@ -64,6 +74,7 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
   ];
+
 
   List<bool> isVisible = [];
 
@@ -114,8 +125,10 @@ class _DeveloperPageState extends State<DeveloperPage>
               opacity: isVisible[index] ? 1.0 : 0.0,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 500),
+
                 transform:
                     Matrix4.translationValues(0, isVisible[index] ? 0 : -50, 0),
+
                 curve: Curves.easeOut,
                 child: Stack(
                   clipBehavior: Clip.none,
@@ -123,16 +136,20 @@ class _DeveloperPageState extends State<DeveloperPage>
                     Container(
                       width: MediaQuery.of(context).size.width * 0.9,
                       height: 123,
+
                       margin: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 20.0),
+
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
                         color: Color.fromARGB(255, 242, 239, 231),
                         borderRadius: BorderRadius.circular(16),
+
                         border: Border.all(
                           color: Color.fromARGB(255, 42, 83, 39),
                           width: 2,
                         ),
+
                       ),
                       child: Row(
                         // crossAxisAlignment: CrossAxisAlignment.center,
@@ -150,6 +167,7 @@ class _DeveloperPageState extends State<DeveloperPage>
                                   color: Color.fromARGB(255, 31, 45, 31),
                                 ),
                               ),
+
                               Text(
                                 developer['role']!,
                                 style: const TextStyle(
@@ -157,6 +175,7 @@ class _DeveloperPageState extends State<DeveloperPage>
                                   color: Color.fromARGB(255, 120, 122, 120),
                                 ),
                               ),
+
                               const SizedBox(width: 5),
                               Row(
                                 children: [
@@ -191,6 +210,7 @@ class _DeveloperPageState extends State<DeveloperPage>
                                   ),
                                 ],
                               ),
+
                             ],
                           ),
                         ],

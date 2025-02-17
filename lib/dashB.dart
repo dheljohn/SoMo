@@ -45,6 +45,7 @@ class _DashBState extends State<DashB> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           const Center(
               // child: Container(
               //   margin: EdgeInsets.all(5),
@@ -60,6 +61,7 @@ class _DashBState extends State<DashB> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
+
               children: [
                 const SizedBox(width: 30),
                 Container(
@@ -91,7 +93,9 @@ class _DashBState extends State<DashB> {
             ),
           ),
 
+
           const SizedBox(width: 10),
+
 
           /* eto yung image na may interpretation ng values 
           Center(

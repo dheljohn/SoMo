@@ -9,6 +9,7 @@ import 'package:soil_monitoring_app/historySection.dart';
 import 'package:soil_monitoring_app/navBar.dart';
 import 'package:soil_monitoring_app/tutorial.dart';
 
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -178,6 +179,7 @@ class _HomeState extends State<Home> {
     });
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return DataProvider(
@@ -194,6 +196,7 @@ class _HomeState extends State<Home> {
         body: Stack(
           children: [
             //  Container(
+
             //   color: const Color.fromARGB(255, 218, 216, 216),
             // ),
             IndexedStack(
@@ -250,7 +253,17 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
+
         ),
+        BottomNavigationBarItem(
+          icon: _buildIcon(Icons.history, 2, _currentIndex),
+          label: 'History',
+        ),
+      ],
+    ),
+    
+  ),
+),
       ),
     );
   }
@@ -273,6 +286,7 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
 
   navBar() {
     return const Navbar();

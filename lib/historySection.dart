@@ -8,6 +8,8 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SensorHistoryScreen extends StatefulWidget {
+  const SensorHistoryScreen({super.key});
+
   @override
   _SensorHistoryScreenState createState() => _SensorHistoryScreenState();
 }
@@ -112,17 +114,18 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sensor History'),
+        title: const Text('Sensor History'),
         actions: [
           IconButton(
-            icon: Icon(Icons.download),
+            icon: const Icon(Icons.download),
             onPressed: _downloadCSV,
           ),
         ],
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _logs.isEmpty
+
               ? Center(child: Text('No sensor history available.'))
               : ListView(
                   children: groupedLogs.entries.map((entry) {
@@ -173,6 +176,7 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
                                       style: TextStyle(fontSize: 14.0),
                                     ),
                                   ],
+
                                 ),
                                 onTap: () {
                                   showDialog(
