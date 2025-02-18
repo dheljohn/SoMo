@@ -44,8 +44,8 @@ class _HelperMsgState extends State<HelperMsg> {
         ),
       );
     }
-    Widget fixedHeader = Padding(
 
+    Widget fixedHeader = Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Row(
         children: [
@@ -53,8 +53,6 @@ class _HelperMsgState extends State<HelperMsg> {
             'assets/somo.png',
             width: 25,
             height: 25,
-
-            // Fixed header message
           ),
           const SizedBox(width: 8),
           const Expanded(
@@ -66,19 +64,8 @@ class _HelperMsgState extends State<HelperMsg> {
             ),
           ),
         ],
-
       ),
-      const SizedBox(width: 8),
-      const Expanded(
-        child: Text(
-          "SOMO",
-          style: TextStyle(color: const Color.fromARGB(255, 125, 171, 124), fontSize: 17),
-        ),
-      ),
-    ],
-  ),
-);
-
+    );
 
     // Interpret humidity value
     if (humidityValue <= 30) {
@@ -151,7 +138,6 @@ class _HelperMsgState extends State<HelperMsg> {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
-
         padding: const EdgeInsets.all(9),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -173,7 +159,6 @@ class _HelperMsgState extends State<HelperMsg> {
           //     offset: const Offset(0, 3),
           //   ),
           // ],
-
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
