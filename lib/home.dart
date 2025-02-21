@@ -137,11 +137,11 @@ class _HomeState extends State<Home> {
       });
 
       // Check for Dry or Wet conditions
-      if (value < 40) {
-        _showNotification('Soil moisture is too dry! Consider watering.');
-      } else if (value > 80) {
-        _showNotification('Soil is too wet! Consider reducing watering.');
-      }
+      // if (value < 40) {
+      //   _showNotification('Soil moisture is too dry! Consider watering.');
+      // } else if (value > 80) {
+      //   _showNotification('Soil is too wet! Consider reducing watering.');
+      // }
     });
 
     // Fetch Moisture Data
@@ -172,7 +172,24 @@ class _HomeState extends State<Home> {
             moisture2 < 40 ||
             moisture3 < 40 ||
             moisture4 < 40) {
+          if (moisture1 < 40) {
+            _showNotification('Sensor 1 detected dry soil.');
+          }
+          if (moisture2 < 40) {
+            _showNotification('Sensor 2 detected dry soil.');
+          }
+          if (moisture3 < 40) {
+            _showNotification('Sensor 3 detected dry soil.');
+          }
+          if (moisture4 < 40) {
+            _showNotification('Sensor 4 detected dry soil.');
+          }
           _showNotification('One of the sensors detected dry soil.');
+        } else if (moisture1 > 75 ||
+            moisture2 > 75 ||
+            //  moisture3 > 75 ||
+            moisture4 > 75) {
+          _showNotification('One of the sensors detected wet soil.');
         }
       }
     });
