@@ -184,12 +184,24 @@ class _HomeState extends State<Home> {
           if (moisture4 < 40) {
             _showNotification('Sensor 4 detected dry soil.');
           }
-          _showNotification('One of the sensors detected dry soil.');
+          // _showNotification('One of the sensors detected dry soil.');
         } else if (moisture1 > 75 ||
             moisture2 > 75 ||
             //  moisture3 > 75 ||
             moisture4 > 75) {
-          _showNotification('One of the sensors detected wet soil.');
+          if (moisture1 > 75) {
+            _showNotification('Sensor 1 detected wet soil.');
+          }
+          if (moisture2 > 75) {
+            _showNotification('Sensor 2 detected wet soil.');
+          }
+          if (moisture3 > 75) {
+            _showNotification('Sensor 3 detected wet soil.');
+          }
+          if (moisture4 > 75) {
+            _showNotification('Sensor 4 detected wet soil.');
+          }
+          // _showNotification('One of the sensors detected wet soil.');
         }
       }
     });
