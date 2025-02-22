@@ -1,8 +1,189 @@
+// import 'dart:async';
+// import 'package:firebase_database/firebase_database.dart';
+// import 'package:flutter/material.dart';
+// import 'package:soil_monitoring_app/dashB.dart';
+// import 'package:soil_monitoring_app/data_provider.dart';
+// import 'package:soil_monitoring_app/historySection.dart';
+// import 'package:soil_monitoring_app/navBar.dart';
+// import 'package:soil_monitoring_app/tutorial.dart';
+// import 'package:soil_monitoring_app/about.dart';
+
+
+
+// class Home extends StatefulWidget {
+//   const Home({super.key});
+
+//   @override
+//   State<Home> createState() => _HomeState();
+// }
+
+// class _HomeState extends State<Home> {
+//   final AppBar appBar = AppBar(
+//     backgroundColor: const Color.fromARGB(255, 100, 122, 99),
+//     iconTheme: const IconThemeData(color: Colors.white),
+//     title: Row(
+//   mainAxisAlignment: MainAxisAlignment.center, 
+//   children: [
+//     Image.asset(
+//       'assets/logo.png',
+//       width: 100,
+//       height: 100,
+//     ),
+//   ],
+// ),
+
+//   );
+
+//   int _currentIndex = 2;
+//   double humidity_v = 0.0;
+//   double temperature_v = 0.0;
+//   double moisture_a = 0.0;
+//   double moisture_s1 = 0.0;
+//   double moisture_s2 = 0.0;
+//   double moisture_s3 = 0.0;
+//   double moisture_s4 = 0.0;
+//   Timer? _timer;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _startTimer();
+//   }
+
+//   void _startTimer() {
+//     _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+//       _fetchDataFromFirebase();
+//     });
+//   }
+
+//   @override
+//   void dispose() {
+//     _timer?.cancel();
+//     super.dispose();
+//   }
+
+//   void _fetchDataFromFirebase() {
+//     DatabaseReference _humidityRef = FirebaseDatabase.instance.ref().child('Humidity/humidity');
+//     DatabaseReference _temperatureRef = FirebaseDatabase.instance.ref().child('Temperature/temperature');
+//     DatabaseReference _moistureAvgRef = FirebaseDatabase.instance.ref().child('Moisture/Average');
+//     DatabaseReference _moistureDataRef = FirebaseDatabase.instance.ref().child('Moisture');
+
+//     _humidityRef.once().then((event) {
+//       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
+//       setState(() => humidity_v = value);
+//     });
+
+//     _temperatureRef.once().then((event) {
+//       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
+//       setState(() => temperature_v = value);
+//     });
+
+//     _moistureAvgRef.once().then((event) {
+//       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
+//       setState(() => moisture_a = value);
+//     });
+
+//     _moistureDataRef.once().then((event) {
+//       final value = event.snapshot.value as Map?;
+//       if (value != null) {
+//         setState(() {
+//           moisture_s1 = double.tryParse(value['MoistureReadings_1']?.toString() ?? '') ?? 0.0;
+//           moisture_s2 = double.tryParse(value['MoistureReadings_2']?.toString() ?? '') ?? 0.0;
+//           moisture_s3 = double.tryParse(value['MoistureReadings_3']?.toString() ?? '') ?? 0.0;
+//           moisture_s4 = double.tryParse(value['MoistureReadings_4']?.toString() ?? '') ?? 0.0;
+//         });
+//       }
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return DataProvider(
+//       humidityValue: humidity_v,
+//       temperatureValue: temperature_v,
+//       moistureA: moisture_a,
+//       moistureS1: moisture_s1,
+//       moistureS2: moisture_s2,
+//       moistureS3: moisture_s3,
+//       moistureS4: moisture_s4,
+//       child: Scaffold(
+//         // drawer: Navbar(),
+//         appBar: appBar,
+//         body: IndexedStack(
+//           index: _currentIndex,
+//         children: [  const AboutPage(), TutorialScreen(), const DashB(), const SensorHistoryScreen(),],
+
+//         ),
+//         bottomNavigationBar: _buildBottomNavigationBar(),
+//       ),
+//     );
+//   }
+
+//   Widget _buildBottomNavigationBar() {
+//     return Container(
+//       margin: const EdgeInsets.fromLTRB(13, 13, 13, 8),
+//       decoration: BoxDecoration(
+//         border: Border.all(
+//           color: Color.fromARGB(255, 42, 83, 39),
+//           width: 2,
+//         ),
+//         color: const Color.fromARGB(255, 100, 122, 99),
+//         borderRadius: BorderRadius.circular(30),
+//       ),
+//       child: Theme(
+//         data: Theme.of(context).copyWith(
+//           splashFactory: NoSplash.splashFactory,
+//         ),
+//         child: BottomNavigationBar(
+//           backgroundColor: Colors.transparent,
+//           elevation: 0,
+//           type: BottomNavigationBarType.fixed,
+//           selectedItemColor: const Color.fromARGB(255, 125, 171, 124),
+//           unselectedItemColor: Colors.white70,
+//           showSelectedLabels: false,
+//           showUnselectedLabels: false,
+//           currentIndex: _currentIndex,
+//           onTap: (index) {
+//             setState(() => _currentIndex = index);
+//           },
+//         items: [
+//   BottomNavigationBarItem(icon: _buildIcon(Icons.info, 0), label: 'About'),
+//   BottomNavigationBarItem(icon: _buildIcon(Icons.help, 1), label: 'Tutorial'),
+//   BottomNavigationBarItem(icon: _buildIcon(Icons.dashboard, 2), label: 'Dashboard'),
+//   BottomNavigationBarItem(icon: _buildIcon(Icons.history, 3), label: 'History'),
+// ],
+ 
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildIcon(IconData iconData, int index) {
+//     bool isSelected = _currentIndex == index;
+//     return AnimatedContainer(
+//       duration: const Duration(milliseconds: 300),
+//       curve: Curves.easeInOut,
+//       padding: const EdgeInsets.all(5),
+//       decoration: BoxDecoration(
+//         color: isSelected ? Colors.white : Colors.transparent,
+//         shape: BoxShape.circle,
+//       ),
+//       child: Icon(
+//         iconData,
+//         color: isSelected ? const Color.fromARGB(255, 125, 171, 124) : Colors.white,
+//       ),
+//     );
+//   }
+// }
+
+
+
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:soil_monitoring_app/about.dart';
 import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
@@ -22,7 +203,7 @@ class _HomeState extends State<Home> {
       FlutterLocalNotificationsPlugin();
 
   final AppBar appBar = AppBar(
-    backgroundColor: const Color.fromARGB(255, 247, 246, 237),
+    backgroundColor: const Color.fromARGB(255, 100, 122, 99),
 
     // shape: const RoundedRectangleBorder(
     //   borderRadius: BorderRadius.only(
@@ -33,19 +214,19 @@ class _HomeState extends State<Home> {
     iconTheme: const IconThemeData(
       color: Color.fromARGB(255, 42, 83, 39),
     ),
-    title: Row(
-      children: [
-        const SizedBox(width: 80),
-        Image.asset(
-          'assets/logo.png',
-          width: 100,
-          height: 100,
-        ),
-      ],
+      title: Row(
+  mainAxisAlignment: MainAxisAlignment.center, 
+  children: [
+    Image.asset(
+      'assets/logo.png',
+      width: 100,
+      height: 100,
     ),
+  ],
+),
   );
 
-  int _currentIndex = 1;
+  int _currentIndex = 2;
   double humidity_v = 0.0;
   double temperature_v = 0.0;
   double moisture_a = 0.0;
@@ -218,7 +399,7 @@ class _HomeState extends State<Home> {
       moistureS3: moisture_s3,
       moistureS4: moisture_s4,
       child: Scaffold(
-        drawer: navBar(),
+        // drawer: navBar(),
         appBar: appBar,
         body: Stack(
           children: [
@@ -229,6 +410,7 @@ class _HomeState extends State<Home> {
             IndexedStack(
               index: _currentIndex,
               children: [
+                AboutPage(),
                 TutorialScreen(),
                 const DashB(),
                 SensorHistoryScreen()
@@ -264,17 +446,22 @@ class _HomeState extends State<Home> {
                   _currentIndex = index;
                 });
               },
+              
               items: [
-                BottomNavigationBarItem(
+                  BottomNavigationBarItem(
                   icon: _buildIcon(Icons.help, 0, _currentIndex),
+                  label: 'About',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon(Icons.help, 1, _currentIndex),
                   label: 'Tutorial',
                 ),
                 BottomNavigationBarItem(
-                  icon: _buildIcon(Icons.dashboard, 1, _currentIndex),
+                  icon: _buildIcon(Icons.dashboard, 2, _currentIndex),
                   label: 'Dashboard',
                 ),
                 BottomNavigationBarItem(
-                  icon: _buildIcon(Icons.history, 2, _currentIndex),
+                  icon: _buildIcon(Icons.history, 3, _currentIndex),
                   label: 'History',
                 ),
               ],

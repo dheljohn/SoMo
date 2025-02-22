@@ -7,34 +7,94 @@ class Gauges extends StatelessWidget {
 
   const Gauges({required this.dataProvider, Key? key}) : super(key: key);
 
-  Widget buildGauge(String title, double value, Color bgColor) {
-    return Container(
-      height: 110,
-      width: 60,
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Color.fromARGB(255, 42, 83, 39),
+  void showWarningPopup(BuildContext context, String title, double value) {
+    String message;
+    Color textColor = Colors.black;
+
+    if (value < 30) {
+      message = 'Warning: Low moisture detected!';
+      textColor = Colors.red;
+    } else if (value > 70) {
+      message = 'Warning: High moisture detected!';
+      textColor = Colors.blue;
+    } else {
+      message = 'Moisture level is normal.';
+      textColor = Colors.green;
+    }
+
+    Navigator.of(context).push(PageRouteBuilder(
+      opaque: false,
+      barrierDismissible: true,
+      barrierColor: Colors.transparent,
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return FadeTransition(
+          opacity: animation,
+          child: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            behavior: HitTestBehavior.opaque,
+            child: Center(
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  width: 250,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        message,
+                        style: TextStyle(fontSize: 16, color: textColor),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    ));
+  }
+
+  Widget buildGauge(BuildContext context, String title, double value, Color bgColor) {
+    return GestureDetector(
+      onTap: () => showWarningPopup(context, title, value),
+      child: Container(
+        height: 100,
+        width: 165,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color.fromARGB(255, 42, 83, 39)),
+          color: bgColor,
+          borderRadius: BorderRadius.circular(10),
         ),
-        color: bgColor,
-        borderRadius: BorderRadius.circular(10),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.grey.shade300,
-        //     blurRadius: 5,
-        //     offset: const Offset(0, 3),
-        //   ),
-        // ],
-      ),
-      child: Row(
-        children: [
-          // Percentage and Title Section
-          Flexible(
-            flex: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   "$value%",
@@ -43,50 +103,45 @@ class Gauges extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 5),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
+                SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: SfRadialGauge(
+                    axes: <RadialAxis>[
+                      RadialAxis(
+                        radiusFactor: 0.7,
+                        showTicks: false,
+                        showLabels: false,
+                        minimum: 0,
+                        maximum: 100,
+                        pointers: <GaugePointer>[
+                          RangePointer(
+                            value: value,
+                            color: value < 30
+                                ? Colors.yellow
+                                : value > 70
+                                    ? Colors.blue
+                                    : const Color.fromARGB(255, 81, 129, 77),
+                            enableAnimation: true,
+                            cornerStyle: CornerStyle.bothCurve,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: 10),
-          // Radial Gauge
-          Flexible(
-            flex: 1,
-            child: Container(
-              height: 80,
-              width: 80,
-              child: SfRadialGauge(
-                axes: <RadialAxis>[
-                  RadialAxis(
-                    radiusFactor: 0.7,
-                    showTicks: false,
-                    showLabels: false,
-                    minimum: 0,
-                    maximum: 100,
-                    pointers: <GaugePointer>[
-                      RangePointer(
-                        value: value,
-                        color: value < 30
-                            ? Colors.yellow
-                            : value > 70
-                                ? Colors.blue
-                                : const Color.fromARGB(255, 81, 129, 77),
-                        enableAnimation: true,
-                        cornerStyle: CornerStyle.bothCurve,
-                      ),
-                    ],
-                  ),
-                ],
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -121,42 +176,39 @@ class Gauges extends StatelessWidget {
 
     return Column(
       children: [
-        const SizedBox(height: 20),
+        const SizedBox(height: 5),
+
+        // First Row
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: buildGauge('Soil Moisture S1', dataProvider.moistureS1,
-                  const Color.fromARGB(255, 191, 224, 198)),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: buildGauge('Soil Moisture S2', dataProvider.moistureS2,
-                  const Color.fromARGB(255, 235, 231, 208)),
-            ),
+            buildGauge(context, 'Soil Moisture S1', dataProvider.moistureS1,
+                const Color.fromARGB(255, 191, 224, 198)),
+            buildGauge(context, 'Soil Moisture S2', dataProvider.moistureS2,
+                const Color.fromARGB(255, 235, 231, 208)),
           ],
         ),
-        const SizedBox(height: 10),
+
+        // Second Row
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: buildGauge('Soil Moisture S3', dataProvider.moistureS3,
-                  const Color.fromARGB(255, 253, 252, 245)),
-            ),
-            const SizedBox(width: 1),
-            Expanded(
-              child: buildGauge('Soil Moisture S4', dataProvider.moistureS4,
-                  Colors.orange.shade50),
-            ),
+            buildGauge(context, 'Soil Moisture S3', dataProvider.moistureS3,
+                const Color.fromARGB(255, 253, 252, 245)),
+            buildGauge(context, 'Soil Moisture S4', dataProvider.moistureS4,
+                Colors.orange.shade50),
           ],
         ),
+
         const SizedBox(height: 20),
+
+        // Humidity, Temperature, and Soil Moisture Row
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // Humidity
             Column(
               children: [
-                Text(
+                const Text(
                   'Humidity:',
                   style: TextStyle(
                     fontSize: 14,
@@ -174,10 +226,9 @@ class Gauges extends StatelessWidget {
                 ),
               ],
             ),
-            // Temperature
             Column(
               children: [
-                Text(
+                const Text(
                   'Temperature:',
                   style: TextStyle(
                     fontSize: 14,
@@ -196,10 +247,9 @@ class Gauges extends StatelessWidget {
                 ),
               ],
             ),
-            // Soil Moisture
             Column(
               children: [
-                Text(
+                const Text(
                   'Soil Moisture:',
                   style: TextStyle(
                     fontSize: 14,
@@ -219,7 +269,6 @@ class Gauges extends StatelessWidget {
             ),
           ],
         ),
-
       ],
     );
   }
