@@ -10,7 +10,6 @@ class _TutorialScreenState extends State<TutorialScreen> {
   late VideoPlayerController _controller;
   bool _isLoading = true;
   bool _isError = false;
-  bool _showControls = true;
 
   @override
   void initState() {
@@ -19,20 +18,23 @@ class _TutorialScreenState extends State<TutorialScreen> {
       'https://www.w3schools.com/html/mov_bbb.mp4',
     )
       ..initialize().then((_) {
-        setState(() {
-          _isLoading = false;
-          _isError = false;
-          _showControls = true;
-        });
-        _controller.play(); // Autoplay the video
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _isError = false;
+          });
+        }
       }).catchError((error) {
         print("Video Error: $error");
-        setState(() {
-          _isLoading = false;
-          _isError = true;
-        });
-      })
-      ..setLooping(true);
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _isError = true;
+          });
+        }
+      });
+
+    _controller.setLooping(true);
   }
 
   @override
@@ -41,19 +43,14 @@ class _TutorialScreenState extends State<TutorialScreen> {
     super.dispose();
   }
 
-  void _toggleControls() {
+  void _togglePlayPause() {
     setState(() {
-      _showControls = !_showControls;
+      if (_controller.value.isPlaying) {
+        _controller.pause();
+      } else {
+        _controller.play();
+      }
     });
-
-    // Auto-hide controls after 3 seconds if visible
-    if (_showControls) {
-      Future.delayed(Duration(seconds: 3), () {
-        setState(() {
-          _showControls = false;
-        });
-      });
-    }
   }
 
   @override
@@ -70,47 +67,42 @@ class _TutorialScreenState extends State<TutorialScreen> {
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: _isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : _isError
-                      ? Center(child: Text("Failed to load video."))
-                      : GestureDetector(
-                          onTap: _toggleControls,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              AspectRatio(
-                                aspectRatio: _controller.value.aspectRatio,
-                                child: VideoPlayer(_controller),
-                              ),
-                              // Play/Pause Button
-                              if (_showControls)
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _controller.value.isPlaying
-                                          ? _controller.pause()
-                                          : _controller.play();
-                                    });
-                                  },
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.black54,
-                                    radius: 30,
-                                    child: Icon(
-                                      _controller.value.isPlaying
-                                          ? Icons.pause
-                                          : Icons.play_arrow,
-                                      color: Colors.white,
-                                      size: 40,
-                                    ),
-                                  ),
-                                ),
-                            ],
+              child: FutureBuilder(
+                future: _controller.initialize(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text("Failed to load video."));
+                  } else {
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        AspectRatio(
+                          aspectRatio: _controller.value.aspectRatio,
+                          child: VideoPlayer(_controller),
+                        ),
+                        GestureDetector(
+                          onTap: _togglePlayPause,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.black54,
+                            radius: 30,
+                            child: Icon(
+                              _controller.value.isPlaying
+                                  ? Icons.pause
+                                  : Icons.play_arrow,
+                              color: Colors.white,
+                              size: 40,
+                            ),
                           ),
                         ),
+                      ],
+                    );
+                  }
+                },
+              ),
             ),
             SizedBox(height: 20),
-            // Header Text
             Text(
               "HOW TO USE SOMO?",
               style: TextStyle(
@@ -120,7 +112,6 @@ class _TutorialScreenState extends State<TutorialScreen> {
               ),
             ),
             SizedBox(height: 20),
-            // Content Container
             Container(
               padding: EdgeInsets.all(10),
               height: 390,

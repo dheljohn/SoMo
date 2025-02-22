@@ -44,8 +44,8 @@ class _HelperMsgState extends State<HelperMsg> {
         ),
       );
     }
-    Widget fixedHeader = Padding(
 
+    Widget fixedHeader = Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Row(
         children: [
@@ -53,34 +53,20 @@ class _HelperMsgState extends State<HelperMsg> {
             'assets/somo.png',
             width: 25,
             height: 25,
-
-            // Fixed header message
           ),
           const SizedBox(width: 8),
           const Expanded(
             child: Text(
               "SOMO",
               style: TextStyle(
-                  color: const Color.fromARGB(255, 125, 171, 124),
-                  fontSize: 17),
+                  color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
             ),
           ),
         ],
-
       ),
-      const SizedBox(width: 8),
-      const Expanded(
-        child: Text(
-          "SOMO",
-          style: TextStyle(color: const Color.fromARGB(255, 125, 171, 124), fontSize: 17),
-        ),
-      ),
-    ],
-  ),
-);
+    );
 
-
-    // Interpret humidity value
+    // Interpret sensor values
     if (humidityValue <= 30) {
       addMessage('Low Humidity Detected! Consider increasing humidity.',
           Icons.warning, Colors.orange);
@@ -89,7 +75,6 @@ class _HelperMsgState extends State<HelperMsg> {
           Icons.warning, Colors.orange);
     }
 
-    // Interpret temperature value
     if (temperatureValue <= 15) {
       addMessage('Low Temperature Detected! Consider increasing temperature.',
           Icons.warning, Colors.orange);
@@ -98,7 +83,6 @@ class _HelperMsgState extends State<HelperMsg> {
           Icons.warning, Colors.orange);
     }
 
-    // Interpret moisture values
     if (moistureA <= 30) {
       addMessage('Low Average Moisture Detected! Consider watering the soil.',
           Icons.warning, Colors.orange);
@@ -107,7 +91,6 @@ class _HelperMsgState extends State<HelperMsg> {
           Icons.warning, Colors.orange);
     }
 
-    // Interpret individual moisture sensor values
     if (moistureS1 <= 30) {
       addMessage('Sensor 1: Low Moisture Detected! Consider watering the soil.',
           Icons.warning, Colors.orange);
@@ -151,29 +134,21 @@ class _HelperMsgState extends State<HelperMsg> {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
-
         padding: const EdgeInsets.all(9),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(
             color: Color.fromARGB(255, 42, 83, 39),
           ),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(40),
-            topRight: Radius.circular(40),
-            bottomRight: Radius.circular(40),
-            bottomLeft: Radius.circular(0),
-          ),
-
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.grey.withOpacity(0.3),
-          //     spreadRadius: 5,
-          //     blurRadius: 7,
-          //     offset: const Offset(0, 3),
-          //   ),
-          // ],
-
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,10 +156,15 @@ class _HelperMsgState extends State<HelperMsg> {
             fixedHeader,
             const SizedBox(height: 5),
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: messageWidgets,
+              child: Scrollbar(
+                thumbVisibility: true,
+                radius: const Radius.circular(8),
+                thickness: 5,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: messageWidgets,
+                  ),
                 ),
               ),
             ),

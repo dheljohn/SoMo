@@ -21,7 +21,7 @@ class _DeveloperPageState extends State<DeveloperPage>
           'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
 
       'image': 'assets/jm.png',
-      'position': {'top': -10.0, 'left': 45.0, 'width': 100.0, 'height': 150.0},
+      'position': {'top': -10.0, 'left': 70.0, 'width': 100.0, 'height': 140.0},
       'links': {
         'github': 'https://github.com/joannamarie',
         'facebook': 'https://facebook.com/joannamarie',
@@ -36,7 +36,7 @@ class _DeveloperPageState extends State<DeveloperPage>
           'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
 
       'image': 'assets/edhel.png',
-      'position': {'top': -5.0, 'left': 45.0, 'width': 90.0, 'height': 145.0},
+      'position': {'top': -5.0, 'left': 70.0, 'width': 90.0, 'height': 135.0},
       'links': {
         'github': 'https://github.com/edheljohn',
         'facebook': 'https://facebook.com/edheljohn',
@@ -51,7 +51,7 @@ class _DeveloperPageState extends State<DeveloperPage>
           'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
 
       'image': 'assets/jenny.png',
-      'position': {'top': -10.0, 'left': 1.0, 'width': 160.0, 'height': 150.0},
+      'position': {'top': -10.0, 'left': 40.0, 'width': 160.0, 'height': 140.0},
       'links': {
         'github': 'https://github.com/jennylyn',
         'facebook': 'https://facebook.com/jennylyn',
@@ -66,7 +66,7 @@ class _DeveloperPageState extends State<DeveloperPage>
           'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
 
       'image': 'assets/marvin.png',
-      'position': {'top': -38.0, 'left': 17.0, 'width': 120.0, 'height': 175.0},
+      'position': {'top': -38.0, 'left': 60.0, 'width': 115.0, 'height': 165.0},
       'links': {
         'github': 'https://github.com/marvin',
         'facebook': 'https://facebook.com/marvin',
@@ -105,17 +105,9 @@ class _DeveloperPageState extends State<DeveloperPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Developers',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: const Color.fromARGB(255, 125, 171, 124),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
       backgroundColor: const Color.fromARGB(255, 248, 249, 247),
       body: Padding(
-        padding: const EdgeInsets.only(top: 45.0),
+        padding: const EdgeInsets.only(top: 40.0),
         child: ListView.builder(
           itemCount: developers.length,
           itemBuilder: (context, index) {
@@ -133,13 +125,13 @@ class _DeveloperPageState extends State<DeveloperPage>
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
+                    const SizedBox (width: 40),
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      height: 123,
-
+                      width: 350,
+                      height: 110,
                       margin: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 20.0),
-
+                      horizontal: 46.0, vertical: 20.0),
+                      alignment: Alignment.center,
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
                         color: Color.fromARGB(255, 242, 239, 231),
@@ -162,7 +154,7 @@ class _DeveloperPageState extends State<DeveloperPage>
                               Text(
                                 developer['name']!,
                                 style: const TextStyle(
-                                  fontSize: 24,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 31, 45, 31),
                                 ),
