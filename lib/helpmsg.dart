@@ -140,6 +140,7 @@ class _HelperMsgState extends State<HelperMsg> {
           border: Border.all(
             color: Color.fromARGB(255, 42, 83, 39),
           ),
+
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
@@ -149,6 +150,7 @@ class _HelperMsgState extends State<HelperMsg> {
               offset: const Offset(0, 3),
             ),
           ],
+
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

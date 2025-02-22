@@ -189,6 +189,7 @@ void _showPermissionDeniedDialog() {
     );
   }
 
+
  Widget dashboardMain(DataProvider dataProvider) {
   return Container(
     color: const Color.fromARGB(255, 247, 246, 237),
@@ -201,6 +202,7 @@ void _showPermissionDeniedDialog() {
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+
               children: [
                 Text(
                   DateFormat('MMMM d, yyyy').format(DateTime.now()), // Date
@@ -220,6 +222,7 @@ void _showPermissionDeniedDialog() {
                 ),
               ],
             ),
+
             Container(
               height: 110,
               width: 160,
@@ -305,6 +308,7 @@ void _showPermissionDeniedDialog() {
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: Color.fromARGB(255, 100, 122, 99),
+
             ),
           ),
         ),
