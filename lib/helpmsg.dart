@@ -111,48 +111,57 @@ class _HelperMsgState extends State<HelperMsg> {
             ],
           ),
         ),
-        Expanded(
-          child: CarouselSlider.builder(
-            itemCount: messages.length,
-            options: CarouselOptions(
-              height: 100,
-              scrollDirection: Axis.vertical,
-              autoPlay: true,
-              autoPlayInterval: const Duration(seconds: 3),
-              enlargeCenterPage: false,
-              viewportFraction: 1.0,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-            ),
-            itemBuilder: (context, index, realIndex) {
-              return Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: messages[index]['color'],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.warning, color: Colors.orange),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        messages[index]['text'],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
+      Expanded(
+  child: messages.isEmpty
+      ? Center(
+          child: Text(
+            'No warnings detected!',
+            style: TextStyle(color: Colors.green, fontSize: 16),
+          ),
+        )
+      : CarouselSlider.builder(
+          itemCount: messages.length,
+          options: CarouselOptions(
+            height: 100,
+            scrollDirection: Axis.vertical,
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 3),
+            enlargeCenterPage: false,
+            viewportFraction: 1.0,
+            onPageChanged: (index, reason) {
+              setState(() {
+                _currentIndex = index;
+              });
             },
           ),
+          itemBuilder: (context, index, realIndex) {
+            return Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: messages[index]['color'],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.warning, color: Colors.orange),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      messages[index]['text'],
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
+
+),
+
       ],
     );
   }
