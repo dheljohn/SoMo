@@ -14,15 +14,37 @@ class DashB extends StatefulWidget {
   State<DashB> createState() => _DashBState();
 }
 
-class _DashBState extends State<DashB> {
+class _DashBState extends State<DashB> with TickerProviderStateMixin {
   final Future<FirebaseApp> _fApp = Firebase.initializeApp();
   String? _weather;
   String? _location;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+  bool _showScrollIndicator = true;
 
   @override
   void initState() {
     super.initState();
+    _fetchWeather();
+     super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(reverse: true);
+
+    _animation = Tween<double>(begin: 0, end: 10).animate(_animationController);
+
+    // Hide scroll indicator after 4 seconds
+    Future.delayed(const Duration(seconds: 4), () {
+      if (mounted) {
+        setState(() {
+          _showScrollIndicator = false;
+        });
+      }
+    });
+
   }
+  
 
   String _getFormattedDate() {
     return DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
@@ -187,8 +209,11 @@ void _showPermissionDeniedDialog() {
       },
     );
   }
-
-
+ @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
 
 Widget dashboardMain(DataProvider dataProvider) {
@@ -215,163 +240,198 @@ Widget dashboardMain(DataProvider dataProvider) {
   return Container(
     color: const Color.fromARGB(255, 247, 246, 237),
     padding: const EdgeInsets.all(16),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Date Container
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 100, 122, 99),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 5,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Date Section
 
-
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    DateFormat('MMMM d, yyyy').format(DateTime.now()), // Date
-                    style: const TextStyle(
-
-                      color: Colors.white,
-                      fontSize: 22,
-
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    DateFormat('EEEE').format(DateTime.now()), // Day
-                    style: const TextStyle(
-
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 2), // Spacing
-              // Humidity & Temperature Container
-              Container(
-                width:170,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 255, 255, 240),
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 5,
-                      spreadRadius: 2,
-                    ),
-                  ],
+    child: SingleChildScrollView( // Make content scrollable
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Date Container
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 100, 122, 99),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 5,
+                  spreadRadius: 2,
                 ),
-                child: Row(
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Date Section
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Humidity Section
-                    Column(
-                      children: [
-                        const Text(
-                          'Humidity',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.water_drop,
-                              color: getTextColor('humidity', dataProvider.humidityValue),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              '${dataProvider.humidityValue}%',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: getTextColor('humidity', dataProvider.humidityValue),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                    Text(
+                      DateFormat('MMMM d, yyyy').format(DateTime.now()), // Date
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    const SizedBox(width: 2), // Spacing
-                    // Temperature Section
-                    Column(
-                      children: [
-                        const Text(
-                          'Temperature',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.thermostat,
-                              color: getTextColor('temperature', dataProvider.temperatureValue),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 1),
-                            Text(
-                              '${dataProvider.temperatureValue}°C',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: getTextColor('temperature', dataProvider.temperatureValue),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                    const SizedBox(height: 4),
+                    Text(
+                      DateFormat('EEEE').format(DateTime.now()), // Day
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(width: 2), // Spacing
+                // Humidity & Temperature Container
+                Container(
+                  width: 170,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 255, 255, 240),
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      // Humidity Section
+                      Column(
+                        children: [
+                          const Text(
+                            'Humidity',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.water_drop,
+                                color: getTextColor(
+                                    'humidity', dataProvider.humidityValue),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                '${dataProvider.humidityValue}%',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: getTextColor(
+                                      'humidity', dataProvider.humidityValue),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 2), // Spacing
+                      // Temperature Section
+                      Column(
+                        children: [
+                          const Text(
+                            'Temperature',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.thermostat,
+                                color: getTextColor('temperature',
+                                    dataProvider.temperatureValue),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 1),
+                              Text(
+                                '${dataProvider.temperatureValue}°C',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: getTextColor('temperature',
+                                      dataProvider.temperatureValue),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 20),
 
-        // Gauges Widget
-        Gauges(dataProvider: dataProvider),
-        const SizedBox(height: 1),
-        _soilMoistureGauge(),
+          const SizedBox(height: 20),
 
-        const SizedBox(height: 5),
+          // Gauges Widget
+          Gauges(dataProvider: dataProvider),
+          const SizedBox(height: 1),
+          _soilMoistureGauge(),
 
-        Align(
-          alignment: Alignment.center,
-          child: Container(
-            color: const Color.fromARGB(255, 247, 246, 237),
-            margin: const EdgeInsets.all(5),
-            height: 130,
-            width: double.infinity,
-            child: const HelperMsg(),
+          const SizedBox(height: 5),
 
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              color: const Color.fromARGB(255, 247, 246, 237),
+              margin: const EdgeInsets.all(5),
+              height: 130,
+              width: double.infinity,
+              child: const HelperMsg(),
+            ),
           ),
+          const SizedBox(height: 1),
+
+         Center(
+              child: _showScrollIndicator
+                  ? AnimatedBuilder(
+                      animation: _animation,
+                      builder: (context, child) {
+                        return Transform.translate(
+                          offset: Offset(0, _animation.value),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Scroll",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Icon(Icons.keyboard_arrow_down,
+                                  color: Colors.grey, size: 24),
+                            ],
+                          ),
+                        );
+                      },
+                    )
+                  : const SizedBox(),
+            ),
+            const SizedBox(height: 20),
+          const SizedBox(height: 20),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
 
 Widget _soilMoistureGauge() {
