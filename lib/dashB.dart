@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
@@ -24,12 +22,12 @@ class _DashBState extends State<DashB> {
   @override
   void initState() {
     super.initState();
-    _fetchWeather();
   }
 
   String _getFormattedDate() {
     return DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
   }
+
 Future<void> _fetchWeather() async {
   try {
     // Step 1: Check Location Permission
@@ -168,6 +166,7 @@ void _showPermissionDeniedDialog() {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     final dataProvider = DataProvider.of(context);
@@ -188,6 +187,7 @@ void _showPermissionDeniedDialog() {
       },
     );
   }
+
 
 
 
@@ -236,14 +236,18 @@ Widget dashboardMain(DataProvider dataProvider) {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Date Section
+
+
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     DateFormat('MMMM d, yyyy').format(DateTime.now()), // Date
                     style: const TextStyle(
+
                       color: Colors.white,
                       fontSize: 22,
+
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -251,6 +255,7 @@ Widget dashboardMain(DataProvider dataProvider) {
                   Text(
                     DateFormat('EEEE').format(DateTime.now()), // Day
                     style: const TextStyle(
+
                       color: Colors.white,
                       fontSize: 18,
                     ),
@@ -361,12 +366,13 @@ Widget dashboardMain(DataProvider dataProvider) {
             height: 130,
             width: double.infinity,
             child: const HelperMsg(),
+
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
+
 
 Widget _soilMoistureGauge() {
   return Image.asset(
