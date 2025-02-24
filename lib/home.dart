@@ -23,7 +23,16 @@ class _HomeState extends State<Home> {
       FlutterLocalNotificationsPlugin();
 
   final AppBar appBar = AppBar(
-    backgroundColor: const Color.fromARGB(255, 100, 122, 99),
+
+    backgroundColor:  const Color.fromARGB(255, 247, 246, 237),
+
+    // shape: const RoundedRectangleBorder(
+    //   borderRadius: BorderRadius.only(
+    //     bottomLeft: Radius.circular(25),
+    //     bottomRight: Radius.circular(25),
+    //   ),
+    // ),
+
     iconTheme: const IconThemeData(
       color: Color.fromARGB(255, 42, 83, 39),
     ),
