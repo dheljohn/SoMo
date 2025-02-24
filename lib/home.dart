@@ -8,6 +8,7 @@ import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
 import 'package:soil_monitoring_app/navBar.dart';
+import 'package:soil_monitoring_app/plot_selection_page.dart';
 import 'package:soil_monitoring_app/tutorial.dart';
 
 class Home extends StatefulWidget {
@@ -23,16 +24,7 @@ class _HomeState extends State<Home> {
       FlutterLocalNotificationsPlugin();
 
   final AppBar appBar = AppBar(
-
-    backgroundColor:  const Color.fromARGB(255, 247, 246, 237),
-
-    // shape: const RoundedRectangleBorder(
-    //   borderRadius: BorderRadius.only(
-    //     bottomLeft: Radius.circular(25),
-    //     bottomRight: Radius.circular(25),
-    //   ),
-    // ),
-
+    backgroundColor: const Color.fromARGB(255, 247, 246, 237),
     iconTheme: const IconThemeData(
       color: Color.fromARGB(255, 42, 83, 39),
     ),
@@ -197,6 +189,7 @@ class _HomeState extends State<Home> {
           if (moisture4 > 75) {
             _showNotification('Sensor 4 detected wet soil.');
           }
+          // _showNotification('One of the sensors detected wet soil.');
         }
       }
     });
@@ -214,6 +207,35 @@ class _HomeState extends State<Home> {
       moistureS4: moisture_s4,
       child: Scaffold(
         appBar: appBar,
+        endDrawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                ),
+                child: Text(
+                  'Settings',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+              ListTile(
+                title: const Text('Plot Selection'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PlotSelectionPage()),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
         body: Stack(
           children: [
             IndexedStack(
