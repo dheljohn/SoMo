@@ -23,52 +23,52 @@ class _HelperMsgState extends State<HelperMsg> {
     final moistureS3 = dataProvider?.moistureS3 ?? 0.0;
     final moistureS4 = dataProvider?.moistureS4 ?? 0.0;
 
-    List<String> messages = [];
+    List<Map<String, dynamic>> messages = [];
 
-    void addMessage(String text) {
-      messages.add(text);
+    void addMessage(String text, Color color) {
+      messages.add({'text': text, 'color': color});
     }
 
     if (humidityValue <= 30) {
-      addMessage('Low Humidity Detected! Consider increasing humidity.');
+      addMessage('Low Humidity Detected! Consider increasing humidity.', Colors.red);
     } else if (humidityValue >= 70) {
-      addMessage('High Humidity Detected! Consider decreasing humidity.');
+      addMessage('High Humidity Detected! Consider decreasing humidity.', Colors.blue);
     }
 
     if (temperatureValue <= 15) {
-      addMessage('Low Temperature Detected! Consider increasing temperature.');
+      addMessage('Low Temperature Detected! Consider increasing temperature.', Colors.blue);
     } else if (temperatureValue >= 30) {
-      addMessage('High Temperature Detected! Consider decreasing temperature.');
+      addMessage('High Temperature Detected! Consider decreasing temperature.', Colors.red);
     }
 
     if (moistureA <= 30) {
-      addMessage('Low Average Moisture Detected! Consider watering the soil.');
+      addMessage('Low Average Moisture Detected! Consider watering the soil.', Colors.red);
     } else if (moistureA >= 70) {
-      addMessage('High Average Moisture Detected! Consider reducing watering.');
+      addMessage('High Average Moisture Detected! Consider reducing watering.', Colors.blue);
     }
 
     if (moistureS1 <= 30) {
-      addMessage('Sensor 1: Low Moisture Detected! Consider watering the soil.');
+      addMessage('Sensor 1: Low Moisture Detected! Consider watering the soil.', Colors.red);
     } else if (moistureS1 >= 70) {
-      addMessage('Sensor 1: High Moisture Detected! Consider reducing watering.');
+      addMessage('Sensor 1: High Moisture Detected! Consider reducing watering.', Colors.blue);
     }
 
     if (moistureS2 <= 30) {
-      addMessage('Sensor 2: Low Moisture Detected! Consider watering the soil.');
+      addMessage('Sensor 2: Low Moisture Detected! Consider watering the soil.', Colors.red);
     } else if (moistureS2 >= 70) {
-      addMessage('Sensor 2: High Moisture Detected! Consider reducing watering.');
+      addMessage('Sensor 2: High Moisture Detected! Consider reducing watering.', Colors.blue);
     }
 
     if (moistureS3 <= 30) {
-      addMessage('Sensor 3: Low Moisture Detected! Consider watering the soil.');
+      addMessage('Sensor 3: Low Moisture Detected! Consider watering the soil.', Colors.red);
     } else if (moistureS3 >= 70) {
-      addMessage('Sensor 3: High Moisture Detected! Consider reducing watering.');
+      addMessage('Sensor 3: High Moisture Detected! Consider reducing watering.', Colors.blue);
     }
 
     if (moistureS4 <= 30) {
-      addMessage('Sensor 4: Low Moisture Detected! Consider watering the soil.');
+      addMessage('Sensor 4: Low Moisture Detected! Consider watering the soil.', Colors.red);
     } else if (moistureS4 >= 70) {
-      addMessage('Sensor 4: High Moisture Detected! Consider reducing watering.');
+      addMessage('Sensor 4: High Moisture Detected! Consider reducing watering.', Colors.blue);
     }
 
     return Column(
@@ -93,52 +93,51 @@ class _HelperMsgState extends State<HelperMsg> {
             ],
           ),
         ),
-      Expanded(
-  child: CarouselSlider.builder(
-    itemCount: messages.length,
-    options: CarouselOptions(
-      height: 100,
-      scrollDirection: Axis.vertical,
-      autoPlay: true,
-      autoPlayInterval: const Duration(seconds: 3),
-      enlargeCenterPage: false, // Ensure only the center is visible
-      viewportFraction: 1.0, // Hide other items
-      onPageChanged: (index, reason) {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-    ),
-    itemBuilder: (context, index, realIndex) {
-      return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.blueGrey,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.warning, color: Colors.orange),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                messages[index],
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
+        Expanded(
+          child: CarouselSlider.builder(
+            itemCount: messages.length,
+            options: CarouselOptions(
+              height: 100,
+              scrollDirection: Axis.vertical,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 3),
+              enlargeCenterPage: false,
+              viewportFraction: 1.0,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
             ),
-          ],
+            itemBuilder: (context, index, realIndex) {
+              return Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: messages[index]['color'],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.warning, color: Colors.orange),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        messages[index]['text'],
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
-      );
-    },
-  ),
-),
-
+        
       ],
+      
     );
   }
 }
-
-
