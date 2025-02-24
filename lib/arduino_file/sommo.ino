@@ -1,6 +1,11 @@
 
+#define GREEN_LED_PIN 26  // Change to GPIO 26
+#define RED_LED_PIN 27    // Change to GPIO 27
+
 #define DHTPIN 4     // new added - GPIO4 (can be any digital pin)
 #define DHTTYPE DHT22   //new added - DHT 22 (AM2302)
+#include <ArduinoJson.h>
+
 
 #include <Arduino.h>
 #include <WiFi.h>
@@ -27,7 +32,6 @@
 // #define WIFI_PASSWORD "Kaida123"
 
 const char* wifiList[][3] = {
-  {"HG8145V5_D400A", "jcww2myE"},
   {"HUAWEI-D8kG", "ana@36546"},
   {"Carlo", "carlfrancis0205"},
   {"Kaida", "Kaida123"},
@@ -60,18 +64,22 @@ const int numNetworks = sizeof(wifiList) / sizeof(wifiList[0]);
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
+FirebaseJson doc; // Declare doc globally or inside fetchPlotFromFirestore()
+
+
 FB_Firestore firestore;
 
-// Variables for Firebase Realtime Database
+
 unsigned long sendDataPrevMillis = 0;
 int count = 0;
 bool signupOK = false;
 
-// Pins for Soil Moisture Sensors
-int sensorPin1 = 34;
+int sensorPin1 = 34;  // Soil moisture sensor connected to GPIO 34
 int sensorPin2 = 35;
 int sensorPin3 = 33;
 int sensorPin4 = 32;
+String plotID;  // Declare globally
+
 
 // Initialize the DHT sensor
 DHT dht(DHTPIN, DHTTYPE);
@@ -98,6 +106,8 @@ void connectToWiFi() {
       Serial.println("\nConnected to WiFi!");
       Serial.print("IP Address: ");
       Serial.println(WiFi.localIP());
+      digitalWrite(RED_LED_PIN, LOW);   // Turn off red LED (Not an error)
+      digitalWrite(GREEN_LED_PIN, HIGH); // Turn on green LED (System ready)
       return;
     }
 
@@ -105,6 +115,8 @@ void connectToWiFi() {
   }
 
   Serial.println("Could not connect to any WiFi."); // Print the IP address
+  digitalWrite(GREEN_LED_PIN, LOW);
+  digitalWrite(RED_LED_PIN, HIGH);  // Keep red LED on (Error)
 
 }
 
@@ -120,33 +132,27 @@ void readAndDisplaySensorValues() {
   //Serial.println(WiFi.localIP()); 
   
   // Read soil moisture sensor values
-  // Analog sensor values are 0-4095, map to 0-100% moisture level
-  // Reverse mapping: 0% moisture = 4095, 100% moisture = 0
-  // 100% moisture = wet soil, 0% moisture = dry soil
-  // The moisture level is inversely proportional to the sensor value
-  // The higher the sensor value, the lower the moisture level
-  // The lower the sensor value, the higher the moisture level
-  // The sensor value is read from the analog pin of the ESP32
-  // The moisture level is calculated using the map function
-  // The map function maps the sensor value from 0-4095 to 100-0
-  // 100% moisture = 0 sensor value, 0% moisture = 4095 sensor value
   int sensorValue1 = analogRead(sensorPin1);
-  int moisturePercent1 = map(sensorValue1, 0, 4095, 100, 0);  // Map to reverse 0-100%
+  int moisturePercent1 = (sensorValue1 < 100 || sensorValue1 > 4000) ? 0 : map(sensorValue1, 0, 4095, 100, 0); // Map to reverse 0-100%
 
   int sensorValue2 = analogRead(sensorPin2);
-  int moisturePercent2 = map(sensorValue2, 0, 4095, 100, 0);  // Map to reverse 0-100%
+  int moisturePercent2 = (sensorValue2 < 100 || sensorValue2 > 4000) ? 0 : map(sensorValue2, 0, 4095, 100, 0);  // Map to reverse 0-100%
 
   int sensorValue3 = analogRead(sensorPin3);
-  int moisturePercent3 = map(sensorValue3, 0, 4095, 100, 0);  // Map to reverse 0-100%
+  int moisturePercent3 = (sensorValue3 < 100 || sensorValue3 > 4000) ? 0 : map(sensorValue3, 0, 4095, 100, 0);  // Map to reverse 0-100%
 
   int sensorValue4 = analogRead(sensorPin4);
-  int moisturePercent4 = map(sensorValue4, 0, 4095, 100, 0);  // Map to reverse 0-100%
+  int moisturePercent4 = (sensorValue4 < 100 || sensorValue4 > 4000) ? 0 : map(sensorValue4, 0, 4095, 100, 0); // Map to reverse 0-100%
 
   float temperature = dht.readTemperature();  // Read temperature
   float humidity = dht.readHumidity();  // Read humidity
-
+  fetchPlotFromFirestore();
   // Calculate average moisture
-  int moistureReadings[] = {moisturePercent1, moisturePercent2, moisturePercent3, moisturePercent4};
+  int moistureReadings[] = {
+    moisturePercent1, 
+    moisturePercent2, 
+  moisturePercent3, 
+  moisturePercent4};
   float averageMoistureLevel = averageMoisture(moistureReadings, 4);
 
   // Display the values on the Serial Monitor
@@ -171,7 +177,6 @@ void readAndDisplaySensorValues() {
       Serial.println("FAILED");
       Serial.println("REASON: " + fbdo.errorReason());
     } 
-
     if (Firebase.RTDB.setInt(&fbdo, "Moisture/MoistureReadings_3", moisturePercent3)){
       // Serial.println("PASSED");
       // Serial.println("PATH: " + fbdo.dataPath());
@@ -251,13 +256,12 @@ void setupTime() {
 
     configTime(gmtOffset_sec, daylightOffset_sec, "pool.ntp.org");
 
-    configTime(0, 0, "time.google.com");
-    configTime(0, 0, "time.nist.gov");
-    configTime(0, 0, "asia.pool.ntp.org"); // Best for Southeast Asia
+    configTime(8 * 3600, 0, "pool.ntp.org", "time.google.com", "asia.pool.ntp.org");
+
 
     Serial.println("Syncing time...");
 
-    delay(2000);  // Wait for NTP sync
+    delay(5000);  // Wait for NTP sync
 
     time_t now = time(nullptr);
     int attempts = 10;
@@ -297,7 +301,9 @@ void setupTime() {
 
   // Connecting and creating logs storing to Firestore
   void saveDailyLogToFirestore(float temperature, float humidity, float avgMoisture, 
-                             int moisture1, int moisture2, int moisture3, int moisture4) {
+                             int moisture1, int moisture2, 
+                             int moisture3, 
+                             int moisture4, String plotID) {
     FirebaseJson json;
     
     // Get current date and time
@@ -311,6 +317,10 @@ void setupTime() {
 
     char isoTime[25];  // "YYYY-MM-DDTHH:MM:SSZ"
     strftime(isoTime, sizeof(isoTime), "%Y-%m-%dT%H:%M:%SZ", &timeInfo);
+    //print debugg statemnt
+    Serial.print("Current timestamp: ");
+    Serial.println(isoTime);
+
 
     json.set("fields/timestamp/timestampValue", isoTime);
     json.set("fields/temperature/doubleValue", temperature);
@@ -320,6 +330,8 @@ void setupTime() {
     json.set("fields/moisture_2/integerValue", moisture2);
     json.set("fields/moisture_3/integerValue", moisture3);
     json.set("fields/moisture_4/integerValue", moisture4);
+    json.set("fields/plot/stringValue", plotID);
+
 
     String jsonString;
     json.toString(jsonString, true);
@@ -336,10 +348,31 @@ void setupTime() {
     }
 }
 
+void listenForPlotChanges() {
+  Firebase.RTDB.getString(&fbdo, "SelectedPlot");
+  String selectedPlot = fbdo.stringData();
 
+  Serial.print("Selected Plot: ");
+  Serial.println(selectedPlot);
+
+  if (selectedPlot == "Plot 1") {
+    // Read sensors for Plot 1
+    readAndDisplaySensorValues();
+
+  } else if (selectedPlot == "Plot 2") {
+    // Read sensors for Plot 2
+    readAndDisplaySensorValues();
+  }
+}
 
 void setup(){
   Serial.begin(115200);
+  pinMode(GREEN_LED_PIN, OUTPUT);
+  pinMode(RED_LED_PIN, OUTPUT);
+    
+  digitalWrite(RED_LED_PIN, HIGH);  // Assume system is not ready
+  digitalWrite(GREEN_LED_PIN, LOW); // Turn off green LED initially
+  
   connectToWiFi();
   setupTime();  // Initialize time
 
@@ -368,6 +401,11 @@ void setup(){
 
 
 void loop() {
+  fetchPlotFromFirestore();  // Get the selected plot
+  listenForPlotChanges();  // Check Firebase for the selected plot
+  delay(5000);  // Check every 5 seconds
+  
+  
   // Storing For Realtime
     if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 2000 || sendDataPrevMillis == 0)) {
         sendDataPrevMillis = millis();
@@ -376,6 +414,8 @@ void loop() {
 
     // Get current time for 
     time_t now = time(nullptr);
+    Serial.println(ctime(&now));
+    delay(5000); // Print the current time to verify
     struct tm timeInfo;
     localtime_r(&now, &timeInfo);
 
@@ -384,20 +424,55 @@ void loop() {
     static int lastLoggedMinute = -1;
     static int lastLoggedHour = -1;
 
+    int moisture1 = map(analogRead(sensorPin1), 0, 4095, 100, 0);
+    int moisture2 = map(analogRead(sensorPin2), 0, 4095, 100, 0);
+    int moisture3 = map(analogRead(sensorPin3), 0, 4095, 100, 0);
+    int moisture4 = map(analogRead(sensorPin4), 0, 4095, 100, 0);
 
-    // Trying logging every 10 minutes if it will store
-    // if (currentMinute % 10 == 0 && lastLoggedMinute != currentMinute) {
-    //     lastLoggedMinute = currentMinute;  // Mark this minute as logged
-    //     logSensorDataToFirestore();  // Call function to log sensor data
-    //     Serial.println("Firestore log saved (every 10 min).");
+    float avgMoisture = (moisture1 + moisture2 + moisture3 + moisture4) / 4.0;
+    
+    // if (avgMoisture < 40 || moisture1 <40 ||moisture2 <40 ||moisture3 <40 ||moisture4 <40 ) {  // If soil is almost dry
+    //     Serial.println("⚠ Warning: Soil is almost dry! Logging to Firestore...");
+    //     saveDailyLogToFirestore(dht.readTemperature(), dht.readHumidity(), avgMoisture, moisture1, moisture2, moisture3, moisture4);
+    //     delay(5000);  // Avoid excessive logging
+    //     logSensorDataToFirestore();
+    // }
+    // if (moisture1 <40 ||moisture2 <40 ||moisture3 <40 ||moisture4 <40 || ){
+    //     Serial.println("One of the sensors are dry! Less than 40% Moisture")
+        
     // }
 
-    // Specific time logging (8 AM, 11 AM, 3 PM, 5 PM)
-    // Trying out calling specif hour if it will actually store the part
-    if ((currentHour == 8 || currentHour == 11 || currentHour == 12 ||currentHour == 13 || currentHour == 15 || currentHour == 17 || currentHour == 20) && lastLoggedHour != currentHour && currentMinute == 0) {
-        lastLoggedHour = currentHour;  // Prevent multiple logs in the same hour
-        logSensorDataToFirestore();  
-        Serial.println("Firestore log saved (Scheduled Time).");
+    // **Scheduled logging at specific hours**
+    if ((currentHour == 8 || currentHour == 11 || currentHour == 12 ||currentHour == 13 ||currentHour == 14 ||currentHour == 15 || currentHour == 17) &&
+        lastLoggedHour != currentHour) {
+    lastLoggedHour = currentHour;
+    logSensorDataToFirestore();
+    Serial.println("📌 Firestore log saved (Scheduled Time).");
+}
+
+
+
+
+}
+
+void fetchPlotFromFirestore() {
+
+    if (firestore.getDocument(&fbdo, "test-monitor-reui", "", "selected_plots", "currentPlot", "")) {
+        Serial.println("Document fetched successfully");
+
+        FirebaseJson jsonResponse;
+        jsonResponse.setJsonData(fbdo.payload().c_str());  // Convert payload to JSON
+
+        FirebaseJsonData jsonData;
+        if (jsonResponse.get(jsonData, "fields/plot/stringValue")) {  
+            plotID = jsonData.stringValue;  
+            Serial.print("Fetched plot ID: ");
+            Serial.println(plotID);
+        } else {
+            Serial.println("Error: Plot ID not found in Firestore response.");
+        }
+    } else {
+        Serial.println("Failed to fetch Firestore document: " + fbdo.errorReason());
     }
 }
 
@@ -411,6 +486,7 @@ void logSensorDataToFirestore() {
     int moisture3 = map(analogRead(sensorPin3), 0, 4095, 100, 0);
     int moisture4 = map(analogRead(sensorPin4), 0, 4095, 100, 0);
     float avgMoisture = (moisture1 + moisture2 + moisture3 + moisture4) / 4.0;
-
-    saveDailyLogToFirestore(temperature, humidity, avgMoisture, moisture1, moisture2, moisture3, moisture4);
+    
+    saveDailyLogToFirestore(temperature, humidity, avgMoisture, moisture1, moisture2, moisture3, moisture4, plotID);
+    
 }

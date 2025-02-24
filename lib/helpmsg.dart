@@ -1,6 +1,6 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 class HelperMsg extends StatefulWidget {
   const HelperMsg({super.key});
@@ -30,45 +30,63 @@ class _HelperMsgState extends State<HelperMsg> {
     }
 
     if (humidityValue <= 30) {
-      addMessage('Low Humidity Detected! Consider increasing humidity.', Colors.red);
+      addMessage(
+          'Low Humidity Detected! Consider increasing humidity.', Colors.red);
     } else if (humidityValue >= 70) {
-      addMessage('High Humidity Detected! Consider decreasing humidity.', Colors.blue);
+      addMessage(
+          'High Humidity Detected! Consider decreasing humidity.', Colors.blue);
     }
 
     if (temperatureValue <= 15) {
-      addMessage('Low Temperature Detected! Consider increasing temperature.', Colors.blue);
+      addMessage('Low Temperature Detected! Consider increasing temperature.',
+          Colors.blue);
     } else if (temperatureValue >= 30) {
-      addMessage('High Temperature Detected! Consider decreasing temperature.', Colors.red);
+      addMessage('High Temperature Detected! Consider decreasing temperature.',
+          Colors.red);
     }
 
     if (moistureA <= 30) {
-      addMessage('Low Average Moisture Detected! Consider watering the soil.', Colors.red);
+      addMessage('Low Average Moisture Detected! Consider watering the soil.',
+          Colors.red);
     } else if (moistureA >= 70) {
-      addMessage('High Average Moisture Detected! Consider reducing watering.', Colors.blue);
+      addMessage('High Average Moisture Detected! Consider reducing watering.',
+          Colors.blue);
     }
 
     if (moistureS1 <= 30) {
-      addMessage('Sensor 1: Low Moisture Detected! Consider watering the soil.', Colors.red);
+      addMessage('Sensor 1: Low Moisture Detected! Consider watering the soil.',
+          Colors.red);
     } else if (moistureS1 >= 70) {
-      addMessage('Sensor 1: High Moisture Detected! Consider reducing watering.', Colors.blue);
+      addMessage(
+          'Sensor 1: High Moisture Detected! Consider reducing watering.',
+          Colors.blue);
     }
 
     if (moistureS2 <= 30) {
-      addMessage('Sensor 2: Low Moisture Detected! Consider watering the soil.', Colors.red);
+      addMessage('Sensor 2: Low Moisture Detected! Consider watering the soil.',
+          Colors.red);
     } else if (moistureS2 >= 70) {
-      addMessage('Sensor 2: High Moisture Detected! Consider reducing watering.', Colors.blue);
+      addMessage(
+          'Sensor 2: High Moisture Detected! Consider reducing watering.',
+          Colors.blue);
     }
 
     if (moistureS3 <= 30) {
-      addMessage('Sensor 3: Low Moisture Detected! Consider watering the soil.', Colors.red);
+      addMessage('Sensor 3: Low Moisture Detected! Consider watering the soil.',
+          Colors.red);
     } else if (moistureS3 >= 70) {
-      addMessage('Sensor 3: High Moisture Detected! Consider reducing watering.', Colors.blue);
+      addMessage(
+          'Sensor 3: High Moisture Detected! Consider reducing watering.',
+          Colors.blue);
     }
 
     if (moistureS4 <= 30) {
-      addMessage('Sensor 4: Low Moisture Detected! Consider watering the soil.', Colors.red);
+      addMessage('Sensor 4: Low Moisture Detected! Consider watering the soil.',
+          Colors.red);
     } else if (moistureS4 >= 70) {
-      addMessage('Sensor 4: High Moisture Detected! Consider reducing watering.', Colors.blue);
+      addMessage(
+          'Sensor 4: High Moisture Detected! Consider reducing watering.',
+          Colors.blue);
     }
 
     return Column(
@@ -141,11 +159,10 @@ class _HelperMsgState extends State<HelperMsg> {
             );
           },
         ),
+
 ),
 
-        
       ],
-      
     );
   }
 }

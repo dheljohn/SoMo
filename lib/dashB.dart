@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -28,7 +29,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _fetchWeather();
-     super.initState();
+    super.initState();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
@@ -45,113 +46,120 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       }
     });
   }
-  
 
   String _getFormattedDate() {
     return DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
   }
-Future<void> _fetchWeather() async {
-  try {
-    // Step 1: Check Location Permission
-    LocationPermission permission = await Geolocator.checkPermission();
-    debugPrint("Location Permission Status: $permission");
 
-    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-      permission = await Geolocator.requestPermission();
-      debugPrint("New Location Permission Status: $permission");
+  Future<void> _fetchWeather() async {
+    try {
+      // Step 1: Check Location Permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      debugPrint("Location Permission Status: $permission");
 
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-        setState(() {
-          _weather = 'Location permission denied';
-        });
-        debugPrint("Error: Location permission denied by user");
-        return;
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        permission = await Geolocator.requestPermission();
+        debugPrint("New Location Permission Status: $permission");
+
+        if (permission == LocationPermission.denied ||
+            permission == LocationPermission.deniedForever) {
+          setState(() {
+            _weather = 'Location permission denied';
+          });
+          debugPrint("Error: Location permission denied by user");
+          return;
+        }
       }
-    }
 
-    // Step 2: Get Current Position
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    double lat = position.latitude;
-    double lon = position.longitude;
+      // Step 2: Get Current Position
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      double lat = position.latitude;
+      double lon = position.longitude;
 
-    debugPrint("Fetched Location: Latitude: $lat, Longitude: $lon");
+      debugPrint("Fetched Location: Latitude: $lat, Longitude: $lon");
 
-    // Step 3: Call Weather API
-    String url = 'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true';
-    debugPrint("Weather API Request URL: $url");
+      // Step 3: Call Weather API
+      String url =
+          'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true';
+      debugPrint("Weather API Request URL: $url");
 
-    var response = await http.get(Uri.parse(url));
+      var response = await http.get(Uri.parse(url));
 
-    // Step 4: Handle API Response
-    debugPrint("Weather API Response: ${response.body}");
+      // Step 4: Handle API Response
+      debugPrint("Weather API Response: ${response.body}");
 
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
 
-      if (data.containsKey('current_weather')) {
-        int weatherCode = data['current_weather']['weathercode'];
-        double temperature = data['current_weather']['temperature'];
+        if (data.containsKey('current_weather')) {
+          int weatherCode = data['current_weather']['weathercode'];
+          double temperature = data['current_weather']['temperature'];
 
-        setState(() {
-          _weather = '$temperature°C, ${_getWeatherDescription(weatherCode)}';
-        });
+          setState(() {
+            _weather = '$temperature°C, ${_getWeatherDescription(weatherCode)}';
+          });
 
-        debugPrint("Weather Data: $_weather");
+          debugPrint("Weather Data: $_weather");
+        } else {
+          setState(() {
+            _weather = 'Invalid response from API';
+          });
+          debugPrint("Error: Unexpected API response structure");
+        }
       } else {
         setState(() {
-          _weather = 'Invalid response from API';
-        });  
-        debugPrint("Error: Unexpected API response structure");
+          _weather = 'Unable to fetch weather';
+        });
+        debugPrint(
+            "Weather API error: ${response.statusCode} - ${response.body}");
       }
-    } else {
+    } catch (e) {
       setState(() {
-        _weather = 'Unable to fetch weather';
+        _weather = 'Error fetching weather';
       });
-      debugPrint("Weather API error: ${response.statusCode} - ${response.body}");
+      debugPrint("Exception occurred: $e");
     }
-  } catch (e) {
-    setState(() {
-      _weather = 'Error fetching weather';
-    });
-    debugPrint("Exception occurred: $e");
   }
-}
 
-void _showLocationDisabledDialog() {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Location Services Disabled"),
-        content: const Text("Please enable location services in your device settings to fetch weather updates."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("OK"),
-          ),
-        ],
-      );
-    },
-  );
-}
+  void _showLocationDisabledDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Location Services Disabled"),
+          content: const Text(
+              "Please enable location services in your device settings to fetch weather updates."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-void _showPermissionDeniedDialog() {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Location Permission Denied"),
-        content: const Text("This app needs location permission to fetch weather data. Please enable it in settings."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("OK"),
-          ),
-        ],
-      );
-    },
-  );
-}
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Location Permission Denied"),
+          content: const Text(
+              "This app needs location permission to fetch weather data. Please enable it in settings."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   String _getWeatherDescription(int weatherCode) {
     switch (weatherCode) {
@@ -208,7 +216,8 @@ void _showPermissionDeniedDialog() {
       },
     );
   }
- @override
+
+  @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
@@ -216,6 +225,7 @@ void _showPermissionDeniedDialog() {
 Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
   double screenWidth = MediaQuery.of(context).size.width;
   double screenHeight = MediaQuery.of(context).size.height;
+
 
   // Function to get text color based on value and type
   Color getTextColor(String type, double value) {
@@ -234,8 +244,9 @@ Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
                 : Colors.green;
       default:
         return Colors.grey;
+
     }
-  }
+
 
   return Container(
     color: const Color.fromARGB(255, 247, 246, 237),
@@ -327,9 +338,12 @@ Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
                                 style: TextStyle(
                                   fontSize: screenWidth * 0.045,
                                   fontWeight: FontWeight.bold,
+
                                   color: getTextColor(
                                       'humidity', dataProvider.humidityValue),
+                                  size: 20,
                                 ),
+
                               ),
                             ],
                           ),
@@ -360,19 +374,32 @@ Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
                                 style: TextStyle(
                                   fontSize: screenWidth * 0.045,
                                   fontWeight: FontWeight.bold,
+
                                   color: getTextColor('temperature',
                                       dataProvider.temperatureValue),
+                                  size: 20,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                                const SizedBox(width: 1),
+                                Text(
+                                  '${dataProvider.temperatureValue}°C',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: getTextColor('temperature',
+                                        dataProvider.temperatureValue),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+
           ),
           SizedBox(height: screenHeight * 0.02),
           
@@ -410,4 +437,13 @@ Widget _soilMoistureGauge(double screenWidth) {
 
 
 
+
+  Widget _soilMoistureGauge() {
+    return Image.asset(
+      'lib/assets/images/image.png',
+      width: double.infinity,
+      height: 130,
+      fit: BoxFit.contain,
+    );
+  }
 }
