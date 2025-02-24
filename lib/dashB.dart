@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
@@ -44,12 +42,14 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         });
       }
     });
+
   }
   
 
   String _getFormattedDate() {
     return DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
   }
+
 Future<void> _fetchWeather() async {
   try {
     // Step 1: Check Location Permission
@@ -188,6 +188,7 @@ void _showPermissionDeniedDialog() {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     final dataProvider = DataProvider.of(context);
@@ -214,6 +215,7 @@ void _showPermissionDeniedDialog() {
     super.dispose();
   }
 
+
 Widget dashboardMain(DataProvider dataProvider) {
   // Function to get text color based on value and type
   Color getTextColor(String type, double value) {
@@ -238,6 +240,7 @@ Widget dashboardMain(DataProvider dataProvider) {
   return Container(
     color: const Color.fromARGB(255, 247, 246, 237),
     padding: const EdgeInsets.all(16),
+
     child: SingleChildScrollView( // Make content scrollable
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,6 +375,7 @@ Widget dashboardMain(DataProvider dataProvider) {
               ],
             ),
           ),
+
           const SizedBox(height: 20),
 
           // Gauges Widget
@@ -428,6 +432,7 @@ Widget dashboardMain(DataProvider dataProvider) {
     ),
   );
 }
+
 
 Widget _soilMoistureGauge() {
   return Image.asset(

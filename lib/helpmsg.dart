@@ -53,6 +53,7 @@ class _HelperMsgState extends State<HelperMsg> {
       addMessage('Sensor 1: High Moisture Detected! Consider reducing watering.', Colors.blue);
     }
 
+
     if (moistureS2 <= 30) {
       addMessage('Sensor 2: Low Moisture Detected! Consider watering the soil.', Colors.red);
     } else if (moistureS2 >= 70) {
@@ -89,6 +90,7 @@ class _HelperMsgState extends State<HelperMsg> {
                   style: TextStyle(
                       color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
                 ),
+
               ),
             ],
           ),
