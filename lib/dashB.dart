@@ -80,7 +80,7 @@ Future<void> _fetchWeather() async {
       } else {
         setState(() {
           _weather = 'Invalid response from API';
-        });
+        });  
         debugPrint("Error: Unexpected API response structure");
       }
     } else {
@@ -189,96 +189,176 @@ void _showPermissionDeniedDialog() {
     );
   }
 
- Widget dashboardMain(DataProvider dataProvider) {
+
+
+Widget dashboardMain(DataProvider dataProvider) {
+  // Function to get text color based on value and type
+  Color getTextColor(String type, double value) {
+    switch (type) {
+      case 'humidity':
+        return value < 30
+            ? Colors.blue
+            : value > 70
+                ? Colors.orange
+                : Colors.green;
+      case 'temperature':
+        return value < 15
+            ? Colors.blue
+            : value > 30
+                ? Colors.red
+                : Colors.green;
+      default:
+        return Colors.grey;
+    }
+  }
+
   return Container(
     color: const Color.fromARGB(255, 247, 246, 237),
     padding: const EdgeInsets.all(16),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  DateFormat('MMMM d, yyyy').format(DateTime.now()), // Date
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 60, 90, 64),
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  DateFormat('EEEE').format(DateTime.now()), // Day
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 60, 90, 64),
-                    fontSize: 20,
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              height: 110,
-              width: 160,
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(100, 82, 115, 84), // Background with opacity
-                borderRadius: BorderRadius.circular(8),
+        // Date Container
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 100, 122, 99),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 5,
+                spreadRadius: 2,
               ),
-             child: Column(
-  mainAxisAlignment: MainAxisAlignment.center,
-  crossAxisAlignment: CrossAxisAlignment.center,
-  children: [
-    if (_weather != null) ...[
-      Text(
-        _weather!.split(',')[0], 
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 30,
-          fontWeight: FontWeight.bold,
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Date Section
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat('MMMM d, yyyy').format(DateTime.now()), // Date
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    DateFormat('EEEE').format(DateTime.now()), // Day
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 2), // Spacing
+              // Humidity & Temperature Container
+              Container(
+                width:170,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 255, 255, 240),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 5,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    // Humidity Section
+                    Column(
+                      children: [
+                        const Text(
+                          'Humidity',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.water_drop,
+                              color: getTextColor('humidity', dataProvider.humidityValue),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              '${dataProvider.humidityValue}%',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: getTextColor('humidity', dataProvider.humidityValue),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 2), // Spacing
+                    // Temperature Section
+                    Column(
+                      children: [
+                        const Text(
+                          'Temperature',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.thermostat,
+                              color: getTextColor('temperature', dataProvider.temperatureValue),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 1),
+                            Text(
+                              '${dataProvider.temperatureValue}°C',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: getTextColor('temperature', dataProvider.temperatureValue),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      const SizedBox(height: 5),
-      Text(
-        _weather!.split(',')[1].trim(), 
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-        ),
-      ),
-    ] else ...[
-      const Text(
-        'Fetching weather...',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-        ),
-      ),
-    ],
-  ],
-),
+        const SizedBox(height: 20),
 
-            ),
-          ],
-        ),
-        const SizedBox(height: 2),
-        IconButton(
-          icon: const Icon(Icons.info_outline, color: Colors.blue),
-          onPressed: () {
-            _showSoilMoistureInfo(context);
-          },
-        ),
+        // Gauges Widget
         Gauges(dataProvider: dataProvider),
-        const SizedBox(height: 15),
+        const SizedBox(height: 1),
+        _soilMoistureGauge(),
+
+        const SizedBox(height: 5),
+
         Align(
           alignment: Alignment.center,
           child: Container(
             color: const Color.fromARGB(255, 247, 246, 237),
             margin: const EdgeInsets.all(5),
-            height: 170,
+            height: 130,
             width: double.infinity,
             child: const HelperMsg(),
           ),
@@ -288,89 +368,15 @@ void _showPermissionDeniedDialog() {
   );
 }
 
-   void _showSoilMoistureInfo(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: const Color.fromARGB(255, 242, 239, 231), // Light background
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-          side: const BorderSide(color: Color.fromARGB(255, 42, 83, 39), width: 2), // Green border
-        ),
-        title: const Center(
-          child: Text(
-            'Soil Moisture Levels',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 100, 122, 99),
-            ),
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            SizedBox(height: 10),
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(text: '🌵 ', style: TextStyle(fontSize: 18)),
-                  TextSpan(
-                    text: '15%  ',
-                    style: TextStyle(fontSize: 18, color: Colors.redAccent, fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(text: '– Extremely Dry Soil', style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 65, 64, 64))),
-                ],
-              ),
-            ),
-            SizedBox(height: 12),
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(text: '🌾 ', style: TextStyle(fontSize: 18)),
-                  TextSpan(
-                    text: '30-45%  ',
-                    style: TextStyle(fontSize: 18, color: Colors.orangeAccent, fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(text: '– Dry / Well-Drained Soil', style: TextStyle(fontSize: 16,  color: Color.fromARGB(255, 65, 64, 64))),
-                ],
-              ),
-            ),
-            SizedBox(height: 12),
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(text: '🌱 ', style: TextStyle(fontSize: 18)),
-                  TextSpan(
-                    text: '60-75%  ',
-                    style: TextStyle(fontSize: 18, color: Colors.greenAccent, fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(text: '– Moist Soil', style: TextStyle(fontSize: 16,  color: Color.fromARGB(255, 65, 64, 64))),
-                ],
-              ),
-            ),
-            SizedBox(height: 12),
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(text: '💧 ', style: TextStyle(fontSize: 18)),
-                  TextSpan(
-                    text: '90%  ',
-                    style: TextStyle(fontSize: 18, color: Colors.lightBlueAccent, fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(text: '– Wet Soil', style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 65, 64, 64))),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),
-          ],
-        ),
-      );
-    },
+Widget _soilMoistureGauge() {
+  return Image.asset(
+    'lib/assets/images/image.png',
+    width: double.infinity,
+    height: 130,
+    fit: BoxFit.contain,
   );
 }
+
 
 
 }
