@@ -30,46 +30,62 @@ class _HelperMsgState extends State<HelperMsg> {
     }
 
     if (humidityValue <= 30) {
-
-      addMessage('Low Humidity Detected! Consider increasing humidity.',  const Color.fromARGB(255, 253, 133, 124));
+      addMessage('Low Humidity Detected! Consider increasing humidity.',
+          const Color.fromARGB(255, 253, 133, 124));
     } else if (humidityValue >= 70) {
-      addMessage('High Humidity Detected! Consider decreasing humidity.', const Color.fromARGB(255, 131, 174, 209));
+      addMessage('High Humidity Detected! Consider decreasing humidity.',
+          const Color.fromARGB(255, 131, 174, 209));
     }
 
     if (temperatureValue <= 15) {
-      addMessage('Low Temperature Detected! Consider increasing temperature.',const Color.fromARGB(255, 131, 174, 209));
+      addMessage('Low Temperature Detected! Consider increasing temperature.',
+          const Color.fromARGB(255, 131, 174, 209));
     } else if (temperatureValue >= 30) {
-      addMessage('High Temperature Detected! Consider decreasing temperature.', const Color.fromARGB(255, 253, 133, 124));
+      addMessage('High Temperature Detected! Consider decreasing temperature.',
+          const Color.fromARGB(255, 253, 133, 124));
     }
 
     if (moistureA <= 30) {
-      addMessage('Low Average Moisture Detected! Consider watering the soil.',  const Color.fromARGB(255, 253, 133, 124));
+      addMessage('Low Average Moisture Detected! Consider watering the soil.',
+          const Color.fromARGB(255, 253, 133, 124));
     } else if (moistureA >= 70) {
-      addMessage('High Average Moisture Detected! Consider reducing watering.', const Color.fromARGB(255, 131, 174, 209));
+      addMessage('High Average Moisture Detected! Consider reducing watering.',
+          const Color.fromARGB(255, 131, 174, 209));
     }
 
     if (moistureS1 <= 30) {
-      addMessage('Sensor 1: Low Moisture Detected! Consider watering the soil.', const Color.fromARGB(255, 253, 133, 124));
+      addMessage('Sensor 1: Low Moisture Detected! Consider watering the soil.',
+          const Color.fromARGB(255, 253, 133, 124));
     } else if (moistureS1 >= 70) {
-      addMessage('Sensor 1: High Moisture Detected! Consider reducing watering.', const Color.fromARGB(255, 131, 174, 209));
+      addMessage(
+          'Sensor 1: High Moisture Detected! Consider reducing watering.',
+          const Color.fromARGB(255, 131, 174, 209));
     }
 
     if (moistureS2 <= 30) {
-      addMessage('Sensor 2: Low Moisture Detected! Consider watering the soil.',  const Color.fromARGB(255, 253, 133, 124));
+      addMessage('Sensor 2: Low Moisture Detected! Consider watering the soil.',
+          const Color.fromARGB(255, 253, 133, 124));
     } else if (moistureS2 >= 70) {
-      addMessage('Sensor 2: High Moisture Detected! Consider reducing watering.', const Color.fromARGB(255, 131, 174, 209));
+      addMessage(
+          'Sensor 2: High Moisture Detected! Consider reducing watering.',
+          const Color.fromARGB(255, 131, 174, 209));
     }
 
     if (moistureS3 <= 30) {
-      addMessage('Sensor 3: Low Moisture Detected! Consider watering the soil.',  const Color.fromARGB(255, 253, 133, 124));
+      addMessage('Sensor 3: Low Moisture Detected! Consider watering the soil.',
+          const Color.fromARGB(255, 253, 133, 124));
     } else if (moistureS3 >= 70) {
-      addMessage('Sensor 3: High Moisture Detected! Consider reducing watering.', const Color.fromARGB(255, 131, 174, 209));
+      addMessage(
+          'Sensor 3: High Moisture Detected! Consider reducing watering.',
+          const Color.fromARGB(255, 131, 174, 209));
     }
 
     if (moistureS4 <= 30) {
-      addMessage('Sensor 4: Low Moisture Detected! Consider watering the soil.',  const Color.fromARGB(255, 253, 133, 124));
+      addMessage('Sensor 4: Low Moisture Detected! Consider watering the soil.',
+          const Color.fromARGB(255, 253, 133, 124));
     } else if (moistureS4 >= 70) {
-      addMessage('Sensor 4: High M
+      addMessage(
+          'Sensor 4: High Moisture', const Color.fromARGB(255, 253, 133, 124));
     }
 
     return Column(
@@ -94,57 +110,56 @@ class _HelperMsgState extends State<HelperMsg> {
             ],
           ),
         ),
-      Expanded(
-  child: messages.isEmpty
-      ? Center(
-          child: Text(
-            'No warnings detected!',
-            style: TextStyle(color: Colors.green, fontSize: 16),
-          ),
-        )
-      : CarouselSlider.builder(
-          itemCount: messages.length,
-          options: CarouselOptions(
-            height: 100,
-            scrollDirection: Axis.vertical,
-            autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 3),
-            enlargeCenterPage: false,
-            viewportFraction: 1.0,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-          ),
-          itemBuilder: (context, index, realIndex) {
-            return Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: messages[index]['color'],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.warning, color: Color.fromARGB(255, 247, 213, 163)),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      messages[index]['text'],
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
+        Expanded(
+          child: messages.isEmpty
+              ? Center(
+                  child: Text(
+                    'No warnings detected!',
+                    style: TextStyle(color: Colors.green, fontSize: 16),
                   ),
-                ],
-              ),
-            );
-          },
+                )
+              : CarouselSlider.builder(
+                  itemCount: messages.length,
+                  options: CarouselOptions(
+                    height: 100,
+                    scrollDirection: Axis.vertical,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 3),
+                    enlargeCenterPage: false,
+                    viewportFraction: 1.0,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                  ),
+                  itemBuilder: (context, index, realIndex) {
+                    return Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: messages[index]['color'],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.warning,
+                              color: Color.fromARGB(255, 247, 213, 163)),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              messages[index]['text'],
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
         ),
-
-),
-
       ],
     );
   }
