@@ -8,7 +8,9 @@ import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
 import 'package:soil_monitoring_app/navBar.dart';
-import 'package:soil_monitoring_app/plot_selection_page.dart';
+
+import 'package:soil_monitoring_app/soilmoistures_info.dart';
+
 import 'package:soil_monitoring_app/tutorial.dart';
 
 class Home extends StatefulWidget {
@@ -24,19 +26,26 @@ class _HomeState extends State<Home> {
       FlutterLocalNotificationsPlugin();
 
   final AppBar appBar = AppBar(
-    backgroundColor: const Color.fromARGB(255, 247, 246, 237),
+
+    backgroundColor:    const Color.fromARGB(255, 247, 246, 237),
+
+    // shape: const RoundedRectangleBorder(
+    //   borderRadius: BorderRadius.only(
+    //     bottomLeft: Radius.circular(25),
+    //     bottomRight: Radius.circular(25),
+    //   ),
+    // ),
     iconTheme: const IconThemeData(
       color: Color.fromARGB(255, 42, 83, 39),
     ),
-    title: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(
-          'assets/logo.png',
-          width: 100,
-          height: 100,
-        ),
-      ],
+      title: Row(
+  mainAxisAlignment: MainAxisAlignment.start, 
+  children: [
+    Image.asset(
+      'assets/logo.png',
+      width: 100,
+      height: 100,
+
     ),
   );
 
@@ -243,63 +252,77 @@ class _HomeState extends State<Home> {
                 AboutPage(),
                 TutorialScreen(),
                 const DashB(),
-                SensorHistoryScreen()
+                SensorHistoryScreen(),
+                  SoilMoistureInfo ()
               ],
             ),
           ],
         ),
-        bottomNavigationBar: Container(
-          margin: const EdgeInsets.fromLTRB(13, 13, 13, 8),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Color.fromARGB(255, 42, 83, 39),
-              width: 2,
-            ),
-            color: const Color.fromARGB(255, 100, 122, 99),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Theme(
-            data: Theme.of(context).copyWith(
-              splashFactory: NoSplash.splashFactory,
-            ),
-            child: BottomNavigationBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              type: BottomNavigationBarType.fixed,
-              selectedItemColor: const Color.fromARGB(255, 125, 171, 124),
-              unselectedItemColor: Colors.white70,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              items: [
-                BottomNavigationBarItem(
-                  icon: _buildIcon(Icons.help, 0, _currentIndex),
-                  label: 'About',
-                ),
-                BottomNavigationBarItem(
-                  icon: _buildIcon(Icons.help, 1, _currentIndex),
-                  label: 'Tutorial',
-                ),
-                BottomNavigationBarItem(
-                  icon: _buildIcon(Icons.dashboard, 2, _currentIndex),
-                  label: 'Dashboard',
-                ),
-                BottomNavigationBarItem(
-                  icon: _buildIcon(Icons.history, 3, _currentIndex),
-                  label: 'History',
-                ),
-              ],
-            ),
-          ),
-        ),
+   bottomNavigationBar: Container(
+    color: const Color.fromARGB(255, 247, 246, 237),
+
+  padding: const EdgeInsets.only(top: 8), // Add some spacing if needed
+  child: Container(
+    margin: const EdgeInsets.fromLTRB(13, 13, 13, 8),
+    decoration: BoxDecoration(
+      color: const Color.fromARGB(255, 100, 122, 99), // Bottom bar background
+      border: Border.all(
+        color: Color.fromARGB(255, 42, 83, 39),
+        width: 2,
       ),
-    );
-  }
+      borderRadius: BorderRadius.circular(30),
+    ),
+    child: Theme(
+      data: Theme.of(context).copyWith(
+        splashFactory: NoSplash.splashFactory,
+      ),
+      child: BottomNavigationBar(
+        backgroundColor: Colors.transparent, // Keeps it transparent to show Container color
+        elevation: 0,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color.fromARGB(255, 125, 171, 124),
+        unselectedItemColor: Colors.white70,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: _buildIcon(Icons.info, 0, _currentIndex),
+            label: 'About',
+          ),
+
+          BottomNavigationBarItem(
+            icon: _buildIcon(Icons.help, 1, _currentIndex),
+            label: 'Tutorial',
+
+          ),
+          BottomNavigationBarItem(
+            icon: _buildIcon(Icons.dashboard, 2, _currentIndex),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildIcon(Icons.history, 3, _currentIndex),
+            label: 'History',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildIcon(Icons.info, 4, _currentIndex),
+            label: 'Info',
+          ),
+        ],
+      ),
+    ),
+  ),
+
+      
+      ),
+    ),
+  );
+}
 
   Widget _buildIcon(IconData iconData, int index, int _currentIndex) {
     bool isSelected = _currentIndex == index;
