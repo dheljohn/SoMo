@@ -36,7 +36,7 @@ class _DeveloperPageState extends State<DeveloperPage>
           'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
 
       'image': 'assets/edhel.png',
-      'position': {'top': -5.0, 'left': 70.0, 'width': 90.0, 'height': 135.0},
+      'position': {'top': -5.0, 'left': 70.0, 'width': 90.0, 'height': 140.0},
       'links': {
         'github': 'https://github.com/edheljohn',
         'facebook': 'https://facebook.com/edheljohn',
@@ -66,7 +66,7 @@ class _DeveloperPageState extends State<DeveloperPage>
           'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
 
       'image': 'assets/marvin.png',
-      'position': {'top': -38.0, 'left': 60.0, 'width': 115.0, 'height': 165.0},
+      'position': {'top': -18.0, 'left': 60.0, 'width': 115.0, 'height': 140.0},
       'links': {
         'github': 'https://github.com/marvin',
         'facebook': 'https://facebook.com/marvin',

@@ -198,6 +198,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    
     final dataProvider = DataProvider.of(context);
     if (dataProvider == null) {
       return const Text("DataProvider is null");
@@ -223,27 +224,30 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
 
-    Color getTextColor(String type, double value) {
-      switch (type) {
-        case 'humidity':
-          return value < 30
-              ? Colors.blue
-              : value > 70
-                  ? Colors.orange
-                  : Colors.green;
-        case 'temperature':
-          return value < 15
-              ? Colors.blue
-              : value > 30
-                  ? Colors.red
-                  : Colors.green;
-        default:
-          return Colors.grey;
-      }
+  
+Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
+  double screenWidth = MediaQuery.of(context).size.width;
+  double screenHeight = MediaQuery.of(context).size.height;
+
+  // Function to get text color based on value and type
+  Color getTextColor(String type, double value) {
+    switch (type) {
+      case 'humidity':
+        return value < 30
+            ? const Color.fromARGB(255, 131, 174, 209)
+            : value > 70
+                ? Colors.orange
+                : const Color.fromARGB(255, 103, 172, 105);
+      case 'temperature':
+        return value < 15
+            ? const Color.fromARGB(255, 131, 174, 209)
+            : value > 30
+                ?  const Color.fromARGB(255, 253, 133, 124)
+                : const Color.fromARGB(255, 103, 172, 105);
+      default:
+        return Colors.grey;
+
     }
 
     return Container(
@@ -280,119 +284,196 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: screenWidth * 0.01),
-                      Text(
-                        DateFormat('EEEE').format(DateTime.now()),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: screenWidth * 0.04,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: screenWidth * 0.01),
-                  Container(
-                    width: screenWidth * 0.45,
-                    padding: EdgeInsets.all(screenWidth * 0.03),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 255, 255, 240),
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 5,
-                          spreadRadius: 2,
-                        ),
-                      ],
+
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Column(
-                          children: [
-                            const Text(
-                              'Humidity',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.water_drop,
-                                  color: getTextColor(
-                                      'humidity', dataProvider.humidityValue),
-                                  size: screenWidth * 0.05,
-                                ),
-                                SizedBox(width: screenWidth * 0.02),
-                                Text(
-                                  '${dataProvider.humidityValue}%',
-                                  style: TextStyle(
-                                    fontSize: screenWidth * 0.045,
-                                    fontWeight: FontWeight.bold,
-                                    color: getTextColor(
-                                        'humidity', dataProvider.humidityValue),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(width: screenWidth * 0.05),
-                        Column(
-                          children: [
-                            const Text(
-                              'Temperature',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.thermostat,
-                                  color: getTextColor('temperature',
-                                      dataProvider.temperatureValue),
-                                  size: screenWidth * 0.05,
-                                ),
-                                SizedBox(width: screenWidth * 0.02),
-                                Text(
-                                  '${dataProvider.temperatureValue}°C',
-                                  style: TextStyle(
-                                    fontSize: screenWidth * 0.045,
-                                    fontWeight: FontWeight.bold,
-                                    color: getTextColor('temperature',
-                                        dataProvider.temperatureValue),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
+                SizedBox(width: screenWidth * 0.01),
+                // Humidity & Temperature Container
+                // Container(
+                //   width: screenWidth * 0.45,
+                //   padding: EdgeInsets.all(screenWidth * 0.03),
+                //   decoration: BoxDecoration(
+                //     color: const Color.fromARGB(255, 255, 255, 240),
+                //     borderRadius: BorderRadius.circular(10),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: Colors.black.withOpacity(0.1),
+                //         blurRadius: 5,
+                //         spreadRadius: 2,
+                //       ),
+                //     ],
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.start,
+                //     children: [
+                //       // Humidity Section
+                //       Column(
+                //         children: [
+                //           const Text(
+                //             'Humidity',
+                //             style: TextStyle(
+                //               fontSize: 10,
+                //               fontWeight: FontWeight.bold,
+                //               color: Colors.black,
+                //             ),
+                //           ),
+                //           Row(
+                //             children: [
+                //               Icon(
+                //                 Icons.water_drop,
+                //                 color: getTextColor(
+                //                     'humidity', dataProvider.humidityValue),
+                //                 size: screenWidth * 0.05,
+                //               ),
+                //               SizedBox(width: screenWidth * 0.00),
+                //               Text(
+                //                 '${dataProvider.humidityValue}%',
+                //                 style: TextStyle(
+                //                   fontSize: screenWidth * 0.045,
+                //                   fontWeight: FontWeight.bold,
+                //                   color: getTextColor(
+                //                       'humidity', dataProvider.humidityValue),
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ],
+                //       ),
+                //       // Temperature Section
+                //       Column(
+                //         children: [
+                //           const Text(
+                //             'Temperature',
+                //             style: TextStyle(
+                //               fontSize: 10,
+                //               fontWeight: FontWeight.bold,
+                //               color: Colors.black,
+                //             ),
+                //           ),
+                //           Row(
+                //             children: [
+                //               Icon(
+                //                 Icons.thermostat,
+                //                 color: getTextColor('temperature',
+                //                     dataProvider.temperatureValue),
+                //                 size: screenWidth * 0.05,
+                //               ),
+                //               SizedBox(width: screenWidth * 0.00),
+                //               Text(
+                //                 '${dataProvider.temperatureValue}°C',
+                //                 style: TextStyle(
+                //                   fontSize: screenWidth * 0.045,
+                //                   fontWeight: FontWeight.bold,
+                //                   color: getTextColor('temperature',
+                //                       dataProvider.temperatureValue),
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ],
+                //       ),
+                //     ],
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+          SizedBox(height: screenHeight * 0.02),
+          
+          // Gauges Widget
+          Gauges(dataProvider: dataProvider),
+          SizedBox(height: screenHeight * 0.01),
+         Center(
+  child: Container(
+    width: screenWidth * 0.85,
+    padding: EdgeInsets.all(screenWidth * 0.03),
+    decoration: BoxDecoration(
+      color: const Color.fromARGB(255, 255, 255, 240),
+      borderRadius: BorderRadius.circular(10),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 5,
+          spreadRadius: 2,
+        ),
+      ],
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distributes space evenly
+      children: [
+        // Humidity Section
+        Row(
+          children: [
+            Text(
+              'Humidity: ',
+              style: TextStyle(
+                fontSize: screenWidth * 0.04,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
             ),
-            SizedBox(height: screenHeight * 0.02),
-            Gauges(dataProvider: dataProvider),
-            SizedBox(height: screenHeight * 0.02),
-            _soilMoistureGauge(screenWidth),
-            SizedBox(height: screenHeight * 0.02),
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                color: const Color.fromARGB(255, 247, 246, 237),
-                margin: EdgeInsets.all(screenWidth * 0.02),
-                height: screenHeight * 0.15,
-                width: double.infinity,
-                child: const HelperMsg(),
+            Text(
+              '${dataProvider.humidityValue}%',
+              style: TextStyle(
+                fontSize: screenWidth * 0.04,
+                fontWeight: FontWeight.bold,
+                color: getTextColor('humidity', dataProvider.humidityValue),
               ),
+            ),
+            SizedBox(width: screenWidth * 0.01),
+            Icon(
+              Icons.water_drop,
+              color: getTextColor('humidity', dataProvider.humidityValue),
+              size: screenWidth * 0.05,
+            ),
+          ],
+        ),
+        // Temperature Section
+        Row(
+          children: [
+            Text(
+              'Temperature: ',
+              style: TextStyle(
+                fontSize: screenWidth * 0.04,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            Text(
+              '${dataProvider.temperatureValue}°C',
+              style: TextStyle(
+                fontSize: screenWidth * 0.04,
+                fontWeight: FontWeight.bold,
+                color: getTextColor('temperature', dataProvider.temperatureValue),
+              ),
+            ),
+            SizedBox(width: screenWidth * 0.01),
+            Icon(
+              Icons.thermostat,
+              color: getTextColor('temperature', dataProvider.temperatureValue),
+              size: screenWidth * 0.05,
+            ),
+          ],
+        ),
+      ],
+    ),
+  ),
+),
+
+
+          // _soilMoistureGauge(screenWidth),
+          SizedBox(height: screenHeight * 0.02),
+          
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              color: const Color.fromARGB(255, 247, 246, 237),
+              margin: EdgeInsets.all(screenWidth * 0.02),
+              height: screenHeight * 0.15,
+              width: double.infinity,
+              child: const HelperMsg(),
+
             ),
             SizedBox(height: screenHeight * 0.02),
           ],
