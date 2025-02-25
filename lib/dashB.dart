@@ -251,7 +251,7 @@ Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
           Container(
             padding: EdgeInsets.all(screenWidth * 0.04),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 100, 122, 99),
+              color: const Color.fromARGB(255, 138, 167, 136),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -264,7 +264,7 @@ Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Date Section
+                // Date Sections
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -380,7 +380,16 @@ Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
           SizedBox(height: screenHeight * 0.02),
           
           // Gauges Widget
-          Gauges(dataProvider: dataProvider),
+         
+
+              Align(
+            alignment: Alignment.center,
+            child: Container(
+              color: const Color.fromARGB(255, 247, 246, 237),
+           
+              child: Gauges(dataProvider: dataProvider),
+            ),
+          ),
           SizedBox(height: screenHeight * 0.01),
          Center(
   child: Container(
@@ -473,7 +482,32 @@ Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
               child: const HelperMsg(),
             ),
           ),
-          SizedBox(height: screenHeight * 0.02),
+          SizedBox(height: screenHeight * 0.0),
+            Center(
+  child: Container(
+    height: screenHeight * 0.1,
+    width: screenWidth * 0.85,
+    padding: EdgeInsets.all(screenWidth * 0.03),
+    decoration: BoxDecoration(
+      color: const Color.fromARGB(255, 255, 255, 240),
+      borderRadius: BorderRadius.circular(10),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 5,
+          spreadRadius: 2,
+        ),
+      ],
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distributes space evenly
+      children: [
+        // Humidity Section
+     
+      ],
+    ),
+  ),
+),
         ],
       ),
     ),
