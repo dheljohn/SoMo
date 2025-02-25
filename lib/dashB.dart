@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -28,7 +29,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _fetchWeather();
-     super.initState();
+    super.initState();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
@@ -45,113 +46,120 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       }
     });
   }
-  
 
   String _getFormattedDate() {
     return DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
   }
-Future<void> _fetchWeather() async {
-  try {
-    // Step 1: Check Location Permission
-    LocationPermission permission = await Geolocator.checkPermission();
-    debugPrint("Location Permission Status: $permission");
 
-    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-      permission = await Geolocator.requestPermission();
-      debugPrint("New Location Permission Status: $permission");
+  Future<void> _fetchWeather() async {
+    try {
+      // Step 1: Check Location Permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      debugPrint("Location Permission Status: $permission");
 
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-        setState(() {
-          _weather = 'Location permission denied';
-        });
-        debugPrint("Error: Location permission denied by user");
-        return;
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        permission = await Geolocator.requestPermission();
+        debugPrint("New Location Permission Status: $permission");
+
+        if (permission == LocationPermission.denied ||
+            permission == LocationPermission.deniedForever) {
+          setState(() {
+            _weather = 'Location permission denied';
+          });
+          debugPrint("Error: Location permission denied by user");
+          return;
+        }
       }
-    }
 
-    // Step 2: Get Current Position
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    double lat = position.latitude;
-    double lon = position.longitude;
+      // Step 2: Get Current Position
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      double lat = position.latitude;
+      double lon = position.longitude;
 
-    debugPrint("Fetched Location: Latitude: $lat, Longitude: $lon");
+      debugPrint("Fetched Location: Latitude: $lat, Longitude: $lon");
 
-    // Step 3: Call Weather API
-    String url = 'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true';
-    debugPrint("Weather API Request URL: $url");
+      // Step 3: Call Weather API
+      String url =
+          'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true';
+      debugPrint("Weather API Request URL: $url");
 
-    var response = await http.get(Uri.parse(url));
+      var response = await http.get(Uri.parse(url));
 
-    // Step 4: Handle API Response
-    debugPrint("Weather API Response: ${response.body}");
+      // Step 4: Handle API Response
+      debugPrint("Weather API Response: ${response.body}");
 
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
 
-      if (data.containsKey('current_weather')) {
-        int weatherCode = data['current_weather']['weathercode'];
-        double temperature = data['current_weather']['temperature'];
+        if (data.containsKey('current_weather')) {
+          int weatherCode = data['current_weather']['weathercode'];
+          double temperature = data['current_weather']['temperature'];
 
-        setState(() {
-          _weather = '$temperature°C, ${_getWeatherDescription(weatherCode)}';
-        });
+          setState(() {
+            _weather = '$temperature°C, ${_getWeatherDescription(weatherCode)}';
+          });
 
-        debugPrint("Weather Data: $_weather");
+          debugPrint("Weather Data: $_weather");
+        } else {
+          setState(() {
+            _weather = 'Invalid response from API';
+          });
+          debugPrint("Error: Unexpected API response structure");
+        }
       } else {
         setState(() {
-          _weather = 'Invalid response from API';
-        });  
-        debugPrint("Error: Unexpected API response structure");
+          _weather = 'Unable to fetch weather';
+        });
+        debugPrint(
+            "Weather API error: ${response.statusCode} - ${response.body}");
       }
-    } else {
+    } catch (e) {
       setState(() {
-        _weather = 'Unable to fetch weather';
+        _weather = 'Error fetching weather';
       });
-      debugPrint("Weather API error: ${response.statusCode} - ${response.body}");
+      debugPrint("Exception occurred: $e");
     }
-  } catch (e) {
-    setState(() {
-      _weather = 'Error fetching weather';
-    });
-    debugPrint("Exception occurred: $e");
   }
-}
 
-void _showLocationDisabledDialog() {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Location Services Disabled"),
-        content: const Text("Please enable location services in your device settings to fetch weather updates."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("OK"),
-          ),
-        ],
-      );
-    },
-  );
-}
+  void _showLocationDisabledDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Location Services Disabled"),
+          content: const Text(
+              "Please enable location services in your device settings to fetch weather updates."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-void _showPermissionDeniedDialog() {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Location Permission Denied"),
-        content: const Text("This app needs location permission to fetch weather data. Please enable it in settings."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("OK"),
-          ),
-        ],
-      );
-    },
-  );
-}
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Location Permission Denied"),
+          content: const Text(
+              "This app needs location permission to fetch weather data. Please enable it in settings."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   String _getWeatherDescription(int weatherCode) {
     switch (weatherCode) {
@@ -209,11 +217,13 @@ void _showPermissionDeniedDialog() {
       },
     );
   }
- @override
+
+  @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
+
 
   
 Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
@@ -237,52 +247,44 @@ Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
                 : const Color.fromARGB(255, 103, 172, 105);
       default:
         return Colors.grey;
-    }
-  }
 
-  return Container(
-    color: const Color.fromARGB(255, 247, 246, 237),
-    padding: EdgeInsets.all(screenWidth * 0.04),
-    child: SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Date Container
-          Container(
-            padding: EdgeInsets.all(screenWidth * 0.04),
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 100, 122, 99),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 5,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Date Section
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      DateFormat('MMMM d, yyyy').format(DateTime.now()),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: screenWidth * 0.05,
-                        fontWeight: FontWeight.bold,
+    }
+
+    return Container(
+      color: const Color.fromARGB(255, 247, 246, 237),
+      padding: EdgeInsets.all(screenWidth * 0.04),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(screenWidth * 0.04),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 100, 122, 99),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 5,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        DateFormat('MMMM d, yyyy').format(DateTime.now()),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: screenWidth * 0.05,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: screenWidth * 0.01),
-                    Text(
-                      DateFormat('EEEE').format(DateTime.now()),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: screenWidth * 0.04,
-                      ),
+
                     ),
                   ],
                 ),
@@ -471,24 +473,30 @@ Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
               height: screenHeight * 0.15,
               width: double.infinity,
               child: const HelperMsg(),
+
             ),
-          ),
-          SizedBox(height: screenHeight * 0.02),
-        ],
+            SizedBox(height: screenHeight * 0.02),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _soilMoistureGauge(double screenWidth) {
-  return Image.asset(
-    'lib/assets/images/image.png',
-    width: screenWidth * 0.9,
-    height: 130,
-    fit: BoxFit.contain,
-  );
-}
+  Widget _soilMoistureGauge(double screenWidth) {
+    return Image.asset(
+      'lib/assets/images/image.png',
+      width: screenWidth * 0.9,
+      height: 130,
+      fit: BoxFit.contain,
+    );
+  }
 
-
-
+//   Widget _soilMoistureGauge() {
+//     return Image.asset(
+//       'lib/assets/images/image.png',
+//       width: double.infinity,
+//       height: 130,
+//       fit: BoxFit.contain,
+//     );
+//   }
 }

@@ -1,6 +1,6 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 class HelperMsg extends StatefulWidget {
   const HelperMsg({super.key});
@@ -30,6 +30,7 @@ class _HelperMsgState extends State<HelperMsg> {
     }
 
     if (humidityValue <= 30) {
+
       addMessage('Low Humidity Detected! Consider increasing humidity.',  const Color.fromARGB(255, 253, 133, 124));
     } else if (humidityValue >= 70) {
       addMessage('High Humidity Detected! Consider decreasing humidity.', const Color.fromARGB(255, 131, 174, 209));
@@ -68,7 +69,7 @@ class _HelperMsgState extends State<HelperMsg> {
     if (moistureS4 <= 30) {
       addMessage('Sensor 4: Low Moisture Detected! Consider watering the soil.',  const Color.fromARGB(255, 253, 133, 124));
     } else if (moistureS4 >= 70) {
-      addMessage('Sensor 4: High Moisture Detected! Consider reducing watering.', const Color.fromARGB(255, 131, 174, 209));
+      addMessage('Sensor 4: High M
     }
 
     return Column(
@@ -141,11 +142,10 @@ class _HelperMsgState extends State<HelperMsg> {
             );
           },
         ),
+
 ),
 
-        
       ],
-      
     );
   }
 }
