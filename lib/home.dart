@@ -228,8 +228,7 @@ class _HomeState extends State<Home> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const PlotSelectionPage()),
+                    MaterialPageRoute(builder: (context) => PlotSelection()),
                   );
                 },
               ),

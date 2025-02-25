@@ -1,78 +1,61 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class PlotSelectionPage extends StatefulWidget {
-  const PlotSelectionPage({super.key});
-
+class PlotSelection extends StatefulWidget {
   @override
-  State<PlotSelectionPage> createState() => _PlotSelectionPageState();
+  _PlotSelectionState createState() => _PlotSelectionState();
 }
 
-class _PlotSelectionPageState extends State<PlotSelectionPage> {
-  final List<String> _plots = ['Plot A', 'Plot B', 'Plot C', 'Plot D'];
-  String? _selectedPlot;
+class _PlotSelectionState extends State<PlotSelection> {
+  final List<String> plots = ['Plot 1', 'Plot 2', 'Plot 3'];
+  String? selectedPlot;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final DatabaseReference realtimeDB = FirebaseDatabase.instance.ref();
+
+  void _savePlotToFirebase(String plot) async {
+    // Save to Firestore (for history)
+    await firestore.collection("selected_plots").doc("currentPlot").set({
+      "plot": plot,
+      "timestamp": FieldValue.serverTimestamp(),
+    });
+
+    // Save to Realtime Database (for live updates)
+    await realtimeDB.child("SelectedPlot").set(plot);
+
+    print("Plot selected: $plot");
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select Plot Area'),
-        backgroundColor: const Color.fromARGB(255, 42, 83, 39),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Choose a plot to monitor:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            DropdownButtonFormField<String>(
-              value: _selectedPlot,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                filled: true,
-                fillColor: Colors.white,
+      appBar: AppBar(title: Text("Select Plot")), // ✅ Fix 1: Add Scaffold
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Choose a plot:", style: TextStyle(fontSize: 18)),
+              SizedBox(height: 20),
+              DropdownButton<String>(
+                value: selectedPlot,
+                hint: const Text("Select Plot"),
+                items: plots.map((String plot) {
+                  return DropdownMenuItem<String>(
+                    value: plot,
+                    child: Text(plot),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedPlot = newValue;
+                    _savePlotToFirebase(selectedPlot!);
+                  });
+                },
               ),
-              hint: const Text('Select a Plot'),
-              items: _plots.map((plot) {
-                return DropdownMenuItem(
-                  value: plot,
-                  child: Text(plot),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedPlot = value;
-                });
-              },
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: _selectedPlot == null
-                  ? null
-                  : () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Selected Plot: $_selectedPlot'),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 42, 83, 39),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              ),
-              child: const Text(
-                'Confirm Selection',
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
