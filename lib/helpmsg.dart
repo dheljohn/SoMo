@@ -1,6 +1,6 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 class HelperMsg extends StatefulWidget {
   const HelperMsg({super.key});
@@ -24,6 +24,7 @@ class _HelperMsgState extends State<HelperMsg> {
     final moistureS4 = dataProvider?.moistureS4 ?? 0.0;
 
     List<Map<String, dynamic>> messages = [];
+
 
  void addMessage(String text, Color color) {
   messages.add({'text': text, 'color': color});
@@ -103,12 +104,14 @@ if (moistureS4 <= 30) {
 
     final screenWidth = MediaQuery.of(context).size.width;
 
+
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5.0),
         
         ),
+
           Expanded(
       child: messages.isEmpty
           ? Center(
@@ -156,12 +159,52 @@ borderRadius: BorderRadius.only(
                         fontSize: 14,
                       ),
                     ),
+
                   ),
-                ],
-              ),
-            );
-          },
+                )
+              : CarouselSlider.builder(
+                  itemCount: messages.length,
+                  options: CarouselOptions(
+                    height: 100,
+                    scrollDirection: Axis.vertical,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 3),
+                    enlargeCenterPage: false,
+                    viewportFraction: 1.0,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                  ),
+                  itemBuilder: (context, index, realIndex) {
+                    return Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: messages[index]['color'],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.warning,
+                              color: Color.fromARGB(255, 247, 213, 163)),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              messages[index]['text'],
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
         ),
+
 ),
  Row(
             children: [
@@ -181,8 +224,8 @@ borderRadius: BorderRadius.only(
             ],
           ),
         
+
       ],
-      
     );
   }
 }
