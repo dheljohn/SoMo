@@ -1,38 +1,36 @@
-
-#define GREEN_LED_PIN 26  // Change to GPIO 26
-#define RED_LED_PIN 27    // Change to GPIO 27
-
-#define DHTPIN 4     // new added - GPIO4 (can be any digital pin)
-#define DHTTYPE DHT22   //new added - DHT 22 (AM2302)
 #include <ArduinoJson.h>
-
-
 #include <Arduino.h>
 #include <WiFi.h>
 #include "SD.h"   // ESP32's SD library
 #include <TimeLib.h>  // Time library to get timestamps
-
 #include <time.h>  // Built-in ESP32 time library
 #include <Firebase_ESP_Client.h>
-
-//Provide the token generation process info.
 #include "addons/TokenHelper.h"
-//Provide the RTDB payload printing info and other helper functions.
 #include "addons/RTDBHelper.h"
-
 #include <DHT.h> //new added
 
-// Insert network credentials
-//#define WIFI_SSID "REPLACE_WITH_YOUR_SSID"
-//#define WIFI_PASSWORD "REPLACE_WITH_YOUR_PASSWORD"
-// #define WIFI_SSID "Hotspot"
-// #define WIFI_PASSWORD "12468642369485"
 
-// #define WIFI_SSID "Kaida"
-// #define WIFI_PASSWORD "Kaida123"
+#define GREEN_LED_PIN 26  // Change to GPIO 26
+#define RED_LED_PIN 27    // Change to GPIO 27
+#define DHTPIN 4     // new added - GPIO4 (can be any digital pin)
+#define DHTTYPE DHT22   //new added - DHT 22 (AM2302)
+#define API_KEY "AIzaSyA_lQLKsXD_SGL4QyEVO3HEFUgJUcQW0sQ"
+#define DATABASE_URL "https://test-monitor-reui-default-rtdb.asia-southeast1.firebasedatabase.app/"
+
+
+//Define Firebase Data object
+FirebaseData fbdo;
+FirebaseAuth auth;
+FirebaseConfig config;
+FirebaseJson doc; 
+FB_Firestore firestore;
+
 
 const char* wifiList[][3] = {
+  {"HG8145V5_D400A", "jcww2myE"},
+  {"HG8145V5_D400A", "jcww2myE"},
   {"HUAWEI-D8kG", "ana@36546"},
+  {"HG8145V5_D400A", "jcww2myE"},
   {"Carlo", "carlfrancis0205"},
   {"Kaida", "Kaida123"},
   {"Hotspot", "12468642369485"},
@@ -45,30 +43,6 @@ const char* wifiList[][3] = {
 const int numNetworks = sizeof(wifiList) / sizeof(wifiList[0]);
 
 
-// const char* fcmServerKey = "YOUR_SERVER_KEY";  // Replace with your FCM Server Key
-// const char* fcmEndpoint = "https://fcm.googleapis.com/fcm/send";
-
-// #define WIFI_SSID "TECNNO CAMON 20 Pro"
-// #define WIFI_PASSWORD "vidallo12345"
-// #define DATABASE_URL "https://test-monitor-reui-default-rtdb.asia-southeast1.firebasedatabase.app/"
-
-// Insert Firebase project API Key
-//#define API_KEY "REPLACE_WITH_YOUR_FIREBASE_PROJECT_API_KEY"
-#define API_KEY "AIzaSyA_lQLKsXD_SGL4QyEVO3HEFUgJUcQW0sQ"
-
-// Insert RTDB URLefine the RTDB URL */
-//#define DATABASE_URL "REPLACE_WITH_YOUR_FIREBASE_DATABASE_URL" 
-#define DATABASE_URL "https://test-monitor-reui-default-rtdb.asia-southeast1.firebasedatabase.app/"
-
-//Define Firebase Data object
-FirebaseData fbdo;
-FirebaseAuth auth;
-FirebaseConfig config;
-FirebaseJson doc; // Declare doc globally or inside fetchPlotFromFirestore()
-
-
-FB_Firestore firestore;
-
 
 unsigned long sendDataPrevMillis = 0;
 int count = 0;
@@ -78,11 +52,13 @@ int sensorPin1 = 34;  // Soil moisture sensor connected to GPIO 34
 int sensorPin2 = 35;
 int sensorPin3 = 33;
 int sensorPin4 = 32;
-String plotID;  // Declare globally
+
 
 
 // Initialize the DHT sensor
 DHT dht(DHTPIN, DHTTYPE);
+
+
 
 void connectToWiFi() {
   //to connect to any wifi by trying 1by1
@@ -146,21 +122,19 @@ void readAndDisplaySensorValues() {
 
   float temperature = dht.readTemperature();  // Read temperature
   float humidity = dht.readHumidity();  // Read humidity
-  fetchPlotFromFirestore();
+
   // Calculate average moisture
   int moistureReadings[] = {
     moisturePercent1, 
     moisturePercent2, 
-  moisturePercent3, 
-  moisturePercent4};
+    moisturePercent3, 
+    moisturePercent4
+    };
+
   float averageMoistureLevel = averageMoisture(moistureReadings, 4);
 
   // Display the values on the Serial Monitor
   if (Firebase.RTDB.setInt(&fbdo, "Moisture/MoistureReadings_1", moisturePercent1)){
-      // Serial.println("PASSED");
-      // Serial.println("PATH: " + fbdo.dataPath());
-      // Serial.println("TYPE: " + fbdo.dataType());
-      
     }
     else {
       Serial.println("FAILED");
@@ -168,9 +142,7 @@ void readAndDisplaySensorValues() {
     } 
 
     if (Firebase.RTDB.setInt(&fbdo, "Moisture/MoistureReadings_2", moisturePercent2)){
-      // Serial.println("PASSED");
-      // Serial.println("PATH: " + fbdo.dataPath());
-      // Serial.println("TYPE: " + fbdo.dataType());
+
       
     }
     else {
@@ -178,9 +150,7 @@ void readAndDisplaySensorValues() {
       Serial.println("REASON: " + fbdo.errorReason());
     } 
     if (Firebase.RTDB.setInt(&fbdo, "Moisture/MoistureReadings_3", moisturePercent3)){
-      // Serial.println("PASSED");
-      // Serial.println("PATH: " + fbdo.dataPath());
-      // Serial.println("TYPE: " + fbdo.dataType());
+
       
     }
     else {
@@ -189,9 +159,6 @@ void readAndDisplaySensorValues() {
     } 
 
     if (Firebase.RTDB.setInt(&fbdo, "Moisture/MoistureReadings_4", moisturePercent4)){
-      // Serial.println("PASSED");
-      // Serial.println("PATH: " + fbdo.dataPath());
-      // Serial.println("TYPE: " + fbdo.dataType());
       
     }
     else {
@@ -200,9 +167,7 @@ void readAndDisplaySensorValues() {
     } 
 
     if (Firebase.RTDB.setFloat(&fbdo, "Moisture/Average", averageMoistureLevel)){
-      // Serial.println("PASSED");
-      // Serial.println("PATH: " + fbdo.dataPath());
-      // Serial.println("TYPE: " + fbdo.dataType());
+
       
     }
     else {
@@ -212,10 +177,7 @@ void readAndDisplaySensorValues() {
 
 
     if (Firebase.RTDB.setFloat(&fbdo, "Temperature/temperature", temperature)){
-      // Serial.println("PASSED");
-      // Serial.println("PATH: " + fbdo.dataPath());
-      // Serial.println("TYPE: " + fbdo.dataType());
-      
+
     }
     else {
       Serial.println("FAILED");
@@ -223,15 +185,15 @@ void readAndDisplaySensorValues() {
     } 
 
     if (Firebase.RTDB.setFloat(&fbdo, "Humidity/humidity", humidity)){
-      // Serial.println("PASSED");
-      // Serial.println("PATH: " + fbdo.dataPath());
-      // Serial.println("TYPE: " + fbdo.dataType());
+
       
     }
     else {
       Serial.println("FAILED");
       Serial.println("REASON: " + fbdo.errorReason());
     } 
+
+
   Serial.println("Soil Moisture Levels:");
   Serial.print("Sensor 1: "); Serial.print(moisturePercent1); Serial.println("%");
   Serial.print("Sensor 2: "); Serial.print(moisturePercent2); Serial.println("%");
@@ -275,95 +237,12 @@ void setupTime() {
     if (now < 1000000000) {
         Serial.println("❌ Failed to get time from NTP!");
     } else {
-        Serial.println("✅ Time synchronized!");
+        Serial.println(" ✅ Time synchronized!");
     }
 }
 
-  //Getting the Date and Time here 
-  String getDateString() {
-    time_t now = time(nullptr);
-    struct tm timeInfo;
-    localtime_r(&now, &timeInfo);
-    char buffer[11];  // YYYY-MM-DD format
-    strftime(buffer, sizeof(buffer), "%Y-%m-%d", &timeInfo);
-    return String(buffer);
-}
+ 
 
-  String getTimeString() {
-    time_t now = time(nullptr);
-    struct tm timeInfo;
-    localtime_r(&now, &timeInfo);
-    char buffer[9];  // HH-MM-SS format
-    strftime(buffer, sizeof(buffer), "%H-%M-%S", &timeInfo);
-    return String(buffer);
-}
-
-
-  // Connecting and creating logs storing to Firestore
-  void saveDailyLogToFirestore(float temperature, float humidity, float avgMoisture, 
-                             int moisture1, int moisture2, 
-                             int moisture3, 
-                             int moisture4, String plotID) {
-    FirebaseJson json;
-    
-    // Get current date and time
-    String dateString = getDateString();
-    String timeString = getTimeString();  
-
-    // Get time in ISO 8601 format
-    time_t now = time(nullptr);
-    struct tm timeInfo;
-    gmtime_r(&now, &timeInfo);  // Convert to UTC time
-
-    char isoTime[25];  // "YYYY-MM-DDTHH:MM:SSZ"
-    strftime(isoTime, sizeof(isoTime), "%Y-%m-%dT%H:%M:%SZ", &timeInfo);
-    //print debugg statemnt
-    Serial.print("Current timestamp: ");
-    Serial.println(isoTime);
-
-
-    json.set("fields/timestamp/timestampValue", isoTime);
-    json.set("fields/temperature/doubleValue", temperature);
-    json.set("fields/humidity/doubleValue", humidity);
-    json.set("fields/average_moisture/doubleValue", avgMoisture);
-    json.set("fields/moisture_1/integerValue", moisture1);
-    json.set("fields/moisture_2/integerValue", moisture2);
-    json.set("fields/moisture_3/integerValue", moisture3);
-    json.set("fields/moisture_4/integerValue", moisture4);
-    json.set("fields/plot/stringValue", plotID);
-
-
-    String jsonString;
-    json.toString(jsonString, true);
-
-    // Firestore path: "DailyLogs/{dateString}/logs/{timeString}"
-    String collectionPath = "DailyLogs/" + dateString + "/logs";
-    String documentPath = timeString;
-
-    // Creating document and collection logs to the firestore
-    if (firestore.createDocument(&fbdo, "test-monitor-reui", "", collectionPath.c_str(), documentPath.c_str(), jsonString.c_str(), "")) {
-        Serial.println("Daily log saved: " + collectionPath + "/" + documentPath);
-    } else {
-        Serial.println("Failed to save log: " + fbdo.errorReason());
-    }
-}
-
-void listenForPlotChanges() {
-  Firebase.RTDB.getString(&fbdo, "SelectedPlot");
-  String selectedPlot = fbdo.stringData();
-
-  Serial.print("Selected Plot: ");
-  Serial.println(selectedPlot);
-
-  if (selectedPlot == "Plot 1") {
-    // Read sensors for Plot 1
-    readAndDisplaySensorValues();
-
-  } else if (selectedPlot == "Plot 2") {
-    // Read sensors for Plot 2
-    readAndDisplaySensorValues();
-  }
-}
 
 void setup(){
   Serial.begin(115200);
@@ -400,11 +279,116 @@ void setup(){
 }
 
 
+ //Getting the Date and Time here 
+ String getDateString() {
+    time_t now = time(nullptr);
+    struct tm timeInfo;
+    localtime_r(&now, &timeInfo);
+    char buffer[11];  // YYYY-MM-DD format
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d", &timeInfo);
+    return String(buffer);
+}
+
+  String getTimeString() {
+    time_t now = time(nullptr);
+    struct tm timeInfo;
+    localtime_r(&now, &timeInfo);
+    char buffer[9];  // HH-MM-SS format
+    strftime(buffer, sizeof(buffer), "%H-%M-%S", &timeInfo);
+    return String(buffer);
+}
+
+String getSelectedPlot() {
+    String selectedPlot;
+    if (Firebase.RTDB.getString(&fbdo, "SelectedPlot/plotName")) {
+        selectedPlot = fbdo.stringData();
+        Serial.println("Selected Plot: " + selectedPlot); 
+    } else {
+        Serial.println("Failed to get selected plot: " + fbdo.errorReason());
+        selectedPlot = "Plot1";  // Default to Plot1 if failed
+    }
+    return selectedPlot;
+}
+
+
+bool shouldLogNow() {
+    time_t now = time(nullptr);
+    struct tm timeInfo;
+    localtime_r(&now, &timeInfo);
+    
+    int hour = timeInfo.tm_hour;
+    int minute = timeInfo.tm_min;
+
+    // Log only at 8 AM, 11 AM, 3 PM, and 5 PM
+    return (hour == 8 || hour == 11 || hour == 15 || hour == 17) && minute == 0;
+}
+
+
+ void saveDailyLogToFirestore(float temperature, float humidity, float avgMoisture, 
+                             int moisture1, int moisture2, int moisture3, int moisture4) {
+
+    if (!shouldLogNow()) {
+        Serial.println("Skipping log - Not the scheduled time.");
+        return;
+    }
+    
+    FirebaseJson json;                           
+    // Get current date and time
+    String dateString = getDateString();
+    String timeString = getTimeString();  
+
+    // Get time in ISO 8601 format
+    time_t now = time(nullptr);
+    struct tm timeInfo;
+    gmtime_r(&now, &timeInfo);  // Convert to UTC time
+
+    char isoTime[25];  // "YYYY-MM-DDTHH:MM:SSZ"
+    strftime(isoTime, sizeof(isoTime), "%Y-%m-%dT%H:%M:%SZ", &timeInfo);
+    //print debugg statemnt
+    Serial.print("Current timestamp: ");
+    Serial.println(isoTime);
+
+    // Get selected plot
+    String selectedPlot = getSelectedPlot();
+
+    json.set("fields/plot/stringValue", selectedPlot);
+    json.set("fields/timestamp/timestampValue", isoTime);  // ✅ Correct
+    json.set("fields/temperature/doubleValue", temperature);
+    json.set("fields/humidity/doubleValue", humidity);
+    json.set("fields/average_moisture/doubleValue", avgMoisture);
+    json.set("fields/moisture_1/integerValue", moisture1);
+    json.set("fields/moisture_2/integerValue", moisture2);
+    json.set("fields/moisture_3/integerValue", moisture3);
+    json.set("fields/moisture_4/integerValue", moisture4);
+
+    String jsonString;
+    json.toString(jsonString, true);
+
+    // Ensure correct Firestore project ID
+    String projectID = "test-monitor-reui";  // Update this if needed
+
+    // Firestore path: "Plots/{selectedPlot}/sensorData/{dateString}/{timeString}"
+    String collectionPath = "Plots/" + selectedPlot + "/sensorData";
+    String documentPath = dateString + "_" + timeString; // Ensures valid document ID
+
+    // bool success = firestore.createDocument(&fbdo, projectID, collectionPath, documentPath, json);
+    Serial.println("Trying to save Firestore document...");
+    Serial.println("Collection: " + collectionPath);
+    Serial.println("Document: " + documentPath);
+
+    // Check if the collection exists (optional, but useful for debugging)
+    if (!firestore.createDocument(&fbdo, projectID, "", collectionPath.c_str(), documentPath.c_str(), jsonString.c_str(), "")) {
+        Serial.println("❌ Firestore write failed: " + fbdo.errorReason());
+    } else {
+        Serial.println("✅ Data saved to Firestore: " + collectionPath + "/" + documentPath);
+    }
+}
+
+unsigned long lastLogTime = 0;
+const unsigned long logInterval = 60000;  // Set interval to 60 seconds (adjust as needed)
+
+
 void loop() {
-  fetchPlotFromFirestore();  // Get the selected plot
-  listenForPlotChanges();  // Check Firebase for the selected plot
-  delay(5000);  // Check every 5 seconds
-  
   
   // Storing For Realtime
     if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 2000 || sendDataPrevMillis == 0)) {
@@ -430,51 +414,19 @@ void loop() {
     int moisture4 = map(analogRead(sensorPin4), 0, 4095, 100, 0);
 
     float avgMoisture = (moisture1 + moisture2 + moisture3 + moisture4) / 4.0;
-    
-    // if (avgMoisture < 40 || moisture1 <40 ||moisture2 <40 ||moisture3 <40 ||moisture4 <40 ) {  // If soil is almost dry
-    //     Serial.println("⚠ Warning: Soil is almost dry! Logging to Firestore...");
-    //     saveDailyLogToFirestore(dht.readTemperature(), dht.readHumidity(), avgMoisture, moisture1, moisture2, moisture3, moisture4);
-    //     delay(5000);  // Avoid excessive logging
-    //     logSensorDataToFirestore();
-    // }
-    // if (moisture1 <40 ||moisture2 <40 ||moisture3 <40 ||moisture4 <40 || ){
-    //     Serial.println("One of the sensors are dry! Less than 40% Moisture")
-        
-    // }
+
 
     // **Scheduled logging at specific hours**
-    if ((currentHour == 8 || currentHour == 11 || currentHour == 12 ||currentHour == 13 ||currentHour == 14 ||currentHour == 15 || currentHour == 17) &&
+    if ((currentHour == 8 || currentHour == 11 || currentHour == 12 || 
+    currentHour == 13 ||currentHour == 14 ||currentHour == 15 || currentHour == 17) &&
         lastLoggedHour != currentHour) {
     lastLoggedHour = currentHour;
     logSensorDataToFirestore();
     Serial.println("📌 Firestore log saved (Scheduled Time).");
-}
-
-
-
-
-}
-
-void fetchPlotFromFirestore() {
-
-    if (firestore.getDocument(&fbdo, "test-monitor-reui", "", "selected_plots", "currentPlot", "")) {
-        Serial.println("Document fetched successfully");
-
-        FirebaseJson jsonResponse;
-        jsonResponse.setJsonData(fbdo.payload().c_str());  // Convert payload to JSON
-
-        FirebaseJsonData jsonData;
-        if (jsonResponse.get(jsonData, "fields/plot/stringValue")) {  
-            plotID = jsonData.stringValue;  
-            Serial.print("Fetched plot ID: ");
-            Serial.println(plotID);
-        } else {
-            Serial.println("Error: Plot ID not found in Firestore response.");
-        }
-    } else {
-        Serial.println("Failed to fetch Firestore document: " + fbdo.errorReason());
     }
+
 }
+
 
 // Function to log sensor data to Firestore
 // Just calling this function inside the loop function
@@ -487,6 +439,6 @@ void logSensorDataToFirestore() {
     int moisture4 = map(analogRead(sensorPin4), 0, 4095, 100, 0);
     float avgMoisture = (moisture1 + moisture2 + moisture3 + moisture4) / 4.0;
     
-    saveDailyLogToFirestore(temperature, humidity, avgMoisture, moisture1, moisture2, moisture3, moisture4, plotID);
+    saveDailyLogToFirestore(temperature, humidity, avgMoisture, moisture1, moisture2, moisture3, moisture4);
     
 }
