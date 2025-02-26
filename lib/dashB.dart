@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -9,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
 import 'package:soil_monitoring_app/helpmsg.dart';
+import 'package:soil_monitoring_app/plot_selection_page.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -254,6 +254,19 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => PlotSelection()));
+              },
+              child: Icon(
+                Icons.grass, // Soil icon
+                color: Colors.brown,
+                size: screenWidth * 0.1,
+              ),
+            ),
+
+            SizedBox(height: screenHeight * 0.02),
             // Date Container
             Container(
               padding: EdgeInsets.all(screenWidth * 0.04),
@@ -275,67 +288,24 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Humidity Section
-                      Row(
-                        children: [
-                          Text(
-                            'Humidity: ',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.04,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(
-                            '${dataProvider.humidityValue}%',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.04,
-                              fontWeight: FontWeight.bold,
-                              color: getTextColor(
-                                  'humidity', dataProvider.humidityValue),
-                            ),
-                          ),
-                          SizedBox(width: screenWidth * 0.01),
-                          Icon(
-                            Icons.water_drop,
-                            color: getTextColor(
-                                'humidity', dataProvider.humidityValue),
-                            size: screenWidth * 0.05,
-                          ),
-                        ],
+                      Text(
+                        DateFormat('MMMM d, yyyy').format(DateTime.now()),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: screenWidth * 0.05,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      // Temperature Section
-                      Row(
-                        children: [
-                          Text(
-                            'Temperature: ',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.04,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(
-                            '${dataProvider.temperatureValue}°C',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.04,
-                              fontWeight: FontWeight.bold,
-                              color: getTextColor(
-                                  'temperature', dataProvider.temperatureValue),
-                            ),
-                          ),
-                          SizedBox(width: screenWidth * 0.01),
-                          Icon(
-                            Icons.thermostat,
-                            color: getTextColor(
-                                'temperature', dataProvider.temperatureValue),
-                            size: screenWidth * 0.05,
-                          ),
-                        ],
+                      SizedBox(height: screenWidth * 0.01),
+                      Text(
+                        DateFormat('EEEE').format(DateTime.now()),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: screenWidth * 0.04,
+                        ),
                       ),
                     ],
                   ),
-
                   SizedBox(width: screenWidth * 0.01),
                   // Humidity & Temperature Container
                   // Container(
@@ -498,21 +468,22 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                             color: Colors.black,
                           ),
                         ),
-
-                        // _soilMoistureGauge(screenWidth),
-                        SizedBox(height: screenHeight * 0.02),
-
-                        Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            color: const Color.fromARGB(255, 247, 246, 237),
-                            margin: EdgeInsets.all(screenWidth * 0.02),
-                            height: screenHeight * 0.15,
-                            width: double.infinity,
-                            child: const HelperMsg(),
+                        Text(
+                          '${dataProvider.temperatureValue}°C',
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.04,
+                            fontWeight: FontWeight.bold,
+                            color: getTextColor(
+                                'temperature', dataProvider.temperatureValue),
                           ),
                         ),
-                        SizedBox(height: screenHeight * 0.02),
+                        SizedBox(width: screenWidth * 0.01),
+                        Icon(
+                          Icons.thermostat,
+                          color: getTextColor(
+                              'temperature', dataProvider.temperatureValue),
+                          size: screenWidth * 0.05,
+                        ),
                       ],
                     ),
                   ],
