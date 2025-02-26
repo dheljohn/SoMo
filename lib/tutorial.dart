@@ -14,10 +14,13 @@ class _TutorialScreenState extends State<TutorialScreen> {
   @override
   void initState() {
     super.initState();
+    _initializeVideoPlayer();
+  }
+
+  void _initializeVideoPlayer() {
     _controller = VideoPlayerController.network(
       'https://www.w3schools.com/html/mov_bbb.mp4',
-    )
-      ..initialize().then((_) {
+    )..initialize().then((_) {
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -67,40 +70,33 @@ class _TutorialScreenState extends State<TutorialScreen> {
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: FutureBuilder(
-                future: _controller.initialize(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text("Failed to load video."));
-                  } else {
-                    return Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        AspectRatio(
-                          aspectRatio: _controller.value.aspectRatio,
-                          child: VideoPlayer(_controller),
-                        ),
-                        GestureDetector(
-                          onTap: _togglePlayPause,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.black54,
-                            radius: 30,
-                            child: Icon(
-                              _controller.value.isPlaying
-                                  ? Icons.pause
-                                  : Icons.play_arrow,
-                              color: Colors.white,
-                              size: 40,
+              child: _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : _isError
+                      ? Center(child: Text("Failed to load video."))
+                      : Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: _controller.value.aspectRatio,
+                              child: VideoPlayer(_controller),
                             ),
-                          ),
+                            GestureDetector(
+                              onTap: _togglePlayPause,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.black54,
+                                radius: 30,
+                                child: Icon(
+                                  _controller.value.isPlaying
+                                      ? Icons.pause
+                                      : Icons.play_arrow,
+                                  color: Colors.white,
+                                  size: 40,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    );
-                  }
-                },
-              ),
             ),
             SizedBox(height: 20),
             Text(
