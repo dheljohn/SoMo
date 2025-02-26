@@ -204,7 +204,7 @@ class _HomeState extends State<Home> {
       FlutterLocalNotificationsPlugin();
 
   final AppBar appBar = AppBar(
-    backgroundColor:    const Color.fromARGB(255, 247, 246, 237),
+    backgroundColor:   const Color.fromARGB(255, 100, 122, 99), 
 
     // shape: const RoundedRectangleBorder(
     //   borderRadius: BorderRadius.only(
@@ -216,7 +216,7 @@ class _HomeState extends State<Home> {
       color: Color.fromARGB(255, 42, 83, 39),
     ),
       title: Row(
-  mainAxisAlignment: MainAxisAlignment.start, 
+  mainAxisAlignment: MainAxisAlignment.center, 
   children: [
     Image.asset(
       'assets/logo.png',
@@ -402,7 +402,7 @@ class _HomeState extends State<Home> {
       child: Scaffold(
         // drawer: navBar(),
         appBar: appBar,
-        body: Stack(
+        body: Stack(  
           children: [
             //  Container(
 
@@ -423,11 +423,11 @@ class _HomeState extends State<Home> {
    bottomNavigationBar: Container(
     color: const Color.fromARGB(255, 247, 246, 237),
 
-  padding: const EdgeInsets.only(top: 8), // Add some spacing if needed
+  padding: const EdgeInsets.only(top: 8), 
   child: Container(
     margin: const EdgeInsets.fromLTRB(13, 13, 13, 8),
     decoration: BoxDecoration(
-      color: const Color.fromARGB(255, 100, 122, 99), // Bottom bar background
+      color: const Color.fromARGB(255, 100, 122, 99), 
       border: Border.all(
         color: Color.fromARGB(255, 42, 83, 39),
         width: 2,
@@ -507,3 +507,4 @@ class _HomeState extends State<Home> {
     return const Navbar();
   }
 }
+
