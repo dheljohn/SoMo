@@ -17,7 +17,6 @@ class SensorHistoryScreen extends StatefulWidget {
 class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
   List<DocumentSnapshot> _logs = [];
   bool _isLoading = true;
-  DateTime? _selectedDate;
 
   @override
   void initState() {
@@ -31,7 +30,6 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
   void _fetchLogs() {
     FirebaseFirestore.instance
         .collectionGroup('logs')
-        .orderBy('timestamp', descending: true)
         .snapshots()
         .listen((snapshot) {
       setState(() {
@@ -103,26 +101,6 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
     return "Invalid time";
   }
 
-  void _pickDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
-
-  void _clearDate() {
-    setState(() {
-      _selectedDate = null;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     Map<String, List<DocumentSnapshot>> groupedLogs = {};
@@ -134,90 +112,53 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
       groupedLogs[date]!.add(log);
     }
 
-   return Scaffold(
-  backgroundColor:   const Color.fromARGB(255, 247, 246, 237),
-
-  appBar: AppBar(
-    backgroundColor: const Color.fromARGB(255, 247, 246, 237),
-    title: const Text('Sensor History' , style: TextStyle(color: const Color.fromARGB(255, 100, 122, 99))),
-    actions: [
-      IconButton(
-        icon: const Icon(Icons.download , color: const Color.fromARGB(255, 100, 122, 99)),
-        onPressed: _downloadCSV,
-      ),
-    ],
-  ),
-  body: Container(
-    color: const Color.fromARGB(255, 247, 246, 237),
-    child: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color.fromARGB(255, 100, 122, 99)),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextButton.icon(
-                    icon: Icon(Icons.calendar_today, color: const Color.fromARGB(255, 100, 122, 99)),
-                    label: Text(
-                      _selectedDate == null
-                          ? 'Search by Date'
-                          : DateFormat('MMM dd, yyyy').format(_selectedDate!),
-                      style: TextStyle(color: const Color.fromARGB(255, 100, 122, 99)),
-                    ),
-                    onPressed: _pickDate,
-                  ),
-                ),
-                if (_selectedDate != null)
-                  IconButton(
-                    icon: Icon(Icons.cancel, color:  Color.fromARGB(255, 253, 133, 124)),
-                    onPressed: _clearDate,
-                  ),
-              ],
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Sensor History'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.download),
+            onPressed: _downloadCSV,
           ),
-        ),
-        Expanded(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _logs.isEmpty
-                  ? Center(child: Text('No sensor history available.'))
-                  : ListView(
-                      children: groupedLogs.entries
-                          .where((entry) =>
-                              _selectedDate == null || entry.key == DateFormat('MMM dd, yyyy').format(_selectedDate!))
-                          .map((entry) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                entry.key,
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ],
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _logs.isEmpty
+              ? Center(child: Text('No sensor history available.'))
+              : ListView(
+                  children: groupedLogs.entries.map((entry) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            entry.key,
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        ...entry.value.map((log) {
+                          Map<String, dynamic> data =
+                              log.data() as Map<String, dynamic>;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            child: Card(
+                              color: const Color.fromARGB(255, 249, 249, 249),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
                               ),
-                            ),
-                            ...entry.value.map((log) {
-                              Map<String, dynamic> data = log.data() as Map<String, dynamic>;
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
+                              child: ListTile(
+                                title: Text(
+                                  _formatTime(data['timestamp']),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
                                   ),
-                                  child: ListTile(
-                                    title: Text(
-                                      _formatTime(data['timestamp']),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0,
-                                      ),
-                                    ),
-                                     subtitle: Column(
+                                ),
+                                subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(height: 8.0),
@@ -234,10 +175,8 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
                                       style: TextStyle(fontSize: 14.0),
                                     ),
                                   ],
-
                                 ),
-
-                                    onTap: () {
+                                onTap: () {
                                   showDialog(
                                     context: context,
                                     builder: (context) {
@@ -276,19 +215,14 @@ class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
                                     },
                                   );
                                 },
-                                  ),
-                                ),
-                              );
-                            }).toList()
-                          ],
-                        );
-                      }).toList(),
-                    ),
-        ),
-      ],
-    ),
-  ),
-);
-
+                              ),
+                            ),
+                          );
+                        }).toList()
+                      ],
+                    );
+                  }).toList(),
+                ),
+    );
   }
 }

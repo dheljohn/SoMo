@@ -8,39 +8,39 @@ class Gauges extends StatelessWidget {
   const Gauges({required this.dataProvider, Key? key}) : super(key: key);
 
   String getWarningMessage(double value) {
-  if (value <= 5) {
-    return 'No Deploy Sensor';
-  } else if (value < 30) {
-    return 'Extremely Dry Soil!';
-  } else if (value > 45) {
-    return 'Well Drained Soil!';
-  } else if (value > 75) {
-    return 'Moist Soil';
-  } else if (value > 90) {
-    return 'Wet Soil';
-  } else {
-    return 'Moisture Level Normal';
+    if (value <= 5) {
+      return 'No Deploy Sensor';
+    } else if (value == 15 || value <= 30) {
+      return 'Extremely Dry Soil!';
+    } else if (value == 30 || value < 45) {
+      return 'Well Drained Soil!';
+    } else if (value == 45 || value <= 75) {
+      return 'Moist Soil';
+    } else if (value > 75) {
+      return 'Wet Soil';
+    } else {
+      return '';
+    }
   }
-}
 
-Color getWarningColor(double value) {
-  if (value <= 5) {
-    return Colors.grey;
-  } else if (value < 30) {
-    return const Color.fromARGB(255, 253, 133, 124);
-  } else if (value > 45) {
-    return const Color.fromARGB(255, 236, 188, 66);
-  } else if (value > 75) {
-    return const Color.fromARGB(255, 103, 172, 105);
-  } else if (value < 90) {
-    return const Color.fromARGB(255, 131, 174, 209);
-  } else {
-    return Colors.green;
+  Color getWarningColor(double value) {
+    if (value <= 5) {
+      return Colors.grey;
+    } else if (value == 15 || value <= 30) {
+      return const Color.fromARGB(255, 253, 133, 124);
+    } else if (value == 30 || value < 45) {
+      return const Color.fromARGB(255, 236, 188, 66);
+    } else if (value == 45 || value <= 75) {
+      return const Color.fromARGB(255, 103, 172, 105);
+    } else if (value > 75) {
+      return const Color.fromARGB(255, 131, 174, 209);
+    } else {
+      return Colors.green;
+    }
   }
-}
 
-
-  Widget buildGauge(BuildContext context, String title, double value, Color bgColor) {
+  Widget buildGauge(
+      BuildContext context, String title, double value, Color bgColor) {
     return Container(
       height: 120,
       width: 160,
