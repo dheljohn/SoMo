@@ -25,17 +25,9 @@ class _HomeState extends State<Home> {
 
   final AppBar appBar = AppBar(
     backgroundColor: const Color.fromARGB(255, 100, 122, 99),
-
-    // shape: const RoundedRectangleBorder(
-    //   borderRadius: BorderRadius.only(
-    //     bottomLeft: Radius.circular(25),
-    //     bottomRight: Radius.circular(25),
-    //   ),
-    // ),
     iconTheme: const IconThemeData(
       color: Color.fromARGB(255, 42, 83, 39),
     ),
-
     title: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -164,10 +156,10 @@ class _HomeState extends State<Home> {
           moisture_s4 = moisture4;
         });
         // Check individual sensor readings
-        if (moisture1 < 40 ||
-            moisture2 < 40 ||
-            moisture3 < 40 ||
-            moisture4 < 40) {
+        if (moisture1 < 40 && moisture1 >= 15 ||
+            moisture2 < 40 && moisture2 >= 15 ||
+            moisture3 < 40 && moisture3 >= 15 ||
+            moisture4 < 40 && moisture4 >= 15) {
           if (moisture1 < 40) {
             _showNotification('Sensor 1 detected dry soil.');
           }
@@ -223,7 +215,7 @@ class _HomeState extends State<Home> {
                   AboutPage(),
                   TutorialScreen(),
                   const DashB(),
-                  SensorHistoryScreen(),
+                  HistoryLogsScreen(),
                   SoilMoistureInfo()
                 ],
               ),
