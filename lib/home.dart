@@ -86,13 +86,14 @@ class _HomeState extends State<Home> {
       importance: Importance.high,
       priority: Priority.high,
       playSound: true,
+      sound: RawResourceAndroidNotificationSound('notif_sound'),
     );
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
     await flutterLocalNotificationsPlugin.show(
       0,
-      'SOMO ',
+      'Soil Moisture Alert',
       message,
       platformChannelSpecifics,
     );

@@ -21,6 +21,15 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, List<DocumentSnapshot>> groupedLogs = {};
+    for (var log in _logs) {
+      String date = _formatDate(log['timestamp']);
+      if (!groupedLogs.containsKey(date)) {
+        groupedLogs[date] = [];
+      }
+      groupedLogs[date]!.add(log);
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text("Sensor Data History")),
       body: Column(
