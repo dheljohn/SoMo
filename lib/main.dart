@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/fcm_service.dart';
 import 'package:soil_monitoring_app/home.dart';
+import 'package:soil_monitoring_app/start_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,8 +22,8 @@ void main() async {
               messagingSenderId: "367476307418",
               appId: "1:367476307418:web:2cf68b6cba4b8189d1fce3"));
       // await LocalNotification.init();
-      runApp(const MaterialApp(
-        home: Home(),
+      runApp(MaterialApp(
+        home: SplashScreen(),
         debugShowCheckedModeBanner: false,
       ));
     } catch (e) {
@@ -34,8 +35,8 @@ void main() async {
     try {
       await Firebase.initializeApp();
       // await LocalNotification.init();
-      runApp(const MaterialApp(
-        home: Home(),
+      runApp(MaterialApp(
+        home: SplashScreen(),
         debugShowCheckedModeBanner: false,
       ));
     } catch (e) {
