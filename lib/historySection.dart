@@ -1,294 +1,262 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class SensorHistoryScreen extends StatefulWidget {
-  const SensorHistoryScreen({super.key});
-
+class HistoryDisplay extends StatefulWidget {
   @override
-  _SensorHistoryScreenState createState() => _SensorHistoryScreenState();
+  _HistoryDisplayState createState() => _HistoryDisplayState();
 }
 
-class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
-  List<DocumentSnapshot> _logs = [];
-  bool _isLoading = true;
-  DateTime? _selectedDate;
+class _HistoryDisplayState extends State<HistoryDisplay> {
+  String selectedPlot = "Plot1"; // Default plot
+  final List<String> plots = ["Plot1", "Plot2", "Plot3"];
+  List<Map<String, dynamic>> sensorData = [];
+  StreamSubscription<QuerySnapshot>? _sensorSubscription;
 
   @override
   void initState() {
     super.initState();
-    _fetchLogs();
+    _startListening();
   }
 
-  final CollectionReference logsRef =
-      FirebaseFirestore.instance.collection('sensor_logs');
-
-  void _fetchLogs() {
-    FirebaseFirestore.instance
-        .collectionGroup('logs')
-        .orderBy('timestamp', descending: true)
+  void _startListening() {
+    _sensorSubscription?.cancel();
+    _sensorSubscription = FirebaseFirestore.instance
+        .collection("Plots")
+        .doc(selectedPlot)
+        .collection("sensorData")
+        .orderBy("timestamp", descending: true)
         .snapshots()
         .listen((snapshot) {
-      setState(() {
-        _logs = snapshot.docs;
-        _isLoading = false;
-      });
-    });
-  }
-
-  Future<void> _downloadCSV() async {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collectionGroup('logs').get();
-
-    List<List<dynamic>> csvData = [
-      [
-        "Timestamp",
-        "Temperature",
-        "Humidity",
-        "Soil Moisture 1",
-        "Soil Moisture 2",
-        "Soil Moisture 3",
-        "Soil Moisture 4"
-      ]
-    ];
-
-    for (var doc in querySnapshot.docs) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      csvData.add([
-        _formatTimestamp(data['timestamp']),
-        data['temperature'] ?? '',
-        data['humidity'] ?? '',
-        data['moisture_1'] ?? '',
-        data['moisture_2'] ?? '',
-        data['moisture_3'] ?? '',
-        data['moisture_4'] ?? '',
-      ]);
-    }
-
-    String csv = const ListToCsvConverter().convert(csvData);
-    final directory = await getApplicationDocumentsDirectory();
-    final path = '${directory.path}/sensor_logs.csv';
-    final File file = File(path);
-    await file.writeAsString(csv);
-
-    OpenFile.open(path);
-  }
-
-  String _formatTimestamp(dynamic timestamp) {
-    if (timestamp is Timestamp) {
-      DateTime dateTime = timestamp.toDate();
-      return DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
-    }
-    return "Invalid date";
-  }
-
-  String _formatDate(dynamic timestamp) {
-    if (timestamp is Timestamp) {
-      DateTime dateTime = timestamp.toDate();
-      return DateFormat('MMM dd, yyyy').format(dateTime);
-    }
-    return "Invalid date";
-  }
-
-  String _formatTime(dynamic timestamp) {
-    if (timestamp is Timestamp) {
-      DateTime dateTime = timestamp.toDate();
-      return DateFormat('h:mm a').format(dateTime);
-    }
-    return "Invalid time";
-  }
-
-  void _pickDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
-
-  void _clearDate() {
-    setState(() {
-      _selectedDate = null;
+      if (mounted) {
+        setState(() {
+          sensorData = snapshot.docs
+              .map((doc) => doc.data() as Map<String, dynamic>)
+              .toList();
+        });
+      }
+    }, onError: (error) {
+      print("Firestore Error: $error");
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    Map<String, List<DocumentSnapshot>> groupedLogs = {};
-    for (var log in _logs) {
-      String date = _formatDate(log['timestamp']);
-      if (!groupedLogs.containsKey(date)) {
-        groupedLogs[date] = [];
-      }
-      groupedLogs[date]!.add(log);
+  void dispose() {
+    _sensorSubscription?.cancel();
+    super.dispose();
+  }
+
+  // Format timestamp
+  String formatTimestamp(dynamic timestamp) {
+    if (timestamp is Timestamp) {
+      DateTime date = timestamp.toDate();
+      return DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
+    }
+    return "Invalid date";
+  }
+
+  // Generate and save CSV file
+  Future<void> _downloadCSV() async {
+    if (sensorData.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("No data to download!"),
+      ));
+      return;
     }
 
-   return Scaffold(
-  backgroundColor:   const Color.fromARGB(255, 247, 246, 237),
+    // Request permission for storage access
+    var status = await Permission.storage.request();
+    if (!status.isGranted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Storage permission denied"),
+      ));
+      return;
+    }
 
-  appBar: AppBar(
-    backgroundColor: const Color.fromARGB(255, 247, 246, 237),
-    title: const Text('Sensor History' , style: TextStyle(color: const Color.fromARGB(255, 100, 122, 99))),
-    actions: [
-      IconButton(
-        icon: const Icon(Icons.download , color: const Color.fromARGB(255, 100, 122, 99)),
-        onPressed: _downloadCSV,
+    // Prepare CSV data
+    List<List<String>> csvData = [
+      [
+        "Date",
+        "Time",
+        "Avg Moisture",
+        "Humidity",
+        "Temperature",
+        "Moisture 1",
+        "Moisture 2",
+        "Moisture 3",
+        "Moisture 4"
+      ]
+    ];
+
+    for (var data in sensorData) {
+      DateTime timestamp = data['timestamp'].toDate();
+      String date = DateFormat('MMMM d, yyyy').format(timestamp);
+      String time = DateFormat('h:mm a').format(timestamp);
+
+      csvData.add([
+        date,
+        time,
+        "${data['average_moisture']}%",
+        "${data['humidity']}%",
+        "${data['temperature']}°C",
+        "${data['moisture_1']}",
+        "${data['moisture_2']}",
+        "${data['moisture_3']}",
+        "${data['moisture_4']}",
+      ]);
+    }
+
+    String csvString = const ListToCsvConverter().convert(csvData);
+
+    try {
+      // Get the REAL Downloads folder
+      Directory? directory = Directory('/storage/emulated/0/Download');
+      if (!await directory.exists()) {
+        throw "Downloads folder not found";
+      }
+
+      String filePath = "${directory.path}/sensor_data_${selectedPlot}.csv";
+      File file = File(filePath);
+
+      // Write CSV data to file
+      await file.writeAsString(csvString);
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("CSV saved to Downloads: $filePath"),
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Error saving file: $e"),
+      ));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Map<String, List<Map<String, dynamic>>> groupedData = {};
+
+    for (var data in sensorData) {
+      String dateKey =
+          DateFormat('MMMM d, yyyy').format(data['timestamp'].toDate());
+      if (!groupedData.containsKey(dateKey)) {
+        groupedData[dateKey] = [];
+      }
+      groupedData[dateKey]!.add(data);
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Sensor Data History"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.download),
+            onPressed: _downloadCSV,
+          )
+        ],
       ),
-    ],
-  ),
-  body: Container(
-    color: const Color.fromARGB(255, 247, 246, 237),
-    child: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color.fromARGB(255, 100, 122, 99)),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextButton.icon(
-                    icon: Icon(Icons.calendar_today, color: const Color.fromARGB(255, 100, 122, 99)),
-                    label: Text(
-                      _selectedDate == null
-                          ? 'Search by Date'
-                          : DateFormat('MMM dd, yyyy').format(_selectedDate!),
-                      style: TextStyle(color: const Color.fromARGB(255, 100, 122, 99)),
-                    ),
-                    onPressed: _pickDate,
-                  ),
-                ),
-                if (_selectedDate != null)
-                  IconButton(
-                    icon: Icon(Icons.cancel, color:  Color.fromARGB(255, 253, 133, 124)),
-                    onPressed: _clearDate,
-                  ),
-              ],
+      body: Column(
+        children: [
+          // Dropdown for selecting plots
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: DropdownButton<String>(
+              value: selectedPlot,
+              items: plots.map((plot) {
+                return DropdownMenuItem(
+                  value: plot,
+                  child: Text(plot),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    selectedPlot = value;
+                  });
+                  _startListening();
+                }
+              },
             ),
           ),
-        ),
-        Expanded(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _logs.isEmpty
-                  ? Center(child: Text('No sensor history available.'))
-                  : ListView(
-                      children: groupedLogs.entries
-                          .where((entry) =>
-                              _selectedDate == null || entry.key == DateFormat('MMM dd, yyyy').format(_selectedDate!))
-                          .map((entry) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                entry.key,
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
+
+          // Display Grouped Sensor Data
+          Expanded(
+            child: sensorData.isEmpty
+                ? Center(child: Text("No data available"))
+                : ListView(
+                    children: groupedData.entries.map((entry) {
+                      String date = entry.key;
+                      List<Map<String, dynamic>> records = entry.value;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Date heading outside the cards
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            child: Text(
+                              date,
+                              style: TextStyle(
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color.fromARGB(255, 0, 73, 39)),
                             ),
-                            ...entry.value.map((log) {
-                              Map<String, dynamic> data = log.data() as Map<String, dynamic>;
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  child: ListTile(
-                                    title: Text(
-                                      _formatTime(data['timestamp']),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0,
-                                      ),
-                                    ),
-                                     subtitle: Column(
+                          ),
+
+                          // List of sensor records under this date
+                          ...records.map((data) {
+                            return Card(
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(height: 8.0),
                                     Text(
-                                      "Soil Moisture: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}",
-                                      style: TextStyle(fontSize: 14.0),
+                                      DateFormat('h:mm a').format(
+                                          data['timestamp']
+                                              .toDate()), // e.g., 3:00 PM
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color.fromARGB(
+                                              255, 0, 0, 0)),
+                                    ),
+                                    Divider(
+                                      color: const Color.fromARGB(
+                                          255, 115, 115, 115),
+                                      thickness: 1,
                                     ),
                                     Text(
-                                      "Temperature: ${data['temperature']}°C",
-                                      style: TextStyle(fontSize: 14.0),
-                                    ),
+                                        "Avg Moisture: ${data['average_moisture']}%",
+                                        style: TextStyle(fontSize: 14)),
+                                    Text("Humidity: ${data['humidity']}%",
+                                        style: TextStyle(fontSize: 14)),
                                     Text(
-                                      "Humidity: ${data['humidity']}%",
-                                      style: TextStyle(fontSize: 14.0),
+                                        "Temperature: ${data['temperature']}°C",
+                                        style: TextStyle(fontSize: 14)),
+                                    Text(
+                                      "Moisture Sensors: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}",
+                                      style: TextStyle(fontSize: 14),
                                     ),
                                   ],
-
                                 ),
-
-                                    onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: Text('Sensor Log Details'),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                'Temperature: ${data['temperature']}°C'),
-                                            Text(
-                                                'Humidity: ${data['humidity']}%'),
-                                            Text(
-                                                'Soil Moisture 1: ${data['moisture_1']}'),
-                                            Text(
-                                                'Soil Moisture 2: ${data['moisture_2']}'),
-                                            Text(
-                                                'Soil Moisture 3: ${data['moisture_3']}'),
-                                            Text(
-                                                'Soil Moisture 4: ${data['moisture_4']}'),
-                                            Text(
-                                                'Time: ${_formatTime(data['timestamp'])}'),
-                                          ],
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('Close'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                  ),
-                                ),
-                              );
-                            }).toList()
-                          ],
-                        );
-                      }).toList(),
-                    ),
-        ),
-      ],
-    ),
-  ),
-);
-
+                              ),
+                            );
+                          }).toList(),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -28,7 +28,9 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+dashb-plot
     // _fetchWeather();
+
     super.initState();
     _animationController = AnimationController(
       vsync: this,
@@ -50,6 +52,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   String _getFormattedDate() {
     return DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
   }
+
 
   // Future<void> _fetchWeather() async {
   //   try {
@@ -161,6 +164,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   //   );
   // }
 
+
   String _getWeatherDescription(int weatherCode) {
     switch (weatherCode) {
       case 0:
@@ -254,6 +258,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
           
 
             SizedBox(height: screenHeight * 0.02),
@@ -385,6 +390,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                   //   ),
                   // ),
                 ],
+
               ),
             ),
                         SizedBox(height: screenHeight * 0.02),
@@ -554,6 +560,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                 ),
               ),
             ),
+
           ],
         ),
       ),
@@ -568,4 +575,6 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       fit: BoxFit.contain,
     );
   }
+
 }
+

@@ -1,6 +1,6 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 class HelperMsg extends StatefulWidget {
   const HelperMsg({super.key});
@@ -24,6 +24,7 @@ class _HelperMsgState extends State<HelperMsg> {
     final moistureS4 = dataProvider?.moistureS4 ?? 0.0;
 
     List<Map<String, dynamic>> messages = [];
+
 void addMessage(String text, Color color) {
   messages.add({'text': text, 'color': color});
 }
@@ -91,82 +92,80 @@ checkSensor('Sensor 4', moistureS4);
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5.0),
-        
         ),
-          Expanded(
-      child: messages.isEmpty
-          ? Center(
-              child: Text(
-                'No warnings detected!',
-                style: TextStyle(color: Colors.green, fontSize: 16),
-              ),
-            )
-      : CarouselSlider.builder(
-          itemCount: messages.length,
-          options: CarouselOptions(
-            height: 100,
-            scrollDirection: Axis.vertical,
-            autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 5),
-            enlargeCenterPage: false,
-            viewportFraction: 3.0,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-          ),
-          itemBuilder: (context, index, realIndex) {
-            return Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: messages[index]['color'],
-borderRadius: BorderRadius.only(
-  topLeft: Radius.circular(20),    
-  topRight: Radius.circular(20),    
-  bottomLeft: Radius.circular(0),  
-  bottomRight: Radius.circular(20), 
-),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.warning, color: Color.fromARGB(255, 247, 213, 163)),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      messages[index]['text'],
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
-                    ),
+        Expanded(
+          child: messages.isEmpty
+              ? Center(
+                  child: Text(
+                    'No warnings detected!',
+                    style: TextStyle(color: Colors.green, fontSize: 16),
                   ),
-                ],
-              ),
-            );
-          },
-        ),
-),
- Row(
-            children: [
-              Image.asset(
-                'assets/somo.png',
-                width: 25,
-                height: 25,
-              ),
-              const SizedBox(width: 8),
-              const Expanded(
-                child: Text(
-                  "SOMO",
-                  style: TextStyle(
-                      color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
+                )
+              : CarouselSlider.builder(
+                  itemCount: messages.length,
+                  options: CarouselOptions(
+                    height: 100,
+                    scrollDirection: Axis.vertical,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 5),
+                    enlargeCenterPage: false,
+                    viewportFraction: 3.0,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                  ),
+                  itemBuilder: (context, index, realIndex) {
+                    return Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: messages[index]['color'],
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                          bottomLeft: Radius.circular(0),
+                          bottomRight: Radius.circular(20),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.warning,
+                              color: Color.fromARGB(255, 247, 213, 163)),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              messages[index]['text'],
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
+        ),
+        Row(
+          children: [
+            Image.asset(
+              'assets/somo.png',
+              width: 25,
+              height: 25,
+            ),
+            const SizedBox(width: 8),
+            const Expanded(
+              child: Text(
+                "SOMO",
+                style: TextStyle(
+                    color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
               ),
-            ],
-          ),
-        
+            ),
+          ],
+        ),
       ],
-      
     );
   }
 }
