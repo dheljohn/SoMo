@@ -13,63 +13,74 @@ class HistoryDisplay extends StatefulWidget {
 }
 
 class _HistoryDisplayState extends State<HistoryDisplay> {
-  String selectedPlot = "Plot1"; // Default plot
-  final List<String> plots = ["Plot1", "Plot2", "Plot3"];
+  String selectedPlot = "All"; // Default selection
+  final List<String> plots = ["All", "Plot1", "Plot2", "Plot3"];
   List<Map<String, dynamic>> sensorData = [];
   StreamSubscription<QuerySnapshot>? _sensorSubscription;
 
   @override
   void initState() {
     super.initState();
-    _startListening();
+    _fetchData();
   }
 
-  void _startListening() {
+  void _fetchData() {
+    print("Fetching data for: $selectedPlot");
+
     _sensorSubscription?.cancel();
+    sensorData.clear();
+
+    if (selectedPlot == "All") {
+      _fetchAllPlotsData();
+    } else {
+      _fetchSinglePlotData(selectedPlot);
+    }
+  }
+
+  void _fetchSinglePlotData(String plot) {
     _sensorSubscription = FirebaseFirestore.instance
         .collection("Plots")
-        .doc(selectedPlot)
+        .doc(plot)
         .collection("sensorData")
         .orderBy("timestamp", descending: true)
         .snapshots()
         .listen((snapshot) {
-      if (mounted) {
-        setState(() {
-          sensorData = snapshot.docs
-              .map((doc) => doc.data() as Map<String, dynamic>)
-              .toList();
-        });
-      }
+      setState(() {
+        sensorData = snapshot.docs.map((doc) {
+          var data = doc.data() as Map<String, dynamic>;
+          data['plot'] = plot; // Add plot name
+          return data;
+        }).toList();
+      });
     }, onError: (error) {
       print("Firestore Error: $error");
     });
   }
 
-  @override
-  void dispose() {
-    _sensorSubscription?.cancel();
-    super.dispose();
-  }
+  void _fetchAllPlotsData() async {
+    List<Map<String, dynamic>> allData = [];
 
-  // Format timestamp
-  String formatTimestamp(dynamic timestamp) {
-    if (timestamp is Timestamp) {
-      DateTime date = timestamp.toDate();
-      return DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
+    for (String plot in plots.where((p) => p != "All")) {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection("Plots")
+          .doc(plot)
+          .collection("sensorData")
+          .orderBy("timestamp", descending: true)
+          .get();
+
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data['plot'] = plot;
+        allData.add(data);
+      }
     }
-    return "Invalid date";
+
+    setState(() {
+      sensorData = allData;
+    });
   }
 
-  // Generate and save CSV file
   Future<void> _downloadCSV() async {
-    if (sensorData.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("No data to download!"),
-      ));
-      return;
-    }
-
-    // Request permission for storage access
     var status = await Permission.storage.request();
     if (!status.isGranted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -78,9 +89,9 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
       return;
     }
 
-    // Prepare CSV data
     List<List<String>> csvData = [
       [
+        "Plot",
         "Date",
         "Time",
         "Avg Moisture",
@@ -94,46 +105,51 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     ];
 
     for (var data in sensorData) {
-      DateTime timestamp = data['timestamp'].toDate();
+      DateTime timestamp =
+          (data['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now();
       String date = DateFormat('MMMM d, yyyy').format(timestamp);
       String time = DateFormat('h:mm a').format(timestamp);
 
       csvData.add([
+        data['plot'] ?? "Unknown Plot",
         date,
         time,
-        "${data['average_moisture']}%",
-        "${data['humidity']}%",
-        "${data['temperature']}°C",
-        "${data['moisture_1']}",
-        "${data['moisture_2']}",
-        "${data['moisture_3']}",
-        "${data['moisture_4']}",
+        "${data['average_moisture'] ?? "N/A"}%",
+        "${data['humidity'] ?? "N/A"}%",
+        "${data['temperature'] ?? "N/A"}°C",
+        "${data['moisture_1'] ?? "N/A"}",
+        "${data['moisture_2'] ?? "N/A"}",
+        "${data['moisture_3'] ?? "N/A"}",
+        "${data['moisture_4'] ?? "N/A"}",
       ]);
     }
 
     String csvString = const ListToCsvConverter().convert(csvData);
 
-    try {
-      // Get the REAL Downloads folder
-      Directory? directory = Directory('/storage/emulated/0/Download');
-      if (!await directory.exists()) {
-        throw "Downloads folder not found";
-      }
-
-      String filePath = "${directory.path}/sensor_data_${selectedPlot}.csv";
-      File file = File(filePath);
-
-      // Write CSV data to file
-      await file.writeAsString(csvString);
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("CSV saved to Downloads: $filePath"),
-      ));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Error saving file: $e"),
-      ));
+    Directory? directory = Directory('/storage/emulated/0/Download');
+    if (!await directory.exists()) {
+      throw "Downloads folder not found";
     }
+
+    String fileName = selectedPlot == "All"
+        ? "all_plots_sensor_data.csv"
+        : "${selectedPlot}_sensor_data.csv";
+    String filePath = "${directory.path}/$fileName";
+    File file = File(filePath);
+
+    await file.writeAsString(csvString);
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("CSV saved to Downloads: $filePath"),
+    ));
+  }
+
+  String formatTimestamp(dynamic timestamp) {
+    if (timestamp is Timestamp) {
+      DateTime date = timestamp.toDate();
+      return DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
+    }
+    return "Invalid date";
   }
 
   @override
@@ -156,7 +172,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
           IconButton(
             icon: Icon(Icons.download),
             onPressed: _downloadCSV,
-          )
+          ),
         ],
       ),
       body: Column(
@@ -177,7 +193,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                   setState(() {
                     selectedPlot = value;
                   });
-                  _startListening();
+                  _fetchData();
                 }
               },
             ),
@@ -195,7 +211,6 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Date heading outside the cards
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 8.0, horizontal: 16.0),
@@ -207,8 +222,6 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                                   color: const Color.fromARGB(255, 0, 73, 39)),
                             ),
                           ),
-
-                          // List of sensor records under this date
                           ...records.map((data) {
                             return Card(
                               margin: EdgeInsets.symmetric(
@@ -219,32 +232,19 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      DateFormat('h:mm a').format(
-                                          data['timestamp']
-                                              .toDate()), // e.g., 3:00 PM
+                                      "${data['plot']} - ${DateFormat('h:mm a').format(data['timestamp'].toDate())}",
                                       style: TextStyle(
                                           fontSize: 17,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color.fromARGB(
-                                              255, 0, 0, 0)),
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    Divider(
-                                      color: const Color.fromARGB(
-                                          255, 115, 115, 115),
-                                      thickness: 1,
-                                    ),
+                                    Divider(),
                                     Text(
-                                        "Avg Moisture: ${data['average_moisture']}%",
-                                        style: TextStyle(fontSize: 14)),
-                                    Text("Humidity: ${data['humidity']}%",
-                                        style: TextStyle(fontSize: 14)),
+                                        "Avg Moisture: ${data['average_moisture']}%"),
+                                    Text("Humidity: ${data['humidity']}%"),
                                     Text(
-                                        "Temperature: ${data['temperature']}°C",
-                                        style: TextStyle(fontSize: 14)),
+                                        "Temperature: ${data['temperature']}°C"),
                                     Text(
-                                      "Moisture Sensors: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}",
-                                      style: TextStyle(fontSize: 14),
-                                    ),
+                                        "Moisture Sensors: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}"),
                                   ],
                                 ),
                               ),
