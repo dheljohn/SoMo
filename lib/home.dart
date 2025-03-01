@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
+import 'package:soil_monitoring_app/about.dart';
 import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
 import 'package:soil_monitoring_app/navBar.dart';
+import 'package:soil_monitoring_app/soilmoistures_info.dart';
+import 'package:soil_monitoring_app/tutorial.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,21 +19,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool showOverlay = true;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   final AppBar appBar = AppBar(
-    backgroundColor: const Color.fromARGB(255, 125, 171, 124),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(25),
-        bottomRight: Radius.circular(25),
-      ),
+    backgroundColor: const Color.fromARGB(255, 100, 122, 99),
+    iconTheme: const IconThemeData(
+      color: Color.fromARGB(255, 42, 83, 39),
     ),
-    iconTheme: const IconThemeData(color: Colors.white),
     title: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(width: 80),
         Image.asset(
           'assets/logo.png',
           width: 100,
@@ -41,7 +40,7 @@ class _HomeState extends State<Home> {
     ),
   );
 
-  int _currentIndex = 0;
+  int _currentIndex = 2;
   double humidity_v = 0.0;
   double temperature_v = 0.0;
   double moisture_a = 0.0;
@@ -59,7 +58,7 @@ class _HomeState extends State<Home> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       _fetchDataFromFirebase();
     });
   }
@@ -73,7 +72,7 @@ class _HomeState extends State<Home> {
   void _initializeNotifications() {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -101,17 +100,17 @@ class _HomeState extends State<Home> {
   }
 
   void _fetchDataFromFirebase() {
-    DatabaseReference _humidityRef =
+    DatabaseReference humidityRef =
         FirebaseDatabase.instance.ref().child('Humidity/humidity');
-    DatabaseReference _temperatureRef =
+    DatabaseReference temperatureRef =
         FirebaseDatabase.instance.ref().child('Temperature/temperature');
-    DatabaseReference _moistureAvgRef =
+    DatabaseReference moistureAvgRef =
         FirebaseDatabase.instance.ref().child('Moisture/Average');
-    DatabaseReference _moistureDataRef =
+    DatabaseReference moistureDataRef =
         FirebaseDatabase.instance.ref().child('Moisture');
 
     // Fetch Humidity
-    _humidityRef.once().then((event) {
+    humidityRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         humidity_v = value;
@@ -119,7 +118,7 @@ class _HomeState extends State<Home> {
     });
 
     // Fetch Temperature
-    _temperatureRef.once().then((event) {
+    temperatureRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         temperature_v = value;
@@ -127,22 +126,15 @@ class _HomeState extends State<Home> {
     });
 
     // Fetch Moisture Average
-    _moistureAvgRef.once().then((event) {
+    moistureAvgRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
       setState(() {
         moisture_a = value;
       });
-
-      // Check for Dry or Wet conditions
-      if (value < 40) {
-        _showNotification('Soil moisture is too dry! Consider watering.');
-      } else if (value > 80) {
-        _showNotification('Soil is too wet! Consider reducing watering.');
-      }
     });
 
     // Fetch Moisture Data
-    _moistureDataRef.once().then((event) {
+    moistureDataRef.once().then((event) {
       final value = event.snapshot.value as Map?;
       if (value != null) {
         double moisture1 =
@@ -165,11 +157,40 @@ class _HomeState extends State<Home> {
           moisture_s4 = moisture4;
         });
         // Check individual sensor readings
-        if (moisture1 < 40 ||
-            moisture2 < 40 ||
-            moisture3 < 40 ||
-            moisture4 < 40) {
-          _showNotification('One of the sensors detected dry soil.');
+        if (moisture1 < 40 && moisture1 >= 15 ||
+            moisture2 < 40 && moisture2 >= 15 ||
+            moisture3 < 40 && moisture3 >= 15 ||
+            moisture4 < 40 && moisture4 >= 15) {
+          if (moisture1 < 40) {
+            _showNotification('Sensor 1 detected dry soil.');
+          }
+          if (moisture2 < 40) {
+            _showNotification('Sensor 2 detected dry soil.');
+          }
+          if (moisture3 < 40) {
+            _showNotification('Sensor 3 detected dry soil.');
+          }
+          if (moisture4 < 40) {
+            _showNotification('Sensor 4 detected dry soil.');
+          }
+          // _showNotification('One of the sensors detected dry soil.');
+        } else if (moisture1 > 75 ||
+            moisture2 > 75 ||
+            //  moisture3 > 75 ||
+            moisture4 > 75) {
+          if (moisture1 > 75) {
+            _showNotification('Sensor 1 detected wet soil.');
+          }
+          if (moisture2 > 75) {
+            _showNotification('Sensor 2 detected wet soil.');
+          }
+          if (moisture3 > 75) {
+            _showNotification('Sensor 3 detected wet soil.');
+          }
+          if (moisture4 > 75) {
+            _showNotification('Sensor 4 detected wet soil.');
+          }
+          // _showNotification('One of the sensors detected wet soil.');
         }
       }
     });
@@ -178,45 +199,110 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return DataProvider(
-      humidityValue: humidity_v,
-      temperatureValue: temperature_v,
-      moistureA: moisture_a,
-      moistureS1: moisture_s1,
-      moistureS2: moisture_s2,
-      moistureS3: moisture_s3,
-      moistureS4: moisture_s4,
-      child: Scaffold(
-        drawer: navBar(),
-        appBar: appBar,
-        body: IndexedStack(
-          index: _currentIndex,
-          children: [const DashB(), SensorHistoryScreen()],
-        ),
-        bottomNavigationBar: MotionTabBar(
-          labels: ['Dashboard', 'History'],
-          initialSelectedTab: 'Dashboard',
-          icons: [Icons.dashboard, Icons.history],
-          tabSize: 50,
-          tabBarHeight: 60,
-          textStyle: TextStyle(
-            color: Color.fromARGB(255, 53, 51, 51),
-            fontWeight: FontWeight.bold,
+        humidityValue: humidity_v,
+        temperatureValue: temperature_v,
+        moistureA: moisture_a,
+        moistureS1: moisture_s1,
+        moistureS2: moisture_s2,
+        moistureS3: moisture_s3,
+        moistureS4: moisture_s4,
+        child: Scaffold(
+          appBar: appBar,
+          body: Stack(
+            children: [
+              IndexedStack(
+                index: _currentIndex,
+                children: [
+                  AboutPage(),
+                  TutorialScreen(),
+                  const DashB(),
+                  HistoryLogsScreen(),
+                  SoilMoistureInfo()
+                ],
+              ),
+            ],
           ),
-          tabIconColor: Colors.grey,
-          tabIconSelectedColor: Colors.white,
-          tabBarColor: Color.fromARGB(255, 255, 255, 255),
-          tabSelectedColor: const Color.fromARGB(255, 125, 171, 124),
-          onTabItemSelected: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-        ),
+          bottomNavigationBar: Container(
+            color: const Color.fromARGB(255, 247, 246, 237),
+            padding: const EdgeInsets.only(top: 8),
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(13, 13, 13, 8),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 100, 122, 99),
+                border: Border.all(
+                  color: Color.fromARGB(255, 42, 83, 39),
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  splashFactory: NoSplash.splashFactory,
+                ),
+                child: BottomNavigationBar(
+                  backgroundColor: Colors
+                      .transparent, // Keeps it transparent to show Container color
+                  elevation: 0,
+                  type: BottomNavigationBarType.fixed,
+                  selectedItemColor: const Color.fromARGB(255, 125, 171, 124),
+                  unselectedItemColor: Colors.white70,
+                  showSelectedLabels: false,
+                  showUnselectedLabels: false,
+                  currentIndex: _currentIndex,
+                  onTap: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: _buildIcon(Icons.info, 0, _currentIndex),
+                      label: 'About',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: _buildIcon(Icons.help, 1, _currentIndex),
+                      label: 'Tutorial',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: _buildIcon(Icons.dashboard, 2, _currentIndex),
+                      label: 'Dashboard',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: _buildIcon(Icons.history, 3, _currentIndex),
+                      label: 'History',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: _buildIcon(Icons.info, 4, _currentIndex),
+                      label: 'Info',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ));
+  }
+
+  Widget _buildIcon(IconData iconData, int index, int _currentIndex) {
+    bool isSelected = _currentIndex == index;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.white : Colors.transparent,
+        shape: BoxShape.circle, // Circle shape
+      ),
+      child: Icon(
+        iconData,
+        color: isSelected
+            ? const Color.fromARGB(255, 125, 171, 124)
+            : Colors.white, // Icon color
       ),
     );
   }
 
   navBar() {
-    return Navbar();
+    return const Navbar();
   }
 }

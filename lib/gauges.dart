@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart' as gauges;
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class Gauges extends StatelessWidget {
@@ -8,320 +7,139 @@ class Gauges extends StatelessWidget {
 
   const Gauges({required this.dataProvider, Key? key}) : super(key: key);
 
+  String getWarningMessage(double value) {
+    if (value <= 5) {
+      return 'No Deploy Sensor';
+    } else if (value == 15 || value <= 30) {
+      return 'Extremely Dry Soil!';
+    } else if (value == 30 || value < 45) {
+      return 'Well Drained Soil!';
+    } else if (value == 45 || value <= 75) {
+      return 'Moist Soil';
+    } else if (value > 75) {
+      return 'Wet Soil';
+    } else {
+      return '';
+    }
+  }
+
+  Color getWarningColor(double value) {
+    if (value <= 5) {
+      return Colors.grey;
+    } else if (value == 15 || value <= 30) {
+      return const Color.fromARGB(255, 253, 133, 124);
+    } else if (value == 30 || value < 45) {
+      return const Color.fromARGB(255, 236, 188, 66);
+    } else if (value == 45 || value <= 75) {
+      return const Color.fromARGB(255, 103, 172, 105);
+    } else if (value > 75) {
+      return const Color.fromARGB(255, 131, 174, 209);
+    } else {
+      return Colors.green;
+    }
+  }
+
+  Widget buildGauge(
+      BuildContext context, String title, double value, Color bgColor) {
+    return Container(
+      height: 120,
+      width: 160,
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color.fromARGB(255, 42, 83, 39)),
+        color: bgColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "$value%",
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 60,
+                width: 60,
+                child: SfRadialGauge(
+                  axes: <RadialAxis>[
+                    RadialAxis(
+                      radiusFactor: 0.7,
+                      showTicks: false,
+                      showLabels: false,
+                      minimum: 0,
+                      maximum: 100,
+                      pointers: <GaugePointer>[
+                        RangePointer(
+                          value: value,
+                          color: value < 30 && value >= 15
+                              ? const Color.fromARGB(255, 253, 133, 124)
+                              : value < 45
+                                  ? const Color.fromARGB(255, 236, 188, 66)
+                                  : value > 70
+                                      ? const Color.fromARGB(255, 131, 174, 209)
+                                      : const Color.fromARGB(255, 81, 129, 77),
+                          enableAnimation: true,
+                          cornerStyle: CornerStyle.bothCurve,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          Text(
+            getWarningMessage(value),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: getWarningColor(value),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-SizedBox(height: 50,),
+        const SizedBox(height: 5),
         Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Expanded(
-              child: Container(
-                height: 150,
-                child: SfRadialGauge(
-title: const GaugeTitle(
-                      text: 'Soil Moisture S1',
-                      textStyle: TextStyle(fontSize: 15)),
-                  axes: <RadialAxis>[
-                    RadialAxis(
-                      showTicks: false,
-                      showLabels: false,
-                      minimum: 0,
-                      maximum: 100,
-                      interval: 10,
-                      pointers: <GaugePointer>[
-                        RangePointer(
-                          value: dataProvider.moistureS1,
-                            color: Colors.blue,
-                            enableAnimation: true,
-                            cornerStyle: gauges.CornerStyle.bothCurve),
-                        if (dataProvider.moistureS1 < 30)
-                          RangePointer(
-                              value: dataProvider.moistureS1,
-                              color: Colors.blue,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve)
-                        else if (dataProvider.moistureS1 > 70)
-                          RangePointer(
-                              value: dataProvider.moistureS1,
-                              color: Colors.blue,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve)
-                        else
-                          RangePointer(
-                              value: dataProvider.moistureS1,
-
-                              color: Colors.green,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve),
-                      ],
-                      annotations: <GaugeAnnotation>[
-                        GaugeAnnotation(
-                          widget: Text(
-                             "${dataProvider.moistureS1}%",
-
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          positionFactor: 0.0,
-                          angle: 90,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                height: 150,
-                child: SfRadialGauge(
-                  title: const GaugeTitle(
-
-                      text: 'Soil Moisture S2',
-                      textStyle: TextStyle(fontSize: 15)),
-                  axes: <RadialAxis>[
-                    RadialAxis(
-                      showTicks: false,
-                      showLabels: false,
-                      minimum: 0,
-                      maximum: 100,
-                      interval: 10,
-                      pointers: <GaugePointer>[
-                        RangePointer(
-                            value: dataProvider.moistureS2,
-                            color: Colors.blue,
-                            enableAnimation: true,
-                            cornerStyle: gauges.CornerStyle.bothCurve),
-                        if (dataProvider.moistureS2 < 30)
-                          RangePointer(
-                              value: dataProvider.moistureS2,
-                              color: Colors.blue,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve)
-                        else if (dataProvider.moistureS2 > 70)
-                          RangePointer(
-                              value: dataProvider.moistureS2,
-                              color: Colors.blue,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve)
-                        else
-                          RangePointer(
-                              value: dataProvider.moistureS2,
-                              color: Colors.green,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve),
-                      ],
-                      annotations: <GaugeAnnotation>[
-                        GaugeAnnotation(
-                          widget: Text(
-                            "${dataProvider.moistureS2}%",
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          positionFactor: 0.0,
-                          angle: 90,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            buildGauge(context, 'Soil Moisture S1', dataProvider.moistureS1,
+                const Color.fromARGB(255, 191, 224, 198)),
+            buildGauge(context, 'Soil Moisture S2', dataProvider.moistureS2,
+                const Color.fromARGB(255, 235, 231, 208)),
           ],
         ),
-         Row(
-
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Expanded(
-              child: Container(
-                height: 150,
-                child: SfRadialGauge(
-                  title: const GaugeTitle(
-                      text: 'Soil Moisture S3',
-                      textStyle: TextStyle(fontSize: 15)),
-                  axes: <RadialAxis>[
-                    RadialAxis(
-                      showTicks: false,
-                      showLabels: false,
-                      minimum: 0,
-                      maximum: 100,
-                      interval: 10,
-                      pointers: <GaugePointer>[
-                        RangePointer(
-                            value: dataProvider.moistureS3,
-                            color: Colors.blue,
-                            enableAnimation: true,
-                            cornerStyle: gauges.CornerStyle.bothCurve),
-                        if (dataProvider.moistureS3 < 30)
-                          RangePointer(
-                              value: dataProvider.moistureS3,
-                              color: Colors.yellow,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve)
-                        else if (dataProvider.moistureS3 > 70)
-                          RangePointer(
-                              value: dataProvider.moistureS3,
-                              color: Colors.blue,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve)
-                        else
-                          RangePointer(
-                              value: dataProvider.moistureS3,
-                              color: Colors.green,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve),
-                      ],
-                      annotations: <GaugeAnnotation>[
-                        GaugeAnnotation(
-                          widget: Text(
-                            "${dataProvider.moistureS3}%",
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          positionFactor: 0.0,
-                          angle: 90,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                height: 150,
-                child: SfRadialGauge(
-                  title: const GaugeTitle(
-                      text: 'Soil Moisture S4',
-                      textStyle: TextStyle(fontSize: 15)),
-                  axes: <RadialAxis>[
-                    RadialAxis(
-                      showTicks: false,
-                      showLabels: false,
-                      minimum: 0,
-                      maximum: 100,
-                      interval: 10,
-                      pointers: <GaugePointer>[
-                        RangePointer(
-                            value: dataProvider.moistureS4,
-                            color: Colors.blue,
-                            enableAnimation: true,
-                            cornerStyle: gauges.CornerStyle.bothCurve),
-                        if (dataProvider.moistureS4 < 30)
-                          RangePointer(
-                              value: dataProvider.moistureS4,
-                              color: Colors.yellow,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve)
-                        else if (dataProvider.moistureS4 > 70)
-                          RangePointer(
-                              value: dataProvider.moistureS4,
-                              color: Colors.blue,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve)
-                        else
-                          RangePointer(
-                              value: dataProvider.moistureS4,
-                              color: Colors.green,
-                              enableAnimation: true,
-                              cornerStyle: gauges.CornerStyle.bothCurve),
-                      ],
-                      annotations: <GaugeAnnotation>[
-                        GaugeAnnotation(
-                          widget: Text(
-                            "${dataProvider.moistureS4}%",
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          positionFactor: 0.0,
-                          angle: 90,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            buildGauge(context, 'Soil Moisture S3', dataProvider.moistureS3,
+                const Color.fromARGB(255, 253, 252, 245)),
+            buildGauge(context, 'Soil Moisture S4', dataProvider.moistureS4,
+                Colors.orange.shade50),
           ],
         ),
-
-        SizedBox(height: 20,),
-        
-       Row(
-  mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
-  children: [
-    Container(
-      height: 70,
-      width: 110, 
-      decoration: BoxDecoration(
-        color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.blue),
-      ),
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Humidity',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            '${dataProvider.humidityValue}%',
-            style: TextStyle(fontSize: 18, color: Colors.blue),
-          ),
-        ],
-      ),
-    ),
-    SizedBox(width: 10), 
-    Container(
-      height: 70,
-      width: 110, 
-      decoration: BoxDecoration(
-        color: Colors.orange.shade50,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.orange),
-      ),
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Temperature',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            '${dataProvider.temperatureValue}°C',
-            style: TextStyle(fontSize: 18, color: Colors.orange),
-          ),
-        ],
-      ),
-    ),
-    SizedBox(width: 10), 
-    Container(
-      height: 70,
-      width: 110, 
-      decoration: BoxDecoration(
-        color: Colors.green.shade50,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.green),
-      ),
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Soil Moisture',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            '${dataProvider.moistureA}%',
-            style: TextStyle(fontSize: 18, color: Colors.green),
-          ),
-        ],
-      ),
-    ),
-  ],
-),
-
-
       ],
     );
   }

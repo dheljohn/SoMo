@@ -1,0 +1,2 @@
+C:/Users/valla/Pictures/SOMO V1/soil_monitoring_git/android/app/.cxx/Debug/u636w5p2/x86/CMakeFiles/edit_cache.dir
+C:/Users/valla/Pictures/SOMO V1/soil_monitoring_git/android/app/.cxx/Debug/u636w5p2/x86/CMakeFiles/rebuild_cache.dir
