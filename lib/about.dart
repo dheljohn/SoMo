@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/developer_page.dart';
+import 'package:soil_monitoring_app/soilmoistures_info.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -7,7 +8,7 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(48), // Reduced height
@@ -19,18 +20,24 @@ class AboutPage extends StatelessWidget {
               unselectedLabelColor: Color.fromARGB(200, 255, 255, 255),
               indicatorColor: Colors.white,
               tabs: [
+                Tab(text: "Soil Moisture\nLevels Scaling"),
                 Tab(text: "About"),
                 Tab(text: "Developers"),
               ],
             ),
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
             // First Tab (About)
+
+            SoilMoistureInfo(),
+
+            // Second Tab (About app)
+
             AboutTab(),
 
-            // Second Tab (Calla - Placeholder)
+            // third Tab (Developers)
             DeveloperPage(),
           ],
         ),
