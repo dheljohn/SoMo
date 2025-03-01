@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +12,46 @@ class HistoryDisplay extends StatefulWidget {
 class _HistoryDisplayState extends State<HistoryDisplay> {
   String selectedPlot = "Plot1"; // Default plot
   final List<String> plots = ["Plot1", "Plot2", "Plot3"];
+  List<Map<String, dynamic>> sensorData = [];
+  StreamSubscription<QuerySnapshot>? _sensorSubscription; // Nullable
+
+  @override
+  void initState() {
+    super.initState();
+    _startListening();
+  }
+
+  void _startListening() {
+    print("Listening to: $selectedPlot");
+
+    _sensorSubscription
+        ?.cancel(); // Cancel existing listener before starting a new one
+    _sensorSubscription = FirebaseFirestore.instance
+        .collection("Plots")
+        .doc(selectedPlot)
+        .collection("sensorData")
+        .orderBy("timestamp", descending: true)
+        .snapshots()
+        .listen((snapshot) {
+      print("Data received: ${snapshot.docs.length} documents");
+
+      if (mounted) {
+        setState(() {
+          sensorData = snapshot.docs
+              .map((doc) => doc.data() as Map<String, dynamic>)
+              .toList();
+        });
+      }
+    }, onError: (error) {
+      print("Firestore Error: $error");
+    });
+  }
+
+  @override
+  void dispose() {
+    _sensorSubscription?.cancel();
+    super.dispose();
+  }
 
   String formatTimestamp(dynamic timestamp) {
     if (timestamp is Timestamp) {
@@ -21,15 +63,6 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, List<DocumentSnapshot>> groupedLogs = {};
-    for (var log in _logs) {
-      String date = _formatDate(log['timestamp']);
-      if (!groupedLogs.containsKey(date)) {
-        groupedLogs[date] = [];
-      }
-      groupedLogs[date]!.add(log);
-    }
-
     return Scaffold(
       appBar: AppBar(title: Text("Sensor Data History")),
       body: Column(
@@ -46,58 +79,44 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                 );
               }).toList(),
               onChanged: (value) {
-                setState(() {
-                  selectedPlot = value!;
-                });
+                if (value != null) {
+                  setState(() {
+                    selectedPlot = value;
+                  });
+                  _startListening(); // Restart listener after setting state
+                }
               },
             ),
           ),
 
-          // Stream Builder to fetch data
+          // Display Sensor Data
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("Plots")
-                  .doc(selectedPlot)
-                  .collection("sensorData")
-                  .orderBy("timestamp", descending: true) // Sort by timestamp
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text("No data available"));
-                }
+            child: sensorData.isEmpty
+                ? Center(child: Text("No data available"))
+                : ListView.builder(
+                    itemCount: sensorData.length,
+                    itemBuilder: (context, index) {
+                      var data = sensorData[index];
 
-                var sensorDocs = snapshot.data!.docs;
-
-                return ListView.builder(
-                  itemCount: sensorDocs.length,
-                  itemBuilder: (context, index) {
-                    var data = sensorDocs[index].data() as Map<String, dynamic>;
-
-                    return Card(
-                      margin: EdgeInsets.all(8),
-                      child: ListTile(
-                        title: Text(
-                            "Timestamp: ${formatTimestamp(data['timestamp'])}"),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Avg Moisture: ${data['average_moisture']}"),
-                            Text("Humidity: ${data['humidity']}"),
-                            Text("Temp: ${data['temperature']}°C"),
-                            Text(
-                                "Moisture Sensors: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}"),
-                          ],
+                      return Card(
+                        margin: EdgeInsets.all(8),
+                        child: ListTile(
+                          title: Text(
+                              "Timestamp: ${formatTimestamp(data['timestamp'])}"),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Avg Moisture: ${data['average_moisture']}"),
+                              Text("Humidity: ${data['humidity']}"),
+                              Text("Temp: ${data['temperature']}°C"),
+                              Text(
+                                  "Moisture Sensors: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}"),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
