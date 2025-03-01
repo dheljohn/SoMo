@@ -215,7 +215,7 @@ class _HomeState extends State<Home> {
                   AboutPage(),
                   TutorialScreen(),
                   const DashB(),
-                  HistoryLogsScreen(),
+                  HistoryDisplay(),
                   SoilMoistureInfo()
                 ],
               ),
