@@ -9,33 +9,36 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _circleAnimation;
-  late Animation<double> _logoOpacity;
+  bool _showGif = false; // Initially hide GIF
 
   @override
   void initState() {
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(seconds: 4),
+      duration: const Duration(milliseconds: 2500), // Smooth transition time
       vsync: this,
     );
 
     _circleAnimation = Tween<double>(begin: 0.0, end: 3.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-
-    _logoOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0.7, 1.0, curve: Curves.easeIn)),
+      CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
     );
 
     _controller.forward();
 
-    // Navigate to Home after 10 seconds
-    Future.delayed(const Duration(seconds: 10), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Home()),
-      );
+    // Start GIF animation AFTER the circle transition completes (2.5s delay)
+    Future.delayed(const Duration(milliseconds: 2500), () {
+      setState(() {
+        _showGif = true; // Show GIF after circle animation
+      });
+
+      // Navigate to Home after GIF animation completes (6s)
+      Future.delayed(const Duration(seconds: 6), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
+      });
     });
   }
 
@@ -53,39 +56,32 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         builder: (context, child) {
           double screenSize = MediaQuery.of(context).size.width * 3;
           double circleSize = screenSize * _circleAnimation.value;
-          
+
           return Stack(
             children: [
-              // Expanding white circle that eventually covers the screen
               Container(
-                color: _circleAnimation.value >= 1.0 
-                    ? const Color.fromARGB(255, 247, 246, 237) // Circle color takes over
-                    : const Color.fromARGB(255, 100, 122, 99), // Initial background color
+                color: _circleAnimation.value >= 1.0
+                    ? const Color.fromARGB(255, 247, 246, 237) // Background turns white
+                    : const Color.fromARGB(255, 100, 122, 99),
               ),
-
               Center(
-                child: ClipOval(
-                  child: Container(
-                    width: circleSize,
-                    height: circleSize,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 247, 246, 237), // Circle color
-                      shape: BoxShape.circle,
-                    ),
+                child: Container(
+                  width: circleSize,
+                  height: circleSize,
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 247, 246, 237),
+                    shape: BoxShape.circle,
                   ),
                 ),
               ),
-
-              // Logo fades in and stays on the last GIF frame
               Center(
-                child: Opacity(
-                  opacity: _logoOpacity.value,
-                  child: Image.asset(
-                    'assets/LOGO.gif',
-                    width: 250,
-                    height: 250,
-                  ),
-                ),
+                child: _showGif // Only show GIF after the circle transition
+                    ? Image.asset(
+                        'assets/LOGO.gif',
+                        width: 250,
+                        height: 250,
+                      )
+                    : const SizedBox(), // Hide GIF initially
               ),
             ],
           );
