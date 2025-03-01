@@ -9,7 +9,7 @@ class Gauges extends StatelessWidget {
 
   String getWarningMessage(double value) {
     if (value <= 5) {
-      return 'No Deploy Sensor';
+      return 'Sensor not deployed';
     } else if (value == 15 || value <= 30) {
       return 'Extremely Dry Soil!';
     } else if (value == 30 || value < 45) {
@@ -119,28 +119,30 @@ class Gauges extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 5),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            buildGauge(context, 'Soil Moisture S1', dataProvider.moistureS1,
-                const Color.fromARGB(255, 191, 224, 198)),
-            buildGauge(context, 'Soil Moisture S2', dataProvider.moistureS2,
-                const Color.fromARGB(255, 235, 231, 208)),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            buildGauge(context, 'Soil Moisture S3', dataProvider.moistureS3,
-                const Color.fromARGB(255, 253, 252, 245)),
-            buildGauge(context, 'Soil Moisture S4', dataProvider.moistureS4,
-                Colors.orange.shade50),
-          ],
-        ),
-      ],
+    return Center(
+      child: Column(
+        children: [
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildGauge(context, 'Soil Moisture S1', dataProvider.moistureS1,
+                  const Color.fromARGB(255, 191, 224, 198)),
+              buildGauge(context, 'Soil Moisture S2', dataProvider.moistureS2,
+                  const Color.fromARGB(255, 235, 231, 208)),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildGauge(context, 'Soil Moisture S3', dataProvider.moistureS3,
+                  const Color.fromARGB(255, 253, 252, 245)),
+              buildGauge(context, 'Soil Moisture S4', dataProvider.moistureS4,
+                  Colors.orange.shade50),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

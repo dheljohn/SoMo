@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
     ),
   );
 
-  int _currentIndex = 2;
+  int _currentIndex = 0;
   double humidity_v = 0.0;
   double temperature_v = 0.0;
   double moisture_a = 0.0;
@@ -213,11 +213,10 @@ class _HomeState extends State<Home> {
               IndexedStack(
                 index: _currentIndex,
                 children: [
-                  AboutPage(),
-                  TutorialScreen(),
                   const DashB(),
+                  TutorialScreen(),
                   HistoryDisplay(),
-                  SoilMoistureInfo()
+                  AboutPage(),
                 ],
               ),
             ],
@@ -256,24 +255,32 @@ class _HomeState extends State<Home> {
                   },
                   items: [
                     BottomNavigationBarItem(
-                      icon: _buildIcon(Icons.info, 0, _currentIndex),
-                      label: 'About',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: _buildIcon(Icons.help, 1, _currentIndex),
-                      label: 'Tutorial',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: _buildIcon(Icons.dashboard, 2, _currentIndex),
+                      icon: Tooltip(
+                        message: 'Dashboard',
+                        child: _buildIcon(Icons.dashboard, 0, _currentIndex),
+                      ),
                       label: 'Dashboard',
                     ),
                     BottomNavigationBarItem(
-                      icon: _buildIcon(Icons.history, 3, _currentIndex),
+                      icon: Tooltip(
+                        message: 'Tutorial',
+                        child: _buildIcon(Icons.help, 1, _currentIndex),
+                      ),
+                      label: 'Tutorial',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Tooltip(
+                        message: 'History',
+                        child: _buildIcon(Icons.history, 2, _currentIndex),
+                      ),
                       label: 'History',
                     ),
                     BottomNavigationBarItem(
-                      icon: _buildIcon(Icons.info, 4, _currentIndex),
-                      label: 'Info',
+                      icon: Tooltip(
+                        message: 'About',
+                        child: _buildIcon(Icons.info, 3, _currentIndex),
+                      ),
+                      label: 'About',
                     ),
                   ],
                 ),

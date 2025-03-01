@@ -411,7 +411,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
             SizedBox(height: screenHeight * 0.01),
             Center(
               child: Container(
-                width: screenWidth * 0.85,
+                width: screenWidth * 0.90,
                 padding: EdgeInsets.all(screenWidth * 0.03),
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 255, 255, 240),
