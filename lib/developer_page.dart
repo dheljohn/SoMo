@@ -94,13 +94,7 @@ class _DeveloperPageState extends State<DeveloperPage> {
                   controller: _pageController,
                   scrollDirection: Axis.horizontal,
                   itemCount: developers.length,
-                  onPageChanged: (index) {
-                    if (index == developers.length - 1) {
-                      Future.delayed(Duration(milliseconds: 300), () {
-                        _pageController.jumpToPage(0);
-                      });
-                    }
-                  },
+                 
                   itemBuilder: (context, index) {
                     final developer = developers[index];
                     return Center(
