@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
@@ -20,10 +21,26 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
   bool _showScrollIndicator = true;
+  String? selectedPlot;
 
   @override
   void initState() {
     super.initState();
+    DatabaseReference ref =
+        FirebaseDatabase.instance.ref("SelectedPlot/plotName");
+
+    ref.onValue.listen((event) {
+      final data = event.snapshot.value;
+      if (data != null) {
+        setState(() {
+          selectedPlot = data.toString();
+        });
+      } else {
+        print("No data found in Firebase!");
+      }
+    }, onError: (error) {
+      print("Firebase error: $error");
+    });
 
     // _fetchWeather();
 
@@ -48,116 +65,6 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   String _getFormattedDate() {
     return DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
   }
-
-  // Future<void> _fetchWeather() async {
-  //   try {
-  //     // Step 1: Check Location Permission
-  //     LocationPermission permission = await Geolocator.checkPermission();
-  //     debugPrint("Location Permission Status: $permission");
-
-  //     if (permission == LocationPermission.denied ||
-  //         permission == LocationPermission.deniedForever) {
-  //       permission = await Geolocator.requestPermission();
-  //       debugPrint("New Location Permission Status: $permission");
-
-  //       if (permission == LocationPermission.denied ||
-  //           permission == LocationPermission.deniedForever) {
-  //         setState(() {
-  //           _weather = 'Location permission denied';
-  //         });
-  //         debugPrint("Error: Location permission denied by user");
-  //         return;
-  //       }
-  //     }
-
-  //     // Step 2: Get Current Position
-  //     Position position = await Geolocator.getCurrentPosition(
-  //         desiredAccuracy: LocationAccuracy.high);
-  //     double lat = position.latitude;
-  //     double lon = position.longitude;
-
-  //     debugPrint("Fetched Location: Latitude: $lat, Longitude: $lon");
-
-  //     // Step 3: Call Weather API
-  //     String url =
-  //         'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true';
-  //     debugPrint("Weather API Request URL: $url");
-
-  //     var response = await http.get(Uri.parse(url));
-
-  //     // Step 4: Handle API Response
-  //     debugPrint("Weather API Response: ${response.body}");
-
-  //     if (response.statusCode == 200) {
-  //       var data = json.decode(response.body);
-
-  //       if (data.containsKey('current_weather')) {
-  //         int weatherCode = data['current_weather']['weathercode'];
-  //         double temperature = data['current_weather']['temperature'];
-
-  //         setState(() {
-  //           _weather = '$temperature°C, ${_getWeatherDescription(weatherCode)}';
-  //         });
-
-  //         debugPrint("Weather Data: $_weather");
-  //       } else {
-  //         setState(() {
-  //           _weather = 'Invalid response from API';
-  //         });
-  //         debugPrint("Error: Unexpected API response structure");
-  //       }
-  //     } else {
-  //       setState(() {
-  //         _weather = 'Unable to fetch weather';
-  //       });
-  //       debugPrint(
-  //           "Weather API error: ${response.statusCode} - ${response.body}");
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       _weather = 'Error fetching weather';
-  //     });
-  //     debugPrint("Exception occurred: $e");
-  //   }
-  // }
-
-  // void _showLocationDisabledDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text("Location Services Disabled"),
-  //         content: const Text(
-  //             "Please enable location services in your device settings to fetch weather updates."),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () => Navigator.pop(context),
-  //             child: const Text("OK"),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
-  // void _showPermissionDeniedDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text("Location Permission Denied"),
-  //         content: const Text(
-  //             "This app needs location permission to fetch weather data. Please enable it in settings."),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () => Navigator.pop(context),
-  //             child: const Text("OK"),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   String _getWeatherDescription(int weatherCode) {
     switch (weatherCode) {
@@ -252,6 +159,58 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              children: [
+                Text("You are currently monitoring the plot: ",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    )),
+                Text(
+                  selectedPlot ?? "Loading...",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+                SizedBox(width: screenWidth * 0.07),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PlotSelection()),
+                      );
+                    },
+                    child: Container(
+                      height: 30,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 4, horizontal: 6),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 247, 246, 237),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                            color: Color.fromARGB(255, 100, 122, 99), width: 2),
+                      ),
+                      child: const Text(
+                        "Select Plot",
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 100, 122, 99),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'Roboto',
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
             SizedBox(height: screenHeight * 0.02),
             // Date Container
             Container(
@@ -293,130 +252,10 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                     ],
                   ),
                   SizedBox(width: screenWidth * 0.01),
-                  // Humidity & Temperature Container
-                  // Container(
-                  //   width: screenWidth * 0.45,
-                  //   padding: EdgeInsets.all(screenWidth * 0.03),
-                  //   decoration: BoxDecoration(
-                  //     color: const Color.fromARGB(255, 255, 255, 240),
-                  //     borderRadius: BorderRadius.circular(10),
-                  //     boxShadow: [
-                  //       BoxShadow(
-                  //         color: Colors.black.withOpacity(0.1),
-                  //         blurRadius: 5,
-                  //         spreadRadius: 2,
-                  //       ),
-                  //     ],
-                  //   ),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.start,
-                  //     children: [
-                  //       // Humidity Section
-                  //       Column(
-                  //         children: [
-                  //           const Text(
-                  //             'Humidity',
-                  //             style: TextStyle(
-                  //               fontSize: 10,
-                  //               fontWeight: FontWeight.bold,
-                  //               color: Colors.black,
-                  //             ),
-                  //           ),
-                  //           Row(
-                  //             children: [
-                  //               Icon(
-                  //                 Icons.water_drop,
-                  //                 color: getTextColor(
-                  //                     'humidity', dataProvider.humidityValue),
-                  //                 size: screenWidth * 0.05,
-                  //               ),
-                  //               SizedBox(width: screenWidth * 0.00),
-                  //               Text(
-                  //                 '${dataProvider.humidityValue}%',
-                  //                 style: TextStyle(
-                  //                   fontSize: screenWidth * 0.045,
-                  //                   fontWeight: FontWeight.bold,
-                  //                   color: getTextColor(
-                  //                       'humidity', dataProvider.humidityValue),
-                  //                 ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ],
-                  //       ),
-                  //       // Temperature Section
-                  //       Column(
-                  //         children: [
-                  //           const Text(
-                  //             'Temperature',
-                  //             style: TextStyle(
-                  //               fontSize: 10,
-                  //               fontWeight: FontWeight.bold,
-                  //               color: Colors.black,
-                  //             ),
-                  //           ),
-                  //           Row(
-                  //             children: [
-                  //               Icon(
-                  //                 Icons.thermostat,
-                  //                 color: getTextColor('temperature',
-                  //                     dataProvider.temperatureValue),
-                  //                 size: screenWidth * 0.05,
-                  //               ),
-                  //               SizedBox(width: screenWidth * 0.00),
-                  //               Text(
-                  //                 '${dataProvider.temperatureValue}°C',
-                  //                 style: TextStyle(
-                  //                   fontSize: screenWidth * 0.045,
-                  //                   fontWeight: FontWeight.bold,
-                  //                   color: getTextColor('temperature',
-                  //                       dataProvider.temperatureValue),
-                  //                 ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                 ],
               ),
             ),
             SizedBox(height: screenHeight * 0.02),
-
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PlotSelection()),
-                  );
-                },
-                child: Container(
-                  height: 30,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 247, 246, 237),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                        color: Color.fromARGB(255, 100, 122, 99), width: 2),
-                  ),
-                  child: const Text(
-                    "Select Plot",
-                    style: TextStyle(
-                      color: const Color.fromARGB(255, 100, 122, 99),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'Roboto',
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ),
-              ),
-            ),
 
             SizedBox(height: screenHeight * 0.00),
 
