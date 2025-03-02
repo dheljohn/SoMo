@@ -65,6 +65,8 @@ dependencies:
   geocoding: ^2.1.0
   chewie: ^1.7.4
   flutter_gif: ^0.0.4
+  shared_preferences: ^2.5.2
+  smooth_page_indicator: ^1.2.1
   
   
 
@@ -103,6 +105,7 @@ flutter:
     - assets/linked.png
     - assets/fb.png
     - assets/LOGO.gif
+    - assets/app.jpg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
