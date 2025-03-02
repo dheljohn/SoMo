@@ -35,6 +35,10 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
   final List<String> plots = ["All", "Plot1", "Plot2", "Plot3"];
   List<Map<String, dynamic>> sensorData = [];
   StreamSubscription<QuerySnapshot>? _sensorSubscription;
+  DateTime? startDate;
+  DateTime? endDate;
+  String selectedSortOrder = "Descending"; // Default sort order
+  String selectedFilter = "None"; // Default filter
 
   @override
   void initState() {
@@ -69,6 +73,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
           data['plot'] = plot; // Add plot name
           return data;
         }).toList();
+        _filterAndSortData();
       });
     }, onError: (error) {
       print("Firestore Error: $error");
@@ -95,7 +100,78 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
 
     setState(() {
       sensorData = allData;
+      _filterAndSortData();
     });
+  }
+
+  void _filterAndSortData() {
+    List<Map<String, dynamic>> filteredData = List.from(sensorData);
+
+    if (startDate != null && endDate != null) {
+      filteredData = filteredData.where((data) {
+        DateTime timestamp = (data['timestamp'] as Timestamp).toDate();
+        return timestamp.isAfter(startDate!) && timestamp.isBefore(endDate!);
+      }).toList();
+    }
+
+    if (selectedFilter != "None") {
+      filteredData = filteredData.where((data) {
+        double value;
+        switch (selectedFilter) {
+          case "High Moisture":
+            value = data['average_moisture'];
+            return value > 60;
+          case "Low Moisture":
+            value = data['average_moisture'];
+            return value < 30;
+          case "High Temperature":
+            value = data['temperature'];
+            return value > 30;
+          case "Low Temperature":
+            value = data['temperature'];
+            return value < 15;
+          case "High Humidity":
+            value = data['humidity'];
+            return value > 70;
+          case "Low Humidity":
+            value = data['humidity'];
+            return value < 40;
+          case "None":
+          default:
+            return true;
+        }
+      }).toList();
+    }
+
+    filteredData.sort((a, b) {
+      DateTime dateA = (a['timestamp'] as Timestamp).toDate();
+      DateTime dateB = (b['timestamp'] as Timestamp).toDate();
+      return selectedSortOrder == "Ascending"
+          ? dateA.compareTo(dateB)
+          : dateB.compareTo(dateA);
+    });
+
+    setState(() {
+      sensorData = filteredData;
+    });
+  }
+
+  Future<void> _selectDateRange(BuildContext context) async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      initialDateRange: startDate != null && endDate != null
+          ? DateTimeRange(start: startDate!, end: endDate!)
+          : null,
+    );
+    if (picked != null) {
+      setState(() {
+        startDate = picked.start;
+        endDate = picked.end;
+      });
+      _fetchData();
+    }
   }
 
   Future<void> _downloadCSV() async {
@@ -199,6 +275,50 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     );
   }
 
+  Widget buildFilterDropdown() {
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.filter_list),
+      onSelected: (value) {
+        setState(() {
+          selectedFilter = value;
+        });
+        _fetchData();
+      },
+      itemBuilder: (BuildContext context) {
+        return [
+          PopupMenuItem(
+            value: "None",
+            child: Text("None"),
+          ),
+          PopupMenuItem(
+            value: "High Moisture",
+            child: Text("High Moisture"),
+          ),
+          PopupMenuItem(
+            value: "Low Moisture",
+            child: Text("Low Moisture"),
+          ),
+          PopupMenuItem(
+            value: "High Temperature",
+            child: Text("High Temperature"),
+          ),
+          PopupMenuItem(
+            value: "Low Temperature",
+            child: Text("Low Temperature"),
+          ),
+          PopupMenuItem(
+            value: "High Humidity",
+            child: Text("High Humidity"),
+          ),
+          PopupMenuItem(
+            value: "Low Humidity",
+            child: Text("Low Humidity"),
+          ),
+        ];
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Map<String, List<Map<String, dynamic>>> groupedData = {};
@@ -239,26 +359,65 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
         ],
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Dropdown for selecting plots
-          Padding(
+          // Date Range Picker
+          Container(
             padding: const EdgeInsets.all(8.0),
-            child: DropdownButton<String>(
-              value: selectedPlot,
-              items: plots.map((plot) {
-                return DropdownMenuItem(
-                  value: plot,
-                  child: Text(plot),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    selectedPlot = value;
-                  });
-                  _fetchData();
-                }
-              },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Dropdown for selecting plots
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButton<String>(
+                    value: selectedPlot,
+                    items: plots.map((plot) {
+                      return DropdownMenuItem(
+                        value: plot,
+                        child: Text(plot),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          selectedPlot = value;
+                        });
+                        _fetchData();
+                      }
+                    },
+                  ),
+                ),
+                // Dropdown for sorting order
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButton<String>(
+                    value: selectedSortOrder,
+                    items: ["Ascending", "Descending"].map((order) {
+                      return DropdownMenuItem(
+                        value: order,
+                        child: Text(order),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          selectedSortOrder = value;
+                        });
+                        _filterAndSortData();
+                      }
+                    },
+                  ),
+                ),
+                // Dropdown for filtering
+                buildFilterDropdown(),
+                Flexible(
+                  child: IconButton(
+                    icon: Icon(Icons.date_range),
+                    onPressed: () => _selectDateRange(context),
+                  ),
+                ),
+              ],
             ),
           ),
 
