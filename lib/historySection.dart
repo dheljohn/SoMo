@@ -524,7 +524,8 @@ class SensorDetailScreen extends StatelessWidget {
             Text("Moisture Sensor 1: ${sensorData['moisture_1']}%"),
             Text("Moisture Sensor 2: ${sensorData['moisture_2']}%"),
             Text("Moisture Sensor 3: ${sensorData['moisture_3']}%"),
-            Text("Moisture Sensor 4: ${sensorData['moisture_4']}%"),
+            Text(
+                "Moisture Sensor 4: ${sensorData['moisture_4']}%"), //lagay comment pang push sa bagong branch
           ],
         ),
       ),
