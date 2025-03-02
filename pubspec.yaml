@@ -66,6 +66,7 @@ dependencies:
   geocoding: ^2.1.0
   chewie: ^1.7.4
   flutter_gif: ^0.0.4
+  connectivity_plus: ^6.1.3
 
   
   

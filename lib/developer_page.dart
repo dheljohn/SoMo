@@ -51,7 +51,7 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
     {
-      'name': 'Marvin ',
+      'name': 'Jon Marvin ',
       'role': 'Project Manager',
       'description':
           'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',

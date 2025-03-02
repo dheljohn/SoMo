@@ -5,6 +5,7 @@ import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
 import 'package:soil_monitoring_app/helpmsg.dart';
 import 'package:soil_monitoring_app/plot_selection_page.dart';
+import 'package:soil_monitoring_app/wifiStat.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -290,6 +291,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                           fontSize: screenWidth * 0.04,
                         ),
                       ),
+                      WifiStatus(),
                     ],
                   ),
                   SizedBox(width: screenWidth * 0.01),
