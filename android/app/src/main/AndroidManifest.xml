@@ -19,7 +19,7 @@ xmlns:tools="https://schemas.android.com/tools"
     
         android:label="SOMO"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/somo">
          <provider
     android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
     android:authorities="${applicationId}.flutter_downloader.provider"
