@@ -1,9 +1,5 @@
-import 'dart:convert';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
@@ -28,7 +24,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-dashb-plot
+
     // _fetchWeather();
 
     super.initState();
@@ -52,7 +48,6 @@ dashb-plot
   String _getFormattedDate() {
     return DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
   }
-
 
   // Future<void> _fetchWeather() async {
   //   try {
@@ -164,7 +159,6 @@ dashb-plot
   //   );
   // }
 
-
   String _getWeatherDescription(int weatherCode) {
     switch (weatherCode) {
       case 0:
@@ -258,9 +252,6 @@ dashb-plot
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-          
-
             SizedBox(height: screenHeight * 0.02),
             // Date Container
             Container(
@@ -390,42 +381,42 @@ dashb-plot
                   //   ),
                   // ),
                 ],
-
               ),
             ),
-                        SizedBox(height: screenHeight * 0.02),
+            SizedBox(height: screenHeight * 0.02),
 
-       Align(
-  alignment: Alignment.centerRight, 
-  child: GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PlotSelection()),
-      );
-    },
-    child: Container(
-      height: 30,
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 247, 246, 237),
-        borderRadius: BorderRadius.circular(8), 
-        border: Border.all( color:  Color.fromARGB(255, 100, 122, 99), width: 2),
-      ),
-      child: const Text(
-        "Select Plot",
-        style: TextStyle(
-          color: const Color.fromARGB(255, 100, 122, 99),
-          fontSize: 12, 
-          fontWeight: FontWeight.w700,
-          fontFamily: 'Roboto', 
-          letterSpacing: 1.2, 
-        ),
-      ),
-    ),
-  ),
-),
-
+            Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PlotSelection()),
+                  );
+                },
+                child: Container(
+                  height: 30,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 247, 246, 237),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                        color: Color.fromARGB(255, 100, 122, 99), width: 2),
+                  ),
+                  child: const Text(
+                    "Select Plot",
+                    style: TextStyle(
+                      color: const Color.fromARGB(255, 100, 122, 99),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Roboto',
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
 
             SizedBox(height: screenHeight * 0.00),
 
@@ -560,7 +551,6 @@ dashb-plot
                 ),
               ),
             ),
-
           ],
         ),
       ),
@@ -575,6 +565,4 @@ dashb-plot
       fit: BoxFit.contain,
     );
   }
-
 }
-

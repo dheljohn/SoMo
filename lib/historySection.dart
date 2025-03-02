@@ -7,6 +7,24 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+String interpretMoisture(double moisture) {
+  if (moisture < 30) return "Low (Soil is dry, needs watering)";
+  if (moisture < 60) return "Moderate (Soil is moist, good condition)";
+  return "High (Soil is very wet, avoid overwatering)";
+}
+
+String interpretTemperature(double temp) {
+  if (temp < 15) return "Cold (Risk of frost)";
+  if (temp < 30) return "Optimal (Good growing conditions)";
+  return "Hot (Plants may need extra water)";
+}
+
+String interpretHumidity(double humidity) {
+  if (humidity < 40) return "Low (Dry air, may cause dehydration)";
+  if (humidity < 70) return "Moderate (Ideal conditions)";
+  return "High (Risk of fungal growth)";
+}
+
 class HistoryDisplay extends StatefulWidget {
   @override
   _HistoryDisplayState createState() => _HistoryDisplayState();
@@ -152,6 +170,35 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     return "Invalid date";
   }
 
+  Widget moistureIndicator(double moisture) {
+    Color color;
+    String interpretation;
+
+    if (moisture < 30) {
+      color = Colors.red;
+      interpretation = "Low (Soil is dry, needs watering)";
+    } else if (moisture < 60) {
+      color = Colors.orange;
+      interpretation = "Moderate (Soil is moist, good condition)";
+    } else {
+      color = Colors.green;
+      interpretation = "High (Soil is very wet, avoid overwatering)";
+    }
+
+    return Row(
+      children: [
+        Icon(Icons.circle, color: color, size: 14),
+        SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            "Moisture: $moisture% - $interpretation",
+            style: TextStyle(color: color, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Map<String, List<Map<String, dynamic>>> groupedData = {};
@@ -163,6 +210,22 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
         groupedData[dateKey] = [];
       }
       groupedData[dateKey]!.add(data);
+    }
+
+    Color getMoistureColor(double moisture) {
+      if (moisture < 30) return Colors.red; // Dry
+      if (moisture < 60) return Colors.orange; // Moderate
+      return Colors.green; // Good
+    }
+
+    Widget moistureIndicator(double moisture) {
+      return Row(
+        children: [
+          Text("Moisture: $moisture%"),
+          SizedBox(width: 5),
+          Icon(Icons.circle, color: getMoistureColor(moisture), size: 14),
+        ],
+      );
     }
 
     return Scaffold(
@@ -223,29 +286,42 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                             ),
                           ),
                           ...records.map((data) {
-                            return Card(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "${data['plot']} - ${DateFormat('h:mm a').format(data['timestamp'].toDate())}",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Divider(),
-                                    Text(
-                                        "Avg Moisture: ${data['average_moisture']}%"),
-                                    Text("Humidity: ${data['humidity']}%"),
-                                    Text(
-                                        "Temperature: ${data['temperature']}°C"),
-                                    Text(
-                                        "Moisture Sensors: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}"),
-                                  ],
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        SensorDetailScreen(sensorData: data),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${data['plot']} - ${DateFormat('h:mm a').format(data['timestamp'].toDate())}",
+                                        style: TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Divider(),
+                                      moistureIndicator(
+                                          data['average_moisture']),
+                                      Text(
+                                          "Temperature: ${data['temperature']}°C - ${interpretTemperature(data['temperature'])}"),
+                                      Text(
+                                          "Humidity: ${data['humidity']}% - ${interpretHumidity(data['humidity'])}"),
+                                      Text(
+                                          "Moisture Sensors: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}"),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
@@ -256,6 +332,42 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                   ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SensorDetailScreen extends StatelessWidget {
+  final Map<String, dynamic> sensorData;
+
+  SensorDetailScreen({required this.sensorData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Sensor Details")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Plot: ${sensorData['plot']}",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+                "Timestamp: ${DateFormat('yyyy-MM-dd h:mm a').format(sensorData['timestamp'].toDate())}"),
+            SizedBox(height: 10),
+            Text(
+                "Temperature: ${sensorData['temperature']}°C - ${interpretTemperature(sensorData['temperature'])}"),
+            Text(
+                "Humidity: ${sensorData['humidity']}% - ${interpretHumidity(sensorData['humidity'])}"),
+            SizedBox(height: 10),
+            Text("Average Moisture: ${sensorData['average_moisture']}%"),
+            Text("Moisture Sensor 1: ${sensorData['moisture_1']}%"),
+            Text("Moisture Sensor 2: ${sensorData['moisture_2']}%"),
+            Text("Moisture Sensor 3: ${sensorData['moisture_3']}%"),
+            Text("Moisture Sensor 4: ${sensorData['moisture_4']}%"),
+          ],
+        ),
       ),
     );
   }
