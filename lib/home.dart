@@ -158,26 +158,26 @@ class _HomeState extends State<Home> {
           moisture_s4 = moisture4;
         });
         // Check individual sensor readings
-        if (moisture1 < 40 && moisture1 >= 15 ||
-            moisture2 < 40 && moisture2 >= 15 ||
-            moisture3 < 40 && moisture3 >= 15 ||
-            moisture4 < 40 && moisture4 >= 15) {
-          if (moisture1 < 40) {
+        if ((moisture1 < 40 && moisture1 > 5) ||
+            (moisture2 < 40 && moisture2 > 5) ||
+            (moisture3 < 40 && moisture3 > 5) ||
+            (moisture4 < 40 && moisture4 > 5)) {
+          if (moisture1 < 40 && moisture1 > 5) {
             _showNotification('Sensor 1 detected dry soil.');
           }
-          if (moisture2 < 40) {
+          if (moisture2 < 40 && moisture2 > 5) {
             _showNotification('Sensor 2 detected dry soil.');
           }
-          if (moisture3 < 40) {
+          if (moisture3 < 40 && moisture3 > 5) {
             _showNotification('Sensor 3 detected dry soil.');
           }
-          if (moisture4 < 40) {
+          if (moisture4 < 40 && moisture4 > 5) {
             _showNotification('Sensor 4 detected dry soil.');
           }
           // _showNotification('One of the sensors detected dry soil.');
         } else if (moisture1 > 75 ||
             moisture2 > 75 ||
-            //  moisture3 > 75 ||
+            moisture3 > 75 ||
             moisture4 > 75) {
           if (moisture1 > 75) {
             _showNotification('Sensor 1 detected wet soil.');
