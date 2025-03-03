@@ -31,6 +31,7 @@ class AboutPage extends StatelessWidget {
               tabs: [
                 Tab(text: "Soil Moisture Levels"),
                 Tab(text: "Application"),
+
                 Tab(text: "Developers"),
               ],
             ),
@@ -41,6 +42,7 @@ class AboutPage extends StatelessWidget {
             SoilMoistureInfo(),
             const AboutTab(),
             const DeveloperPage(),
+
           ],
         ),
       ),

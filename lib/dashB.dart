@@ -6,6 +6,7 @@ import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
 import 'package:soil_monitoring_app/helpmsg.dart';
 import 'package:soil_monitoring_app/plot_selection_page.dart';
+import 'package:soil_monitoring_app/wifiStat.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -197,6 +198,7 @@ void _showPasswordDialog(BuildContext context) {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             SizedBox(height: screenHeight * 0.02),
             // Date Container
            Container(
@@ -226,7 +228,7 @@ void _showPasswordDialog(BuildContext context) {
                 fontSize: screenWidth * 0.06,
                 fontWeight: FontWeight.bold,
               ),
-            ),
+              ),
             SizedBox(height: screenWidth * 0.01),
             Text(
               DateFormat('EEEE').format(DateTime.now()),
@@ -291,6 +293,7 @@ void _showPasswordDialog(BuildContext context) {
   //                     );
   //                   },
                     
+
   //                   child: Container(
   //                     height: 30,
   //                     padding: const EdgeInsets.symmetric(
@@ -314,8 +317,9 @@ void _showPasswordDialog(BuildContext context) {
   //                   ),
   //                 ),
   //               ),
+
               
-            
+ 
 
             SizedBox(height: screenHeight * 0.01),
         Gauges(dataProvider: dataProvider),
