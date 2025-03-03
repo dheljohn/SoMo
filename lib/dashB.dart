@@ -129,7 +129,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
     super.dispose();
   }
 
- Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
+  Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -160,126 +160,121 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             SizedBox(height: screenHeight * 0.02),
             // Date Container
-           Container(
-  padding: EdgeInsets.all(screenWidth * 0.04),
-  decoration: BoxDecoration(
-    color: const Color.fromARGB(255, 138, 167, 136),
-    borderRadius: BorderRadius.circular(12),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.1),
-        blurRadius: 5,
-        spreadRadius: 2,
-      ),
-    ],
-  ),
-  child: Row( // Changed from Column to Row for two-column layout
-    children: [
-      // Left Column
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              DateFormat('MMMM d, yyyy').format(DateTime.now()),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: screenWidth * 0.06,
-                fontWeight: FontWeight.bold,
+            Container(
+              padding: EdgeInsets.all(screenWidth * 0.04),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 138, 167, 136),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 5,
+                    spreadRadius: 2,
+                  ),
+                ],
               ),
-              ),
-            SizedBox(height: screenWidth * 0.01),
-            Text(
-              DateFormat('EEEE').format(DateTime.now()),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: screenWidth * 0.05,
+              child: Row(
+                // Changed from Column to Row for two-column layout
+                children: [
+                  // Left Column
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        WifiStatus(),
+                        Text(
+                          DateFormat('MMMM d, yyyy').format(DateTime.now()),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: screenWidth * 0.06,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: screenWidth * 0.01),
+                        Text(
+                          DateFormat('EEEE').format(DateTime.now()),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: screenWidth * 0.05,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // SizedBox(width: screenWidth * 0.04), // Spacing between columns
+                  // Right Column
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(screenWidth * 0.02),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 255, 255, 240),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.grass,
+                            size: 24,
+                            color: const Color.fromARGB(255, 81, 135, 83),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              selectedPlot ?? "Loading...",
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: const Color.fromARGB(255, 81, 135, 83),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-      // SizedBox(width: screenWidth * 0.04), // Spacing between columns
-      // Right Column
-      Expanded(
-        child: Container(
-          padding: EdgeInsets.all(screenWidth * 0.02),
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 255, 255, 240),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: [
-             Icon(
-                Icons.grass, 
-                size: 24,
-                color:const Color.fromARGB(255, 81, 135, 83),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  selectedPlot ?? "Loading...",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 81, 135, 83),
-                  ),
-                  overflow: TextOverflow.ellipsis, 
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ],
-  ),
-),                  
             SizedBox(height: screenHeight * 0.02),
-  Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PlotSelection()),
-                      );
-                    },
-                    
-                    child: Container(
-                      height: 30,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 6),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 247, 246, 237),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                            color: Color.fromARGB(255, 100, 122, 99), width: 2),
-                      ),
-                      child: const Text(
-                        "Select Plot",
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 100, 122, 99),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          fontFamily: 'Roboto',
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                      WifiStatus(),
+            Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PlotSelection()),
+                  );
+                },
+                child: Container(
+                  height: 30,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 247, 246, 237),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                        color: Color.fromARGB(255, 100, 122, 99), width: 2),
+                  ),
+                  child: const Text(
+                    "Select Plot",
+                    style: TextStyle(
+                      color: const Color.fromARGB(255, 100, 122, 99),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Roboto',
+                      letterSpacing: 1.2,
                     ),
                   ),
                 ),
-              
- 
+              ),
+            ),
 
             SizedBox(height: screenHeight * 0.01),
-        Gauges(dataProvider: dataProvider),
-           
-            
+            Gauges(dataProvider: dataProvider),
+
             SizedBox(height: screenHeight * 0.01),
             Center(
               child: Container(
@@ -359,7 +354,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                 ),
               ),
             ),
-               Align(
+            Align(
               alignment: Alignment.center,
               child: Container(
                 color: const Color.fromARGB(255, 247, 246, 237),
@@ -374,9 +369,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         ),
       ),
     );
-    
   }
-
 
   Widget _soilMoistureGauge(double screenWidth) {
     return Image.asset(

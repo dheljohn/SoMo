@@ -43,9 +43,9 @@ class Gauges extends StatelessWidget {
       BuildContext context, String title, double value, Color bgColor) {
     final screenWidth = MediaQuery.of(context).size.width;
     final gaugeSize =
-        screenWidth / 2.6; // Adjust the divisor to change the size
+        screenWidth / 3.2; // Adjust the divisor to change the size
     final gaugeHeight =
-        gaugeSize / 1.14; // Adjust the divisor to change the height
+        gaugeSize / 1; // Adjust the divisor to change the height
 
     return Container(
       height: gaugeHeight,
@@ -132,19 +132,36 @@ class Gauges extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              buildGauge(context, 'Soil Moisture S1', dataProvider.moistureS1,
-                  const Color.fromARGB(255, 191, 224, 198)),
-              buildGauge(context, 'Soil Moisture S2', dataProvider.moistureS2,
-                  const Color.fromARGB(255, 235, 231, 208)),
+              Expanded(
+                child: buildGauge(
+                    context,
+                    'Soil Moisture S1',
+                    dataProvider.moistureS1,
+                    const Color.fromARGB(255, 191, 224, 198)),
+              ),
+              Expanded(
+                child: buildGauge(
+                    context,
+                    'Soil Moisture S2',
+                    dataProvider.moistureS2,
+                    const Color.fromARGB(255, 235, 231, 208)),
+              ),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              buildGauge(context, 'Soil Moisture S3', dataProvider.moistureS3,
-                  const Color.fromARGB(255, 253, 252, 245)),
-              buildGauge(context, 'Soil Moisture S4', dataProvider.moistureS4,
-                  Colors.orange.shade50),
+              Expanded(
+                child: buildGauge(
+                    context,
+                    'Soil Moisture S3',
+                    dataProvider.moistureS3,
+                    const Color.fromARGB(255, 253, 252, 245)),
+              ),
+              Expanded(
+                child: buildGauge(context, 'Soil Moisture S4',
+                    dataProvider.moistureS4, Colors.orange.shade50),
+              ),
             ],
           ),
         ],
