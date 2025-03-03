@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PlotSelection extends StatefulWidget {
   @override
@@ -12,6 +13,25 @@ class _PlotSelectionState extends State<PlotSelection> {
   String? selectedPlot;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final DatabaseReference realtimeDB = FirebaseDatabase.instance.ref();
+
+@override
+  void initState() {
+    super.initState();
+    _loadSavedPlot();
+  }
+
+  Future<void> _loadSavedPlot() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedPlot = prefs.getString('selected_plot');
+    });
+  }
+
+  Future<void> _savePlot(String plot) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selected_plot', plot);
+    _savePlotToFirebase(plot);
+  }
 
   void _savePlotToFirebase(String plot) async {
     // Save to Firestore (for historical logs)
@@ -39,7 +59,7 @@ class _PlotSelectionState extends State<PlotSelection> {
               Text("Choose a plot:", style: TextStyle(fontSize: 18)),
               SizedBox(height: 20),
               DropdownButton<String>(
-                value: selectedPlot, // Handle null value
+ value: selectedPlot,
                 hint: Text("Select a plot"),
                 items: plots.map((String value) {
                   return DropdownMenuItem<String>(
@@ -52,10 +72,14 @@ class _PlotSelectionState extends State<PlotSelection> {
                     setState(() {
                       selectedPlot = newValue;
                     });
-                    _savePlotToFirebase(
-                        newValue); // Use the function for consistency
+ _savePlot(newValue);
                   }
                 },
+              ),
+              SizedBox(height: 20),
+              Text(
+                selectedPlot != null ? "Selected Plot: $selectedPlot" : "No plot selected",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -64,9 +88,3 @@ class _PlotSelectionState extends State<PlotSelection> {
     );
   }
 }
-
-//   // The  _savePlotToFirebase  function saves the selected plot to both Firestore and Realtime Database. The Firestore collection is named  selected_plots  and the document is named  currentPlot . The Realtime Database key is  SelectedPlot .
-//   // The  DropdownButton  widget is used to display the list of plots. When a plot is selected, the  onChanged  callback is triggered. The selected plot is saved to Firebase and the UI is updated.
-//   // Step 4: Display the selected plot
-//   // To display the selected plot, we will create a new page named  PlotDisplay . This page will listen to changes in the Realtime Database and update the UI accordingly.
-//   // Create a new file named  plot_display_page.dart  and add the following code:

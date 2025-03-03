@@ -22,8 +22,8 @@ class _HelperMsgState extends State<HelperMsg> {
     final moistureS2 = dataProvider?.moistureS2 ?? 0.0;
     final moistureS3 = dataProvider?.moistureS3 ?? 0.0;
     final moistureS4 = dataProvider?.moistureS4 ?? 0.0;
+List<Map<String, dynamic>> messages = [];
 
-    List<Map<String, dynamic>> messages = [];
 
 void addMessage(String text, Color color) {
   messages.add({'text': text, 'color': color});
@@ -31,53 +31,40 @@ void addMessage(String text, Color color) {
 
 if (humidityValue <= 30) {
   addMessage(
-      'Low Humidity Detected! Consider increasing humidity.\nRecommendation: Place water trays near plants to raise humidity.', 
+      'Low Humidity Detected! Consider increasing humidity.\nRecommendation: Place water trays near plants to raise humidity. 🌵', 
       const Color.fromARGB(255, 253, 133, 124));
 } else if (humidityValue >= 70) {
   addMessage(
-      'High Humidity Detected! Consider decreasing humidity.\nRecommendation: Improve ventilation, or avoid overwatering.', 
+      'High Humidity Detected! Consider decreasing humidity.\nRecommendation: Improve ventilation, or avoid overwatering. 💦', 
       const Color.fromARGB(255, 131, 174, 209));
 }
 
 if (temperatureValue <= 15) {
   addMessage(
-      'Low Temperature Detected! Consider increasing temperature.\nRecommendation: Expose plants to more sunlight.', 
+      'Low Temperature Detected! Consider increasing temperature.\nRecommendation: Expose plants to more sunlight. ❄️', 
       const Color.fromARGB(255, 131, 174, 209));
 } else if (temperatureValue >= 30) {
   addMessage(
-      'High Temperature Detected! Consider decreasing temperature.\nRecommendation: Provide shade, or water plants.', 
+      'High Temperature Detected! Consider decreasing temperature.\nRecommendation: Provide shade, or water plants. 🔥', 
       const Color.fromARGB(255, 253, 133, 124));
 }
-
-// if (moistureA <= 5) {
-//   addMessage(
-//       'No Deploy Sensor Detected in Average Moisture!', 
-//       const Color.fromARGB(255, 150, 150, 150));
-// } else if (moistureA <= 30) {
-//   addMessage(
-//       'Low Average Moisture Detected! Consider watering the soil.\nRecommendation: Water the soil as needed.', 
-//       const Color.fromARGB(255, 253, 133, 124));
-// } else if (moistureA >= 70) {
-//   addMessage(
-//       'High Average Moisture Detected! Consider reducing watering.\nRecommendation: Skip the next scheduled watering and ensure proper drainage.', 
-//       const Color.fromARGB(255, 131, 174, 209));
-// }
 
 void checkSensor(String sensorName, double moistureValue) {
   if (moistureValue <= 5) {
     addMessage(
-        '$sensorName: No Deploy Sensor Detected!', 
+        '$sensorName: Sensor not deployed! ⚠️', 
         const Color.fromARGB(255, 150, 150, 150));
   } else if (moistureValue <= 30) {
     addMessage(
-        '$sensorName: Low Moisture Detected! Consider watering the soil.\nRecommendation: Water the soil as needed.', 
+        '$sensorName: Low Moisture Detected! Consider watering the soil.\nRecommendation: Water the soil as needed. 🌱', 
         const Color.fromARGB(255, 253, 133, 124));
   } else if (moistureValue >= 70) {
     addMessage(
-        '$sensorName: High Moisture Detected! Consider reducing watering.\nRecommendation: Skip the next scheduled watering and improve soil drainage.', 
+        '$sensorName: High Moisture Detected! Consider reducing watering.\nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰', 
         const Color.fromARGB(255, 131, 174, 209));
   }
 }
+
 
 checkSensor('Sensor 1', moistureS1);
 checkSensor('Sensor 2', moistureS2);

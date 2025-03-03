@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class DeveloperPage extends StatefulWidget {
   const DeveloperPage({Key? key}) : super(key: key);
@@ -7,17 +8,20 @@ class DeveloperPage extends StatefulWidget {
   @override
   State<DeveloperPage> createState() => _DeveloperPageState();
 }
+class _DeveloperPageState extends State<DeveloperPage> {
+  final PageController _pageController = PageController();
 
-class _DeveloperPageState extends State<DeveloperPage>
-    with SingleTickerProviderStateMixin {
   final List<Map<String, dynamic>> developers = [
     {
       'name': 'Joanna Marie',
-      'role': 'Developer',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+      'role': 'Lead Developer/Mobile App Developer/\nHardware Developer/Document Support',
+      'description': 'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+
+
       'image': 'assets/jm.png',
-      'position': {'top': -10.0, 'left': 70.0, 'width': 100.0, 'height': 140.0},
+      'imageWidth': 200.0,
+      'imageHeight': 200.0,
+      'imageTop': 1.0,
       'links': {
         'github': 'https://github.com/joannamarie',
         'facebook': 'https://facebook.com/joannamarie',
@@ -25,12 +29,14 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
     {
-      'name': 'Edhel John ',
-      'role': 'Developer',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+      'name': 'Edhel John',
+      'role': 'Mobile App Developer Support/Mobile Cloud',
+      'description': 'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/edhel.png',
-      'position': {'top': -12.0, 'left': 60.0, 'width': 120.0, 'height': 140.0},
+      'imageWidth': 200.0,
+      'imageHeight': 200.0,
+      'imageTop': 1.0,
+
       'links': {
         'github': 'https://github.com/edheljohn',
         'facebook': 'https://facebook.com/edheljohn',
@@ -38,12 +44,14 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
     {
-      'name': 'Jenny Lyn ',
-      'role': 'Tambay',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+      'name': 'Jenny Lyn',
+      'role': 'UI/UX Developer/Document/\nPrototype Designer',
+      'description': 'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+
       'image': 'assets/jenny.png',
-      'position': {'top': -10.0, 'left': 40.0, 'width': 160.0, 'height': 140.0},
+      'imageWidth': 200.0,
+      'imageHeight': 200.0,
+      'imageTop': 1.0,
       'links': {
         'github': 'https://github.com/jennylyn',
         'facebook': 'https://facebook.com/jennylyn',
@@ -51,12 +59,15 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
     {
-      'name': 'Jon Marvin ',
-      'role': 'Project Manager',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+      'name': 'Jon Marvin',
+      'role': 'Document/Proof Reader',
+      'description': 'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+
       'image': 'assets/marvin.png',
-      'position': {'top': -12.0, 'left': 60.0, 'width': 115.0, 'height': 140.0},
+      'imageWidth': 200.0,
+      'imageHeight': 200.0,
+      'imageTop': 1.0,
+
       'links': {
         'github': 'https://github.com/marvin',
         'facebook': 'https://facebook.com/marvin',
@@ -64,148 +75,138 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
   ];
+  void _nextPage() {
+    _pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
 
-  List<bool> isVisible = [];
 
-  @override
-  void initState() {
-    super.initState();
-    isVisible = List<bool>.filled(developers.length, false);
-
-    for (int i = 0; i < developers.length; i++) {
-      Future.delayed(Duration(milliseconds: i * 300), () {
-        if (mounted) {
-          setState(() {
-            isVisible[i] = true;
-          });
-        }
-      });
-    }
   }
 
-  void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+  void _previousPage() {
+    _pageController.previousPage(duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 248, 249, 247),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 40.0),
-        child: ListView.builder(
-          itemCount: developers.length,
-          itemBuilder: (context, index) {
-            final developer = developers[index];
-            return AnimatedOpacity(
-              duration: const Duration(milliseconds: 500),
-              opacity: isVisible[index] ? 1.0 : 0.0,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 500),
-                transform:
-                    Matrix4.translationValues(0, isVisible[index] ? 0 : -50, 0),
-                curve: Curves.easeOut,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    const SizedBox(width: 40),
-                    Container(
-                      width: 350,
-                      height: 110,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 46.0, vertical: 20.0),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 242, 239, 231),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: Color.fromARGB(255, 42, 83, 39),
-                          width: 2,
-                        ),
-                      ),
-                      child: Row(
-                        // crossAxisAlignment: CrossAxisAlignment.center,
+       backgroundColor:const Color.fromARGB(255, 242, 239, 231),
+      body: Column(
+        children: [
+          const SizedBox(height: 40),
+          Expanded(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                PageView.builder(
+                  controller: _pageController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: developers.length,
+                 
+                  itemBuilder: (context, index) {
+                    final developer = developers[index];
+                    return Center(
+                      child: Stack(
+                        alignment: Alignment.topCenter,
                         children: [
-                          const SizedBox(width: 140),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 3),
-                              Text(
-                                developer['name']!,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 31, 45, 31),
+                          Container(
+                            width: 300,
+                            height: 350,
+                            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 50),
+                            padding: const EdgeInsets.only(top: 60, left: 10, right: 10, bottom: 10),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Color.fromARGB(255, 42, 83, 39),
+                                width: 2,
+                              ),
+                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(height: 90),
+                                Text(
+                                  developer['name']!,
+                                  style: const TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 31, 45, 31),
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                developer['role']!,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Color.fromARGB(255, 120, 122, 120),
+                                Text(
+                                  developer['role']!,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Color.fromARGB(255, 120, 122, 120),
+                                  ),
+                                   ),
+                                const SizedBox(height: 30),
+                                  Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: () => launchUrl(Uri.parse(developer['links']['github'])),
+                                  child: Image.asset('assets/github.png', width: 30, height: 30),
                                 ),
-                              ),
-                              const SizedBox(width: 5),
-                              Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () => _launchURL(
-                                        developer['links']['github']),
-                                    child: Image.asset(
-                                      'assets/github.png',
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  GestureDetector(
-                                    onTap: () => _launchURL(
-                                        developer['links']['facebook']),
-                                    child: Image.asset(
-                                      'assets/fb.png',
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  GestureDetector(
-                                    onTap: () => _launchURL(
-                                        developer['links']['linkedin']),
-                                    child: Image.asset(
-                                      'assets/linked.png',
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                const SizedBox(width: 10),
+                                GestureDetector(
+                                  onTap: () => launchUrl(Uri.parse(developer['links']['facebook'])),
+                                  child: Image.asset('assets/fb.png', width: 30, height: 30),
+                                ),
+                                const SizedBox(width: 10),
+                                GestureDetector(
+                                  onTap: () => launchUrl(Uri.parse(developer['links']['linkedin'])),
+                                  child: Image.asset('assets/linked.png', width: 30, height: 30),
+                                ),
+                              ],
+                            ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            top: developer['imageTop'],
+                            child: Image.asset(
+                              developer['image']!,
+                              width: developer['imageWidth'],
+                              height: developer['imageHeight'],
+                              fit: BoxFit.contain,
+                            ),
+
                           ),
                         ],
                       ),
-                    ),
-                    Positioned(
-                      top: developer['position']['top'],
-                      left: developer['position']['left'],
-                      child: Image.asset(
-                        developer['image']!,
-                        width: developer['position']['width'],
-                        height: developer['position']['height'],
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              ),
-            );
-          },
-        ),
+                Positioned(
+                  left: 10,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back_ios, size: 30, color: Colors.black),
+                    onPressed: _previousPage,
+                  ),
+                ),
+                Positioned(
+                  right: 10,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_forward_ios, size: 30, color: Colors.black),
+                    onPressed: _nextPage,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          SmoothPageIndicator(
+            controller: _pageController,
+            count: developers.length,
+            effect: ExpandingDotsEffect(
+              dotHeight: 8,
+              dotWidth: 8,
+              activeDotColor: Color.fromARGB(255, 42, 83, 39),
+              dotColor: Color.fromARGB(255, 120, 122, 120),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
