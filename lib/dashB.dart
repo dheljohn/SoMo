@@ -101,7 +101,45 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         return 'Unknown Weather';
     }
   }
+void _showPasswordDialog(BuildContext context) {
+  TextEditingController passwordController = TextEditingController();
+  String correctPassword = "12345"; // Set your password here
 
+  showDialog(
+    context: context,
+    barrierDismissible: false, // Prevent closing without input
+    builder: (context) => AlertDialog(
+      title: Text("Enter Password Before Modifying the Plot",  ),
+      content: TextField(
+        controller: passwordController,
+        obscureText: true,
+        decoration: InputDecoration(hintText: "Password"),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context), // Close dialog
+          child: Text("Cancel"),
+        ),
+        TextButton(
+          onPressed: () {
+            if (passwordController.text == correctPassword) {
+              Navigator.pop(context); // Close dialog
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PlotSelection()),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Incorrect password!")),
+              );
+            }
+          },
+          child: Text("Submit"),
+        ),
+      ],
+    ),
+  );
+}
   @override
   Widget build(BuildContext context) {
     final dataProvider = DataProvider.of(context);
@@ -204,75 +242,82 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       ),
       // SizedBox(width: screenWidth * 0.04), // Spacing between columns
       // Right Column
-      Expanded(
-        child: Container(
-          padding: EdgeInsets.all(screenWidth * 0.02),
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 255, 255, 240),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: [
-             Icon(
-                Icons.grass, 
-                size: 24,
-                color:const Color.fromARGB(255, 81, 135, 83),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  selectedPlot ?? "Loading...",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 81, 135, 83),
-                  ),
-                  overflow: TextOverflow.ellipsis, 
-                ),
-              ),
-            ],
+   Expanded(
+  child: Container(
+    padding: EdgeInsets.all(screenWidth * 0.02),
+    decoration: BoxDecoration(
+      color: const Color.fromARGB(255, 255, 255, 240),
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Row(
+      children: [
+        Icon(
+          Icons.grass,
+          size: 24,
+          color: const Color.fromARGB(255, 81, 135, 83),
+        ),
+        SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            selectedPlot ?? "Loading...",
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: const Color.fromARGB(255, 81, 135, 83),
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-      ),
+        IconButton(
+          icon: Icon(Icons.edit, color: Colors.grey),
+          onPressed: () {
+            _showPasswordDialog(context); // Show password dialog on click
+          },
+        ),
+      ],
+    ),
+  ),
+),
     ],
   ),
 ),                  
             SizedBox(height: screenHeight * 0.02),
-  Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PlotSelection()),
-                      );
-                    },
+  // Align(
+  //                 alignment: Alignment.centerRight,
+  //                 child: GestureDetector(
+  //                   onTap: () {
+  //                     Navigator.push(
+  //                       context,
+  //                       MaterialPageRoute(
+  //                           builder: (context) => PlotSelection()),
+  //                     );
+  //                   },
                     
-                    child: Container(
-                      height: 30,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 6),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 247, 246, 237),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                            color: Color.fromARGB(255, 100, 122, 99), width: 2),
-                      ),
-                      child: const Text(
-                        "Select Plot",
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 100, 122, 99),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          fontFamily: 'Roboto',
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                      WifiStatus(),
-                    ),
-                  ),
-                ),
+
+  //                   child: Container(
+  //                     height: 30,
+  //                     padding: const EdgeInsets.symmetric(
+  //                         vertical: 4, horizontal: 6),
+  //                     decoration: BoxDecoration(
+  //                       color: const Color.fromARGB(255, 247, 246, 237),
+  //                       borderRadius: BorderRadius.circular(8),
+  //                       border: Border.all(
+  //                           color: Color.fromARGB(255, 100, 122, 99), width: 2),
+  //                     ),
+  //                     child: const Text(
+  //                       "Select Plot",
+  //                       style: TextStyle(
+  //                         color: const Color.fromARGB(255, 100, 122, 99),
+  //                         fontSize: 12,
+  //                         fontWeight: FontWeight.w700,
+  //                         fontFamily: 'Roboto',
+  //                         letterSpacing: 1.2,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+
               
  
 
