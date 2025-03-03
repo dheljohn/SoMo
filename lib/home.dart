@@ -8,9 +8,7 @@ import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
 import 'package:soil_monitoring_app/navBar.dart';
-import 'package:soil_monitoring_app/soilmoistures_info.dart';
 import 'package:soil_monitoring_app/tutorial.dart';
-import 'package:soil_monitoring_app/wifiStat.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -162,16 +160,16 @@ class _HomeState extends State<Home> {
             moisture2 < 40 && moisture2 >= 15 ||
             moisture3 < 40 && moisture3 >= 15 ||
             moisture4 < 40 && moisture4 >= 15) {
-          if (moisture1 < 40) {
+          if (moisture1 < 40 && moisture1 >= 15) {
             _showNotification('Sensor 1 detected dry soil.');
           }
-          if (moisture2 < 40) {
+          if (moisture2 < 40 && moisture2 >= 15) {
             _showNotification('Sensor 2 detected dry soil.');
           }
-          if (moisture3 < 40) {
+          if (moisture3 < 40 && moisture3 >= 15) {
             _showNotification('Sensor 3 detected dry soil.');
           }
-          if (moisture4 < 40) {
+          if (moisture4 < 40 && moisture4 >= 15) {
             _showNotification('Sensor 4 detected dry soil.');
           }
           // _showNotification('One of the sensors detected dry soil.');
