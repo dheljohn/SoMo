@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DeveloperPage extends StatefulWidget {
   const DeveloperPage({Key? key}) : super(key: key);
@@ -8,16 +8,17 @@ class DeveloperPage extends StatefulWidget {
   @override
   State<DeveloperPage> createState() => _DeveloperPageState();
 }
+
 class _DeveloperPageState extends State<DeveloperPage> {
   final PageController _pageController = PageController();
 
   final List<Map<String, dynamic>> developers = [
     {
       'name': 'Joanna Marie',
-      'role': 'Lead Developer/Mobile App Developer/\nHardware Developer/Document Support',
-      'description': 'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
-
-
+      'role':
+          'Lead Developer/Mobile App Developer/\nHardware Developer/Document Support',
+      'description':
+          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/jm.png',
       'imageWidth': 200.0,
       'imageHeight': 200.0,
@@ -30,13 +31,13 @@ class _DeveloperPageState extends State<DeveloperPage> {
     },
     {
       'name': 'Edhel John',
-      'role': 'Mobile App Developer Support/Mobile Cloud',
-      'description': 'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+      'role': 'Mobile App Developer Support/Mobile Cloud/3D Modeler',
+      'description':
+          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/edhel.png',
       'imageWidth': 200.0,
       'imageHeight': 200.0,
       'imageTop': 1.0,
-
       'links': {
         'github': 'https://github.com/edheljohn',
         'facebook': 'https://facebook.com/edheljohn',
@@ -46,8 +47,8 @@ class _DeveloperPageState extends State<DeveloperPage> {
     {
       'name': 'Jenny Lyn',
       'role': 'UI/UX Developer/Document/\nPrototype Designer',
-      'description': 'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
-
+      'description':
+          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/jenny.png',
       'imageWidth': 200.0,
       'imageHeight': 200.0,
@@ -61,13 +62,12 @@ class _DeveloperPageState extends State<DeveloperPage> {
     {
       'name': 'Jon Marvin',
       'role': 'Document/Proof Reader',
-      'description': 'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
-
+      'description':
+          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/marvin.png',
       'imageWidth': 200.0,
       'imageHeight': 200.0,
       'imageTop': 1.0,
-
       'links': {
         'github': 'https://github.com/marvin',
         'facebook': 'https://facebook.com/marvin',
@@ -76,19 +76,19 @@ class _DeveloperPageState extends State<DeveloperPage> {
     },
   ];
   void _nextPage() {
-    _pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
-
-
+    _pageController.nextPage(
+        duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   void _previousPage() {
-    _pageController.previousPage(duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+    _pageController.previousPage(
+        duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor:const Color.fromARGB(255, 242, 239, 231),
+      backgroundColor: const Color.fromARGB(255, 242, 239, 231),
       body: Column(
         children: [
           const SizedBox(height: 40),
@@ -100,7 +100,6 @@ class _DeveloperPageState extends State<DeveloperPage> {
                   controller: _pageController,
                   scrollDirection: Axis.horizontal,
                   itemCount: developers.length,
-                 
                   itemBuilder: (context, index) {
                     final developer = developers[index];
                     return Center(
@@ -110,8 +109,10 @@ class _DeveloperPageState extends State<DeveloperPage> {
                           Container(
                             width: 300,
                             height: 350,
-                            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 50),
-                            padding: const EdgeInsets.only(top: 60, left: 10, right: 10, bottom: 10),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 50),
+                            padding: const EdgeInsets.only(
+                                top: 60, left: 10, right: 10, bottom: 10),
                             decoration: BoxDecoration(
                               color: Color.fromARGB(255, 255, 255, 255),
                               borderRadius: BorderRadius.circular(16),
@@ -119,7 +120,7 @@ class _DeveloperPageState extends State<DeveloperPage> {
                                 color: Color.fromARGB(255, 42, 83, 39),
                                 width: 2,
                               ),
-                              ),
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -138,27 +139,33 @@ class _DeveloperPageState extends State<DeveloperPage> {
                                     fontSize: 15,
                                     color: Color.fromARGB(255, 120, 122, 120),
                                   ),
-                                   ),
+                                ),
                                 const SizedBox(height: 30),
-                                  Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                GestureDetector(
-                                  onTap: () => launchUrl(Uri.parse(developer['links']['github'])),
-                                  child: Image.asset('assets/github.png', width: 30, height: 30),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () => launchUrl(Uri.parse(
+                                          developer['links']['github'])),
+                                      child: Image.asset('assets/github.png',
+                                          width: 30, height: 30),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    GestureDetector(
+                                      onTap: () => launchUrl(Uri.parse(
+                                          developer['links']['facebook'])),
+                                      child: Image.asset('assets/fb.png',
+                                          width: 30, height: 30),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    GestureDetector(
+                                      onTap: () => launchUrl(Uri.parse(
+                                          developer['links']['linkedin'])),
+                                      child: Image.asset('assets/linked.png',
+                                          width: 30, height: 30),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 10),
-                                GestureDetector(
-                                  onTap: () => launchUrl(Uri.parse(developer['links']['facebook'])),
-                                  child: Image.asset('assets/fb.png', width: 30, height: 30),
-                                ),
-                                const SizedBox(width: 10),
-                                GestureDetector(
-                                  onTap: () => launchUrl(Uri.parse(developer['links']['linkedin'])),
-                                  child: Image.asset('assets/linked.png', width: 30, height: 30),
-                                ),
-                              ],
-                            ),
                               ],
                             ),
                           ),
@@ -170,7 +177,6 @@ class _DeveloperPageState extends State<DeveloperPage> {
                               height: developer['imageHeight'],
                               fit: BoxFit.contain,
                             ),
-
                           ),
                         ],
                       ),
@@ -180,14 +186,16 @@ class _DeveloperPageState extends State<DeveloperPage> {
                 Positioned(
                   left: 10,
                   child: IconButton(
-                    icon: Icon(Icons.arrow_back_ios, size: 30, color: Colors.black),
+                    icon: Icon(Icons.arrow_back_ios,
+                        size: 30, color: Colors.black),
                     onPressed: _previousPage,
                   ),
                 ),
                 Positioned(
                   right: 10,
                   child: IconButton(
-                    icon: Icon(Icons.arrow_forward_ios, size: 30, color: Colors.black),
+                    icon: Icon(Icons.arrow_forward_ios,
+                        size: 30, color: Colors.black),
                     onPressed: _nextPage,
                   ),
                 ),

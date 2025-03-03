@@ -6,7 +6,6 @@ import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
 import 'package:soil_monitoring_app/helpmsg.dart';
 import 'package:soil_monitoring_app/plot_selection_page.dart';
-import 'package:soil_monitoring_app/wifiStat.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -101,45 +100,49 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         return 'Unknown Weather';
     }
   }
-void _showPasswordDialog(BuildContext context) {
-  TextEditingController passwordController = TextEditingController();
-  String correctPassword = "12345"; // Set your password here
 
-  showDialog(
-    context: context,
-    barrierDismissible: false, // Prevent closing without input
-    builder: (context) => AlertDialog(
-      title: Text("Enter Password Before Modifying the Plot",  ),
-      content: TextField(
-        controller: passwordController,
-        obscureText: true,
-        decoration: InputDecoration(hintText: "Password"),
+  void _showPasswordDialog(BuildContext context) {
+    TextEditingController passwordController = TextEditingController();
+    String correctPassword = "12345"; // Set your password here
+
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing without input
+      builder: (context) => AlertDialog(
+        title: Text(
+          "Enter Password Before Modifying the Plot",
+        ),
+        content: TextField(
+          controller: passwordController,
+          obscureText: true,
+          decoration: InputDecoration(hintText: "Password"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), // Close dialog
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              if (passwordController.text == correctPassword) {
+                Navigator.pop(context); // Close dialog
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PlotSelection()),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Incorrect password!")),
+                );
+              }
+            },
+            child: Text("Submit"),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context), // Close dialog
-          child: Text("Cancel"),
-        ),
-        TextButton(
-          onPressed: () {
-            if (passwordController.text == correctPassword) {
-              Navigator.pop(context); // Close dialog
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PlotSelection()),
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Incorrect password!")),
-              );
-            }
-          },
-          child: Text("Submit"),
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final dataProvider = DataProvider.of(context);
@@ -200,7 +203,6 @@ void _showPasswordDialog(BuildContext context) {
           children: [
             SizedBox(height: screenHeight * 0.02),
             // Date Container
-
             Container(
               padding: EdgeInsets.all(screenWidth * 0.04),
               decoration: BoxDecoration(
@@ -222,7 +224,6 @@ void _showPasswordDialog(BuildContext context) {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        WifiStatus(),
                         Text(
                           DateFormat('MMMM d, yyyy').format(DateTime.now()),
                           style: TextStyle(
@@ -270,6 +271,13 @@ void _showPasswordDialog(BuildContext context) {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                          IconButton(
+                            icon: Icon(Icons.edit, color: Colors.grey),
+                            onPressed: () {
+                              _showPasswordDialog(
+                                  context); // Show password dialog on click
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -278,39 +286,40 @@ void _showPasswordDialog(BuildContext context) {
               ),
             ),
             SizedBox(height: screenHeight * 0.02),
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PlotSelection()),
-                  );
-                },
-                child: Container(
-                  height: 30,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 247, 246, 237),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                        color: Color.fromARGB(255, 100, 122, 99), width: 2),
-                  ),
-                  child: const Text(
-                    "Select Plot",
-                    style: TextStyle(
-                      color: const Color.fromARGB(255, 100, 122, 99),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'Roboto',
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Align(
+            //                 alignment: Alignment.centerRight,
+            //                 child: GestureDetector(
+            //                   onTap: () {
+            //                     Navigator.push(
+            //                       context,
+            //                       MaterialPageRoute(
+            //                           builder: (context) => PlotSelection()),
+            //                     );
+            //                   },
 
+            //                   child: Container(
+            //                     height: 30,
+            //                     padding: const EdgeInsets.symmetric(
+            //                         vertical: 4, horizontal: 6),
+            //                     decoration: BoxDecoration(
+            //                       color: const Color.fromARGB(255, 247, 246, 237),
+            //                       borderRadius: BorderRadius.circular(8),
+            //                       border: Border.all(
+            //                           color: Color.fromARGB(255, 100, 122, 99), width: 2),
+            //                     ),
+            //                     child: const Text(
+            //                       "Select Plot",
+            //                       style: TextStyle(
+            //                         color: const Color.fromARGB(255, 100, 122, 99),
+            //                         fontSize: 12,
+            //                         fontWeight: FontWeight.w700,
+            //                         fontFamily: 'Roboto',
+            //                         letterSpacing: 1.2,
+            //                       ),
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ),
 
             SizedBox(height: screenHeight * 0.01),
             Gauges(dataProvider: dataProvider),

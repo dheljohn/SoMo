@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/fcm_service.dart';
-import 'package:soil_monitoring_app/home.dart';
 import 'package:soil_monitoring_app/start_page.dart';
 
 void main() async {
@@ -58,7 +57,6 @@ void main() async {
   //   debugShowCheckedModeBanner: false,
   // ));
 }
-
 
 // void main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
