@@ -175,7 +175,7 @@ class _HomeState extends State<Home> {
           // _showNotification('One of the sensors detected dry soil.');
         } else if (moisture1 > 75 ||
             moisture2 > 75 ||
-            //  moisture3 > 75 ||
+            moisture3 > 75 ||
             moisture4 > 75) {
           if (moisture1 > 75) {
             _showNotification('Sensor 1 detected wet soil.');
