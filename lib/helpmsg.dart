@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 
 class HelperMsg extends StatefulWidget {
@@ -11,9 +12,36 @@ class HelperMsg extends StatefulWidget {
 
 class _HelperMsgState extends State<HelperMsg> {
   int _currentIndex = 0;
+  bool _isFilipino = false; // Toggle state for language
+  final FlutterTts flutterTts = FlutterTts(); // Initialize FlutterTts
+  bool _isSpeaking = false; // Flag to track TTS state
+  List<Map<String, dynamic>> messages = [];
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    flutterTts.setStartHandler(() {
+      setState(() {
+        _isSpeaking = true;
+      });
+    });
+
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        _isSpeaking = false;
+      });
+    });
+
+    flutterTts.setErrorHandler((msg) {
+      setState(() {
+        _isSpeaking = false;
+      });
+    });
+
+    _updateMessages(); // Initialize messages
+  }
+
+  void _updateMessages() {
     final dataProvider = DataProvider.of(context);
     final humidityValue = dataProvider?.humidityValue ?? 0.0;
     final temperatureValue = dataProvider?.temperatureValue ?? 0.0;
@@ -22,59 +50,89 @@ class _HelperMsgState extends State<HelperMsg> {
     final moistureS2 = dataProvider?.moistureS2 ?? 0.0;
     final moistureS3 = dataProvider?.moistureS3 ?? 0.0;
     final moistureS4 = dataProvider?.moistureS4 ?? 0.0;
-List<Map<String, dynamic>> messages = [];
 
+    messages.clear(); // Clear existing messages
 
-void addMessage(String text, Color color) {
-  messages.add({'text': text, 'color': color});
-}
+    if (humidityValue <= 30) {
+      addMessage(
+        _isFilipino
+            ? 'Mababang kahalumigmigan ang nararanasan! Subukang pataasin ang kahalumigmigan.\nRekomendasyon: Maglagay ng mga lagayang may tubig malapit sa mga halaman upang mapataas ang kahalumigmigan. 🌵'
+            : 'Low Humidity Detected! Consider increasing humidity.\nRecommendation: Place water trays near plants to raise humidity. 🌵',
+        const Color.fromARGB(255, 253, 133, 124),
+      );
+    } else if (humidityValue >= 70) {
+      addMessage(
+        _isFilipino
+            ? 'Mataas na kahalumigmigan ang nararanasan! Subukang pababain ang kahalumigmigan.\nRekomendasyon: Pagbutihin ang bentilasyon, o iwasan ang sobrang pagdidilig. 💦'
+            : 'High Humidity Detected! Consider decreasing humidity.\nRecommendation: Improve ventilation, or avoid overwatering. 💦',
+        const Color.fromARGB(255, 131, 174, 209),
+      );
+    }
 
-if (humidityValue <= 30) {
-  addMessage(
-      'Low Humidity Detected! Consider increasing humidity.\nRecommendation: Place water trays near plants to raise humidity. 🌵', 
-      const Color.fromARGB(255, 253, 133, 124));
-} else if (humidityValue >= 70) {
-  addMessage(
-      'High Humidity Detected! Consider decreasing humidity.\nRecommendation: Improve ventilation, or avoid overwatering. 💦', 
-      const Color.fromARGB(255, 131, 174, 209));
-}
+    if (temperatureValue <= 15) {
+      addMessage(
+        _isFilipino
+            ? 'Mababang Temperatura ang nararanasan! Subukang pataasin ang temperatura.\nRekomendasyon: Ilantad ang mga halaman kung san may sikat ng araw. ❄️'
+            : 'Low Temperature Detected! Consider increasing temperature.\nRecommendation: Expose plants to more sunlight. ❄️',
+        const Color.fromARGB(255, 131, 174, 209),
+      );
+    } else if (temperatureValue >= 30) {
+      addMessage(
+        _isFilipino
+            ? 'Mataas na Temperatura na nararanasan! Subukang pababain ang temperatura.\nRekomendasyon: Magbigay lilim, o diligan ang mga halaman. 🔥'
+            : 'High Temperature Detected! Consider decreasing temperature.\nRecommendation: Provide shade, or water plants. 🔥',
+        const Color.fromARGB(255, 253, 133, 124),
+      );
+    }
 
-if (temperatureValue <= 15) {
-  addMessage(
-      'Low Temperature Detected! Consider increasing temperature.\nRecommendation: Expose plants to more sunlight. ❄️', 
-      const Color.fromARGB(255, 131, 174, 209));
-} else if (temperatureValue >= 30) {
-  addMessage(
-      'High Temperature Detected! Consider decreasing temperature.\nRecommendation: Provide shade, or water plants. 🔥', 
-      const Color.fromARGB(255, 253, 133, 124));
-}
+    void checkSensor(String sensorName, double moistureValue) {
+      if (moistureValue <= 5) {
+        addMessage(
+          _isFilipino
+              ? '$sensorName: Hindi naka-deploy ang sensor! ⚠️'
+              : '$sensorName: Sensor not deployed! ⚠️',
+          const Color.fromARGB(255, 150, 150, 150),
+        );
+      } else if (moistureValue <= 30) {
+        addMessage(
+          _isFilipino
+              ? '$sensorName: Mababang Moisture ang nararanasan! Isaalang-alang ang pagdidilig ng lupa.\nRekomendasyon: Diligan ang lupa ayon sa pangangailangan. 🌱'
+              : '$sensorName: Low Moisture Detected! Consider watering the soil.\nRecommendation: Water the soil as needed. 🌱',
+          const Color.fromARGB(255, 253, 133, 124),
+        );
+      } else if (moistureValue >= 70) {
+        addMessage(
+          _isFilipino
+              ? '$sensorName: Mataas na Moisture na nararanasan! Isaalang-alang ang pagbabawas ng pagdidilig.\nRekomendasyon: Patayin ang drip line o laktawan ang susunod na nakatakdang pagdidilig at pagbutihin ang drainage ng lupa. 🚰'
+              : '$sensorName: High Moisture Detected! Consider reducing watering.\nRecommendation: Turn off the drip line or skip the next scheduled watering and improve soil drainage. 🚰',
+          const Color.fromARGB(255, 131, 174, 209),
+        );
+      }
+    }
 
-void checkSensor(String sensorName, double moistureValue) {
-  if (moistureValue <= 5) {
-    addMessage(
-        '$sensorName: Sensor not deployed! ⚠️', 
-        const Color.fromARGB(255, 150, 150, 150));
-  } else if (moistureValue <= 30) {
-    addMessage(
-        '$sensorName: Low Moisture Detected! Consider watering the soil.\nRecommendation: Water the soil as needed. 🌱', 
-        const Color.fromARGB(255, 253, 133, 124));
-  } else if (moistureValue >= 70) {
-    addMessage(
-        '$sensorName: High Moisture Detected! Consider reducing watering.\nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰', 
-        const Color.fromARGB(255, 131, 174, 209));
+    checkSensor(_isFilipino ? 'Sensor 1' : 'Sensor 1', moistureS1);
+    checkSensor(_isFilipino ? 'Sensor 2' : 'Sensor 2', moistureS2);
+    checkSensor(_isFilipino ? 'Sensor 3' : 'Sensor 3', moistureS3);
+    checkSensor(_isFilipino ? 'Sensor 4' : 'Sensor 4', moistureS4);
   }
-}
 
+  void addMessage(String text, Color color) {
+    if (!_isSpeaking) {
+      setState(() {
+        messages.add({'text': text, 'color': color});
+      });
+    }
+  }
 
-checkSensor('Sensor 1', moistureS1);
-checkSensor('Sensor 2', moistureS2);
-checkSensor('Sensor 3', moistureS3);
-checkSensor('Sensor 4', moistureS4);
+  Future<void> _speak(String text) async {
+    await flutterTts.stop(); // Stop any ongoing TTS
+    await flutterTts.setLanguage(_isFilipino ? 'fil-PH' : 'en-US');
+    await flutterTts.setPitch(1.0);
+    await flutterTts.speak(text);
+  }
 
-
-
-    final screenWidth = MediaQuery.of(context).size.width;
-
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
@@ -93,10 +151,11 @@ checkSensor('Sensor 4', moistureS4);
                   options: CarouselOptions(
                     height: 100,
                     scrollDirection: Axis.vertical,
-                    autoPlay: true,
+                    autoPlay:
+                        !_isSpeaking, // Control autoPlay based on TTS state
                     autoPlayInterval: const Duration(seconds: 5),
                     enlargeCenterPage: false,
-                    viewportFraction: 3.0,
+                    viewportFraction: 1.0,
                     onPageChanged: (index, reason) {
                       setState(() {
                         _currentIndex = index;
@@ -136,19 +195,45 @@ checkSensor('Sensor 4', moistureS4);
                 ),
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.asset(
-              'assets/somo.png',
-              width: 25,
-              height: 25,
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.volume_up, color: Colors.black),
+                  onPressed: () async {
+                    if (messages.isNotEmpty) {
+                      await _speak(messages[_currentIndex]['text']);
+                    }
+                  },
+                ),
+                Image.asset(
+                  'assets/somo.png',
+                  width: 25,
+                  height: 25,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  "SOMO",
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            const Expanded(
-              child: Text(
-                "SOMO",
-                style: TextStyle(
-                    color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
-              ),
+            Row(
+              children: [
+                Text('Eng'),
+                Switch(
+                  value: _isFilipino,
+                  onChanged: (value) {
+                    setState(() {
+                      _isFilipino = value;
+                      _updateMessages(); // Update messages when language is toggled
+                    });
+                  },
+                ),
+                Text('Fil'),
+              ],
             ),
           ],
         ),
