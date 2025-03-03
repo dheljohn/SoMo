@@ -10,6 +10,7 @@ import 'package:soil_monitoring_app/historySection.dart';
 import 'package:soil_monitoring_app/navBar.dart';
 import 'package:soil_monitoring_app/soilmoistures_info.dart';
 import 'package:soil_monitoring_app/tutorial.dart';
+import 'package:soil_monitoring_app/wifiStat.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -225,7 +226,7 @@ class _HomeState extends State<Home> {
             color: const Color.fromARGB(255, 247, 246, 237),
             padding: const EdgeInsets.only(top: 8),
             child: Container(
-              margin: const EdgeInsets.fromLTRB(13, 13, 13, 8),
+              margin: const EdgeInsets.fromLTRB(13, 0, 13, 8),
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 100, 122, 99),
                 border: Border.all(

@@ -41,9 +41,15 @@ class Gauges extends StatelessWidget {
 
   Widget buildGauge(
       BuildContext context, String title, double value, Color bgColor) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final gaugeSize =
+        screenWidth / 2.6; // Adjust the divisor to change the size
+    final gaugeHeight =
+        gaugeSize / 1.14; // Adjust the divisor to change the height
+
     return Container(
-      height: 120,
-      width: 160,
+      height: gaugeHeight,
+      width: gaugeSize,
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -66,8 +72,8 @@ class Gauges extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 60,
-                width: 60,
+                height: gaugeSize / 2,
+                width: gaugeSize / 2,
                 child: SfRadialGauge(
                   axes: <RadialAxis>[
                     RadialAxis(

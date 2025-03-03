@@ -62,6 +62,7 @@ class _DeveloperPageState extends State<DeveloperPage> {
       'name': 'Jon Marvin',
       'role': 'Document/Proof Reader',
       'description': 'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
+
       'image': 'assets/marvin.png',
       'imageWidth': 200.0,
       'imageHeight': 200.0,
