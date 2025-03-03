@@ -14,7 +14,7 @@ class _PlotSelectionState extends State<PlotSelection> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final DatabaseReference realtimeDB = FirebaseDatabase.instance.ref();
 
-  @override
+@override
   void initState() {
     super.initState();
     _loadSavedPlot();
@@ -59,7 +59,7 @@ class _PlotSelectionState extends State<PlotSelection> {
               Text("Choose a plot:", style: TextStyle(fontSize: 18)),
               SizedBox(height: 20),
               DropdownButton<String>(
-                value: selectedPlot,
+ value: selectedPlot,
                 hint: Text("Select a plot"),
                 items: plots.map((String value) {
                   return DropdownMenuItem<String>(
@@ -72,7 +72,7 @@ class _PlotSelectionState extends State<PlotSelection> {
                     setState(() {
                       selectedPlot = newValue;
                     });
-                    _savePlot(newValue);
+ _savePlot(newValue);
                   }
                 },
               ),

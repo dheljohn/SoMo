@@ -1,294 +1,534 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class SensorHistoryScreen extends StatefulWidget {
-  const SensorHistoryScreen({super.key});
-
-  @override
-  _SensorHistoryScreenState createState() => _SensorHistoryScreenState();
+String interpretMoisture(double moisture) {
+  if (moisture < 30) return "Low (Soil is dry, needs watering)";
+  if (moisture < 60) return "Moderate (Soil is moist, good condition)";
+  return "High (Soil is very wet, avoid overwatering)";
 }
 
-class _SensorHistoryScreenState extends State<SensorHistoryScreen> {
-  List<DocumentSnapshot> _logs = [];
-  bool _isLoading = true;
-  DateTime? _selectedDate;
+String interpretTemperature(double temp) {
+  if (temp < 15) return "Cold (Risk of frost)";
+  if (temp < 30) return "Optimal (Good growing conditions)";
+  return "Hot (Plants may need extra water)";
+}
+
+String interpretHumidity(double humidity) {
+  if (humidity < 40) return "Low (Dry air, may cause dehydration)";
+  if (humidity < 70) return "Moderate (Ideal conditions)";
+  return "High (Risk of fungal growth)";
+}
+
+class HistoryDisplay extends StatefulWidget {
+  @override
+  _HistoryDisplayState createState() => _HistoryDisplayState();
+}
+
+class _HistoryDisplayState extends State<HistoryDisplay> {
+  String selectedPlot = "All"; // Default selection
+  final List<String> plots = ["All", "Plot1", "Plot2", "Plot3"];
+  List<Map<String, dynamic>> sensorData = [];
+  StreamSubscription<QuerySnapshot>? _sensorSubscription;
+  DateTime? startDate;
+  DateTime? endDate;
+  String selectedSortOrder = "Descending"; // Default sort order
+  String selectedFilter = "None"; // Default filter
 
   @override
   void initState() {
     super.initState();
-    _fetchLogs();
+    _fetchData();
   }
 
-  final CollectionReference logsRef =
-      FirebaseFirestore.instance.collection('sensor_logs');
+  void _fetchData() {
+    print("Fetching data for: $selectedPlot");
 
-  void _fetchLogs() {
-    FirebaseFirestore.instance
-        .collectionGroup('logs')
-        .orderBy('timestamp', descending: true)
+    _sensorSubscription?.cancel();
+    sensorData.clear();
+
+    if (selectedPlot == "All") {
+      _fetchAllPlotsData();
+    } else {
+      _fetchSinglePlotData(selectedPlot);
+    }
+  }
+
+  void _fetchSinglePlotData(String plot) {
+    _sensorSubscription = FirebaseFirestore.instance
+        .collection("Plots")
+        .doc(plot)
+        .collection("sensorData")
+        .orderBy("timestamp", descending: true)
         .snapshots()
         .listen((snapshot) {
       setState(() {
-        _logs = snapshot.docs;
-        _isLoading = false;
+        sensorData = snapshot.docs.map((doc) {
+          var data = doc.data() as Map<String, dynamic>;
+          data['plot'] = plot; // Add plot name
+          return data;
+        }).toList();
+        _filterAndSortData();
       });
+    }, onError: (error) {
+      print("Firestore Error: $error");
     });
   }
 
-  Future<void> _downloadCSV() async {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collectionGroup('logs').get();
+  void _fetchAllPlotsData() async {
+    List<Map<String, dynamic>> allData = [];
 
-    List<List<dynamic>> csvData = [
-      [
-        "Timestamp",
-        "Temperature",
-        "Humidity",
-        "Soil Moisture 1",
-        "Soil Moisture 2",
-        "Soil Moisture 3",
-        "Soil Moisture 4"
-      ]
-    ];
+    for (String plot in plots.where((p) => p != "All")) {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection("Plots")
+          .doc(plot)
+          .collection("sensorData")
+          .orderBy("timestamp", descending: true)
+          .get();
 
-    for (var doc in querySnapshot.docs) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      csvData.add([
-        _formatTimestamp(data['timestamp']),
-        data['temperature'] ?? '',
-        data['humidity'] ?? '',
-        data['moisture_1'] ?? '',
-        data['moisture_2'] ?? '',
-        data['moisture_3'] ?? '',
-        data['moisture_4'] ?? '',
-      ]);
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data['plot'] = plot;
+        allData.add(data);
+      }
     }
 
-    String csv = const ListToCsvConverter().convert(csvData);
-    final directory = await getApplicationDocumentsDirectory();
-    final path = '${directory.path}/sensor_logs.csv';
-    final File file = File(path);
-    await file.writeAsString(csv);
-
-    OpenFile.open(path);
+    setState(() {
+      sensorData = allData;
+      _filterAndSortData();
+    });
   }
 
-  String _formatTimestamp(dynamic timestamp) {
-    if (timestamp is Timestamp) {
-      DateTime dateTime = timestamp.toDate();
-      return DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+  void _filterAndSortData() {
+    List<Map<String, dynamic>> filteredData = List.from(sensorData);
+
+    if (startDate != null && endDate != null) {
+      filteredData = filteredData.where((data) {
+        DateTime timestamp = (data['timestamp'] as Timestamp).toDate();
+        return timestamp.isAfter(startDate!) && timestamp.isBefore(endDate!);
+      }).toList();
     }
-    return "Invalid date";
-  }
 
-  String _formatDate(dynamic timestamp) {
-    if (timestamp is Timestamp) {
-      DateTime dateTime = timestamp.toDate();
-      return DateFormat('MMM dd, yyyy').format(dateTime);
+    if (selectedFilter != "None") {
+      filteredData = filteredData.where((data) {
+        double value;
+        switch (selectedFilter) {
+          case "High Moisture":
+            value = data['average_moisture'];
+            return value > 60;
+          case "Low Moisture":
+            value = data['average_moisture'];
+            return value < 30;
+          case "High Temperature":
+            value = data['temperature'];
+            return value > 30;
+          case "Low Temperature":
+            value = data['temperature'];
+            return value < 15;
+          case "High Humidity":
+            value = data['humidity'];
+            return value > 70;
+          case "Low Humidity":
+            value = data['humidity'];
+            return value < 40;
+          case "None":
+          default:
+            return true;
+        }
+      }).toList();
     }
-    return "Invalid date";
+
+    filteredData.sort((a, b) {
+      DateTime dateA = (a['timestamp'] as Timestamp).toDate();
+      DateTime dateB = (b['timestamp'] as Timestamp).toDate();
+      return selectedSortOrder == "Ascending"
+          ? dateA.compareTo(dateB)
+          : dateB.compareTo(dateA);
+    });
+
+    setState(() {
+      sensorData = filteredData;
+    });
   }
 
-  String _formatTime(dynamic timestamp) {
-    if (timestamp is Timestamp) {
-      DateTime dateTime = timestamp.toDate();
-      return DateFormat('h:mm a').format(dateTime);
-    }
-    return "Invalid time";
-  }
-
-  void _pickDate() async {
-    DateTime? picked = await showDatePicker(
+  Future<void> _selectDateRange(BuildContext context) async {
+    final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      initialDateRange: startDate != null && endDate != null
+          ? DateTimeRange(start: startDate!, end: endDate!)
+          : null,
     );
     if (picked != null) {
       setState(() {
-        _selectedDate = picked;
+        startDate = picked.start;
+        endDate = picked.end;
       });
+      _fetchData();
     }
   }
 
-  void _clearDate() {
-    setState(() {
-      _selectedDate = null;
-    });
+  Future<void> _downloadCSV() async {
+    var status = await Permission.storage.request();
+    if (!status.isGranted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Storage permission denied"),
+      ));
+      return;
+    }
+
+    List<List<String>> csvData = [
+      [
+        "Plot",
+        "Date",
+        "Time",
+        "Avg Moisture",
+        "Humidity",
+        "Temperature",
+        "Moisture 1",
+        "Moisture 2",
+        "Moisture 3",
+        "Moisture 4"
+      ]
+    ];
+
+    for (var data in sensorData) {
+      DateTime timestamp =
+          (data['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now();
+      String date = DateFormat('MMMM d, yyyy').format(timestamp);
+      String time = DateFormat('h:mm a').format(timestamp);
+
+      csvData.add([
+        data['plot'] ?? "Unknown Plot",
+        date,
+        time,
+        "${data['average_moisture'] ?? "N/A"}%",
+        "${data['humidity'] ?? "N/A"}%",
+        "${data['temperature'] ?? "N/A"}°C",
+        "${data['moisture_1'] ?? "N/A"}",
+        "${data['moisture_2'] ?? "N/A"}",
+        "${data['moisture_3'] ?? "N/A"}",
+        "${data['moisture_4'] ?? "N/A"}",
+      ]);
+    }
+
+    String csvString = const ListToCsvConverter().convert(csvData);
+
+    Directory? directory = Directory('/storage/emulated/0/Download');
+    if (!await directory.exists()) {
+      throw "Downloads folder not found";
+    }
+
+    String fileName = selectedPlot == "All"
+        ? "all_plots_sensor_data.csv"
+        : "${selectedPlot}_sensor_data.csv";
+    String filePath = "${directory.path}/$fileName";
+    File file = File(filePath);
+
+    await file.writeAsString(csvString);
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("CSV saved to Downloads: $filePath"),
+    ));
+  }
+
+  String formatTimestamp(dynamic timestamp) {
+    if (timestamp is Timestamp) {
+      DateTime date = timestamp.toDate();
+      return DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
+    }
+    return "Invalid date";
+  }
+
+  Widget moistureIndicator(double moisture) {
+    Color color;
+    String interpretation;
+
+    if (moisture < 30) {
+      color = Colors.red;
+      interpretation = "Low (Soil is dry, needs watering)";
+    } else if (moisture < 60) {
+      color = Colors.orange;
+      interpretation = "Moderate (Soil is moist, good condition)";
+    } else {
+      color = Colors.green;
+      interpretation = "High (Soil is very wet, avoid overwatering)";
+    }
+
+    return Row(
+      children: [
+        Icon(Icons.circle, color: color, size: 14),
+        SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            "Moisture: $moisture% - $interpretation",
+            style: TextStyle(color: color, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildFilterDropdown() {
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.filter_list),
+      onSelected: (value) {
+        setState(() {
+          selectedFilter = value;
+        });
+        _fetchData();
+      },
+      itemBuilder: (BuildContext context) {
+        return [
+          PopupMenuItem(
+            value: "None",
+            child: Text("None"),
+          ),
+          PopupMenuItem(
+            value: "High Moisture",
+            child: Text("High Moisture"),
+          ),
+          PopupMenuItem(
+            value: "Low Moisture",
+            child: Text("Low Moisture"),
+          ),
+          PopupMenuItem(
+            value: "High Temperature",
+            child: Text("High Temperature"),
+          ),
+          PopupMenuItem(
+            value: "Low Temperature",
+            child: Text("Low Temperature"),
+          ),
+          PopupMenuItem(
+            value: "High Humidity",
+            child: Text("High Humidity"),
+          ),
+          PopupMenuItem(
+            value: "Low Humidity",
+            child: Text("Low Humidity"),
+          ),
+        ];
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, List<DocumentSnapshot>> groupedLogs = {};
-    for (var log in _logs) {
-      String date = _formatDate(log['timestamp']);
-      if (!groupedLogs.containsKey(date)) {
-        groupedLogs[date] = [];
+    Map<String, List<Map<String, dynamic>>> groupedData = {};
+
+    for (var data in sensorData) {
+      String dateKey =
+          DateFormat('MMMM d, yyyy').format(data['timestamp'].toDate());
+      if (!groupedData.containsKey(dateKey)) {
+        groupedData[dateKey] = [];
       }
-      groupedLogs[date]!.add(log);
+      groupedData[dateKey]!.add(data);
     }
 
-   return Scaffold(
-  backgroundColor:   const Color.fromARGB(255, 247, 246, 237),
+    Color getMoistureColor(double moisture) {
+      if (moisture < 30) return Colors.red; // Dry
+      if (moisture < 60) return Colors.orange; // Moderate
+      return Colors.green; // Good
+    }
 
-  appBar: AppBar(
-    backgroundColor: const Color.fromARGB(255, 247, 246, 237),
-    title: const Text('Sensor History' , style: TextStyle(color: const Color.fromARGB(255, 100, 122, 99))),
-    actions: [
-      IconButton(
-        icon: const Icon(Icons.download , color: const Color.fromARGB(255, 100, 122, 99)),
-        onPressed: _downloadCSV,
+    Widget moistureIndicator(double moisture) {
+      return Row(
+        children: [
+          Text("Moisture: $moisture%"),
+          SizedBox(width: 5),
+          Icon(Icons.circle, color: getMoistureColor(moisture), size: 14),
+        ],
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Sensor Data History"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.download),
+            onPressed: _downloadCSV,
+          ),
+        ],
       ),
-    ],
-  ),
-  body: Container(
-    color: const Color.fromARGB(255, 247, 246, 237),
-    child: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color.fromARGB(255, 100, 122, 99)),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Date Range Picker
+          Container(
+            padding: const EdgeInsets.all(8.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Expanded(
-                  child: TextButton.icon(
-                    icon: Icon(Icons.calendar_today, color: const Color.fromARGB(255, 100, 122, 99)),
-                    label: Text(
-                      _selectedDate == null
-                          ? 'Search by Date'
-                          : DateFormat('MMM dd, yyyy').format(_selectedDate!),
-                      style: TextStyle(color: const Color.fromARGB(255, 100, 122, 99)),
-                    ),
-                    onPressed: _pickDate,
+                // Dropdown for selecting plots
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButton<String>(
+                    value: selectedPlot,
+                    items: plots.map((plot) {
+                      return DropdownMenuItem(
+                        value: plot,
+                        child: Text(plot),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          selectedPlot = value;
+                        });
+                        _fetchData();
+                      }
+                    },
                   ),
                 ),
-                if (_selectedDate != null)
-                  IconButton(
-                    icon: Icon(Icons.cancel, color:  Color.fromARGB(255, 253, 133, 124)),
-                    onPressed: _clearDate,
+                // Dropdown for sorting order
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButton<String>(
+                    value: selectedSortOrder,
+                    items: ["Ascending", "Descending"].map((order) {
+                      return DropdownMenuItem(
+                        value: order,
+                        child: Text(order),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          selectedSortOrder = value;
+                        });
+                        _filterAndSortData();
+                      }
+                    },
                   ),
+                ),
+                // Dropdown for filtering
+                buildFilterDropdown(),
+                Flexible(
+                  child: IconButton(
+                    icon: Icon(Icons.date_range),
+                    onPressed: () => _selectDateRange(context),
+                  ),
+                ),
               ],
             ),
           ),
-        ),
-        Expanded(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _logs.isEmpty
-                  ? Center(child: Text('No sensor history available.'))
-                  : ListView(
-                      children: groupedLogs.entries
-                          .where((entry) =>
-                              _selectedDate == null || entry.key == DateFormat('MMM dd, yyyy').format(_selectedDate!))
-                          .map((entry) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                entry.key,
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
+
+          // Display Grouped Sensor Data
+          Expanded(
+            child: sensorData.isEmpty
+                ? Center(child: Text("No data available"))
+                : ListView(
+                    children: groupedData.entries.map((entry) {
+                      String date = entry.key;
+                      List<Map<String, dynamic>> records = entry.value;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            child: Text(
+                              date,
+                              style: TextStyle(
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color.fromARGB(255, 0, 73, 39)),
                             ),
-                            ...entry.value.map((log) {
-                              Map<String, dynamic> data = log.data() as Map<String, dynamic>;
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          ...records.map((data) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        SensorDetailScreen(sensorData: data),
                                   ),
-                                  child: ListTile(
-                                    title: Text(
-                                      _formatTime(data['timestamp']),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0,
+                                );
+                              },
+                              child: Card(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${data['plot']} - ${DateFormat('h:mm a').format(data['timestamp'].toDate())}",
+                                        style: TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                    ),
-                                     subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(height: 8.0),
-                                    Text(
-                                      "Soil Moisture: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}",
-                                      style: TextStyle(fontSize: 14.0),
-                                    ),
-                                    Text(
-                                      "Temperature: ${data['temperature']}°C",
-                                      style: TextStyle(fontSize: 14.0),
-                                    ),
-                                    Text(
-                                      "Humidity: ${data['humidity']}%",
-                                      style: TextStyle(fontSize: 14.0),
-                                    ),
-                                  ],
-
-                                ),
-
-                                    onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: Text('Sensor Log Details'),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                'Temperature: ${data['temperature']}°C'),
-                                            Text(
-                                                'Humidity: ${data['humidity']}%'),
-                                            Text(
-                                                'Soil Moisture 1: ${data['moisture_1']}'),
-                                            Text(
-                                                'Soil Moisture 2: ${data['moisture_2']}'),
-                                            Text(
-                                                'Soil Moisture 3: ${data['moisture_3']}'),
-                                            Text(
-                                                'Soil Moisture 4: ${data['moisture_4']}'),
-                                            Text(
-                                                'Time: ${_formatTime(data['timestamp'])}'),
-                                          ],
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('Close'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
+                                      Divider(),
+                                      moistureIndicator(
+                                          data['average_moisture']),
+                                      Text(
+                                          "Temperature: ${data['temperature']}°C - ${interpretTemperature(data['temperature'])}"),
+                                      Text(
+                                          "Humidity: ${data['humidity']}% - ${interpretHumidity(data['humidity'])}"),
+                                      Text(
+                                          "Moisture Sensors: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}"),
+                                    ],
                                   ),
                                 ),
-                              );
-                            }).toList()
-                          ],
-                        );
-                      }).toList(),
-                    ),
-        ),
-      ],
-    ),
-  ),
-);
+                              ),
+                            );
+                          }).toList(),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
+class SensorDetailScreen extends StatelessWidget {
+  final Map<String, dynamic> sensorData;
+
+  SensorDetailScreen({required this.sensorData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Sensor Details")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Plot: ${sensorData['plot']}",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+                "Timestamp: ${DateFormat('yyyy-MM-dd h:mm a').format(sensorData['timestamp'].toDate())}"),
+            SizedBox(height: 10),
+            Text(
+                "Temperature: ${sensorData['temperature']}°C - ${interpretTemperature(sensorData['temperature'])}"),
+            Text(
+                "Humidity: ${sensorData['humidity']}% - ${interpretHumidity(sensorData['humidity'])}"),
+            SizedBox(height: 10),
+            Text("Average Moisture: ${sensorData['average_moisture']}%"),
+            Text("Moisture Sensor 1: ${sensorData['moisture_1']}%"),
+            Text("Moisture Sensor 2: ${sensorData['moisture_2']}%"),
+            Text("Moisture Sensor 3: ${sensorData['moisture_3']}%"),
+            Text(
+                "Moisture Sensor 4: ${sensorData['moisture_4']}%"), //lagay comment pang push sa bagong branch
+          ],
+        ),
+      ),
+    );
   }
 }

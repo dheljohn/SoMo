@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
 
@@ -119,7 +120,7 @@ class _FirebaseDataState extends State<FirebaseData> {
             moistureS2: moisture_s2,
             moistureS3: moisture_s3,
             moistureS4: moisture_s4,
-            child: SensorHistoryScreen(),
+            child: HistoryDisplay(),
           );
         } else {
           return const CircularProgressIndicator();

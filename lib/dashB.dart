@@ -159,6 +159,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             SizedBox(height: screenHeight * 0.02),
             // Date Container
            Container(
@@ -188,7 +189,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                 fontSize: screenWidth * 0.06,
                 fontWeight: FontWeight.bold,
               ),
-            ),
+              ),
             SizedBox(height: screenWidth * 0.01),
             Text(
               DateFormat('EEEE').format(DateTime.now()),
@@ -271,7 +272,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                   ),
                 ),
               
-            
+ 
 
             SizedBox(height: screenHeight * 0.01),
         Gauges(dataProvider: dataProvider),
