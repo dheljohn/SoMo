@@ -101,7 +101,45 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         return 'Unknown Weather';
     }
   }
+void _showPasswordDialog(BuildContext context) {
+  TextEditingController passwordController = TextEditingController();
+  String correctPassword = "12345"; // Set your password here
 
+  showDialog(
+    context: context,
+    barrierDismissible: false, // Prevent closing without input
+    builder: (context) => AlertDialog(
+      title: Text("Enter Password Before Modifying the Plot",  ),
+      content: TextField(
+        controller: passwordController,
+        obscureText: true,
+        decoration: InputDecoration(hintText: "Password"),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context), // Close dialog
+          child: Text("Cancel"),
+        ),
+        TextButton(
+          onPressed: () {
+            if (passwordController.text == correctPassword) {
+              Navigator.pop(context); // Close dialog
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PlotSelection()),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Incorrect password!")),
+              );
+            }
+          },
+          child: Text("Submit"),
+        ),
+      ],
+    ),
+  );
+}
   @override
   Widget build(BuildContext context) {
     final dataProvider = DataProvider.of(context);
@@ -162,6 +200,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
           children: [
             SizedBox(height: screenHeight * 0.02),
             // Date Container
+
             Container(
               padding: EdgeInsets.all(screenWidth * 0.04),
               decoration: BoxDecoration(
@@ -271,6 +310,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                 ),
               ),
             ),
+
 
             SizedBox(height: screenHeight * 0.01),
             Gauges(dataProvider: dataProvider),
