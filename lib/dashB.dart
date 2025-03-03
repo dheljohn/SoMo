@@ -6,6 +6,7 @@ import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
 import 'package:soil_monitoring_app/helpmsg.dart';
 import 'package:soil_monitoring_app/plot_selection_page.dart';
+import 'package:soil_monitoring_app/wifiStat.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -203,6 +204,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
           children: [
             SizedBox(height: screenHeight * 0.02),
             // Date Container
+
             Container(
               padding: EdgeInsets.all(screenWidth * 0.04),
               decoration: BoxDecoration(
@@ -224,6 +226,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        WifiStatus(),
                         Text(
                           DateFormat('MMMM d, yyyy').format(DateTime.now()),
                           style: TextStyle(

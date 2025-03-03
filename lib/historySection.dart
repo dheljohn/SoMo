@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 String interpretMoisture(double moisture) {
@@ -175,11 +177,12 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
   }
 
   Future<void> _downloadCSV() async {
-    var status = await Permission.storage.request();
+    var status = await Permission.manageExternalStorage.request();
     if (!status.isGranted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Storage permission denied"),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Storage permission denied")),
+      );
+
       return;
     }
 
@@ -219,10 +222,10 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     }
 
     String csvString = const ListToCsvConverter().convert(csvData);
+    Directory? directory = await getExternalStorageDirectory();
 
-    Directory? directory = Directory('/storage/emulated/0/Download');
-    if (!await directory.exists()) {
-      throw "Downloads folder not found";
+    if (directory == null) {
+      throw "Failed to get storage directory";
     }
 
     String fileName = selectedPlot == "All"
@@ -234,8 +237,11 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     await file.writeAsString(csvString);
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("CSV saved to Downloads: $filePath"),
+      content: Text("CSV saved: $filePath"),
     ));
+
+    // Open the file after download
+    OpenFile.open(filePath);
   }
 
   String formatTimestamp(dynamic timestamp) {
