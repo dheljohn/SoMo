@@ -85,7 +85,7 @@ class _HelperMsgState extends State<HelperMsg> {
     } else if (temperatureValue >= 30) {
       addMessage(
         _isFilipino
-            ? 'Mataas na Temperatura na nararanasan! Subukang pababain ang temperatura.\nRekomendasyon: Magbigay lilim, o diligan ang mga halaman. ' //🔥
+            ? 'Mataas na Temperatura ang nararanasan! Subukang pababain ang temperatura.\nRekomendasyon: Magbigay lilim, o diligan ang mga halaman. ' //🔥
             : 'High Temperature Detected! Consider decreasing temperature.\nRecommendation: Provide shade, or water plants. ',
         const Color.fromARGB(255, 253, 133, 124),
       );
@@ -109,7 +109,7 @@ class _HelperMsgState extends State<HelperMsg> {
       } else if (moistureValue >= 70) {
         addMessage(
           _isFilipino
-              ? '$sensorName: Mataas na Moisture na nararanasan! Isaalang-alang ang pagbabawas ng pagdidilig.\nRekomendasyon: Patayin ang drip line o laktawan ang susunod na nakatakdang pagdidilig at pagbutihin ang drainage ng lupa. ' //🚰
+              ? '$sensorName: Mataas na Moisture ang nararanasan! Isaalang-alang ang pagbabawas ng pagdidilig.\nRekomendasyon: Patayin ang drip line o laktawan ang susunod na nakatakdang pagdidilig at pagbutihin ang drainage ng lupa. ' //🚰
               : '$sensorName: High Moisture Detected! Consider reducing watering.\nRecommendation: Turn off the drip line or skip the next scheduled watering and improve soil drainage. ',
           const Color.fromARGB(255, 131, 174, 209),
         );
