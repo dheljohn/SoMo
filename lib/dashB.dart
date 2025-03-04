@@ -197,7 +197,11 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
 
     return Container(
       color: const Color.fromARGB(255, 247, 246, 237),
-      padding: EdgeInsets.all(screenWidth * 0.04),
+      padding: EdgeInsets.only(
+          left: screenWidth * 0.04,
+          right: screenWidth * 0.04,
+          top: screenWidth * 0.04,
+          bottom: screenWidth * 0),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,7 +230,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        WifiStatus(),
+                        WifiStatus(), // Display WiFi status snackbar
                         Text(
                           DateFormat('MMMM d, yyyy').format(DateTime.now()),
                           style: TextStyle(
@@ -406,17 +410,18 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                 ),
               ),
             ),
+
             Align(
-              alignment: Alignment.center,
+              alignment: Alignment.bottomLeft,
               child: Container(
                 color: const Color.fromARGB(255, 247, 246, 237),
                 margin: EdgeInsets.all(screenWidth * 0.02),
-                height: screenHeight * 0.15,
+                height: screenHeight * 0.19,
                 width: double.infinity,
                 child: const HelperMsg(),
               ),
             ),
-            SizedBox(height: screenHeight * 0.0),
+            //SizedBox(height: screenHeight * 0),
           ],
         ),
       ),

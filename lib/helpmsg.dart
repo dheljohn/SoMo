@@ -38,6 +38,12 @@ class _HelperMsgState extends State<HelperMsg> {
       });
     });
 
+    //_updateMessages();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _updateMessages(); // Initialize messages
   }
 
@@ -149,7 +155,7 @@ class _HelperMsgState extends State<HelperMsg> {
               : CarouselSlider.builder(
                   itemCount: messages.length,
                   options: CarouselOptions(
-                    height: 100,
+                    height: 140, // Adjust height based on message length
                     scrollDirection: Axis.vertical,
                     autoPlay:
                         !_isSpeaking, // Control autoPlay based on TTS state
@@ -199,14 +205,6 @@ class _HelperMsgState extends State<HelperMsg> {
           children: [
             Row(
               children: [
-                IconButton(
-                  icon: Icon(Icons.volume_up, color: Colors.black),
-                  onPressed: () async {
-                    if (messages.isNotEmpty) {
-                      await _speak(messages[_currentIndex]['text']);
-                    }
-                  },
-                ),
                 Image.asset(
                   'assets/somo.png',
                   width: 25,
@@ -217,6 +215,14 @@ class _HelperMsgState extends State<HelperMsg> {
                   "SOMO",
                   style: TextStyle(
                       color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
+                ),
+                IconButton(
+                  icon: Icon(Icons.volume_up, color: Colors.black),
+                  onPressed: () async {
+                    if (messages.isNotEmpty) {
+                      await _speak(messages[_currentIndex]['text']);
+                    }
+                  },
                 ),
               ],
             ),
@@ -233,6 +239,14 @@ class _HelperMsgState extends State<HelperMsg> {
                   },
                 ),
                 Text('Fil'),
+                // IconButton(
+                //   icon: Icon(Icons.volume_up, color: Colors.black),
+                //   onPressed: () async {
+                //     if (messages.isNotEmpty) {
+                //       await _speak(messages[_currentIndex]['text']);
+                //     }
+                //   },
+                // ),
               ],
             ),
           ],
