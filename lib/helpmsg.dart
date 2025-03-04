@@ -62,15 +62,15 @@ class _HelperMsgState extends State<HelperMsg> {
     if (humidityValue <= 30) {
       addMessage(
         _isFilipino
-            ? 'Mababang kahalumigmigan ang nararanasan! Subukang pataasin ang kahalumigmigan.\nRekomendasyon: Maglagay ng mga lagayang may tubig malapit sa mga halaman upang mapataas ang kahalumigmigan. 🌵'
-            : 'Low Humidity Detected! Consider increasing humidity.\nRecommendation: Place water trays near plants to raise humidity. 🌵',
+            ? 'Mababang kahalumigmigan ang nararanasan! Subukang pataasin ang kahalumigmigan.\nRekomendasyon: Maglagay ng mga lagayang may tubig malapit sa mga halaman upang mapataas ang kahalumigmigan. '
+            : 'Low Humidity Detected! Consider increasing humidity.\nRecommendation: Place water trays near plants to raise humidity. ', //🌵
         const Color.fromARGB(255, 253, 133, 124),
       );
     } else if (humidityValue >= 70) {
       addMessage(
         _isFilipino
-            ? 'Mataas na kahalumigmigan ang nararanasan! Subukang pababain ang kahalumigmigan.\nRekomendasyon: Pagbutihin ang bentilasyon, o iwasan ang sobrang pagdidilig. 💦'
-            : 'High Humidity Detected! Consider decreasing humidity.\nRecommendation: Improve ventilation, or avoid overwatering. 💦',
+            ? 'Mataas na kahalumigmigan ang nararanasan! Subukang pababain ang kahalumigmigan.\nRekomendasyon: Pagbutihin ang bentilasyon, o iwasan ang sobrang pagdidilig. ' //💦
+            : 'High Humidity Detected! Consider decreasing humidity.\nRecommendation: Improve ventilation, or avoid overwatering. ',
         const Color.fromARGB(255, 131, 174, 209),
       );
     }
@@ -78,15 +78,15 @@ class _HelperMsgState extends State<HelperMsg> {
     if (temperatureValue <= 15) {
       addMessage(
         _isFilipino
-            ? 'Mababang Temperatura ang nararanasan! Subukang pataasin ang temperatura.\nRekomendasyon: Ilantad ang mga halaman kung san may sikat ng araw. ❄️'
-            : 'Low Temperature Detected! Consider increasing temperature.\nRecommendation: Expose plants to more sunlight. ❄️',
+            ? 'Mababang Temperatura ang nararanasan! Subukang pataasin ang temperatura.\nRekomendasyon: Ilantad ang mga halaman kung san may sikat ng araw. ' //❄️
+            : 'Low Temperature Detected! Consider increasing temperature.\nRecommendation: Expose plants to more sunlight. ',
         const Color.fromARGB(255, 131, 174, 209),
       );
     } else if (temperatureValue >= 30) {
       addMessage(
         _isFilipino
-            ? 'Mataas na Temperatura na nararanasan! Subukang pababain ang temperatura.\nRekomendasyon: Magbigay lilim, o diligan ang mga halaman. 🔥'
-            : 'High Temperature Detected! Consider decreasing temperature.\nRecommendation: Provide shade, or water plants. 🔥',
+            ? 'Mataas na Temperatura na nararanasan! Subukang pababain ang temperatura.\nRekomendasyon: Magbigay lilim, o diligan ang mga halaman. ' //🔥
+            : 'High Temperature Detected! Consider decreasing temperature.\nRecommendation: Provide shade, or water plants. ',
         const Color.fromARGB(255, 253, 133, 124),
       );
     }
@@ -95,22 +95,22 @@ class _HelperMsgState extends State<HelperMsg> {
       if (moistureValue <= 5) {
         addMessage(
           _isFilipino
-              ? '$sensorName: Hindi naka-deploy ang sensor! ⚠️'
-              : '$sensorName: Sensor not deployed! ⚠️',
+              ? '$sensorName: Hindi naka-deploy ang sensor! '
+              : '$sensorName: Sensor not deployed! ', //⚠️
           const Color.fromARGB(255, 150, 150, 150),
         );
       } else if (moistureValue <= 30) {
         addMessage(
           _isFilipino
-              ? '$sensorName: Mababang Moisture ang nararanasan! Isaalang-alang ang pagdidilig ng lupa.\nRekomendasyon: Diligan ang lupa ayon sa pangangailangan. 🌱'
-              : '$sensorName: Low Moisture Detected! Consider watering the soil.\nRecommendation: Water the soil as needed. 🌱',
+              ? '$sensorName: Mababang Moisture ang nararanasan! Isaalang-alang ang pagdidilig ng lupa.\nRekomendasyon: Diligan ang lupa ayon sa pangangailangan. '
+              : '$sensorName: Low Moisture Detected! Consider watering the soil.\nRecommendation: Water the soil as needed. ', //🌱
           const Color.fromARGB(255, 253, 133, 124),
         );
       } else if (moistureValue >= 70) {
         addMessage(
           _isFilipino
-              ? '$sensorName: Mataas na Moisture na nararanasan! Isaalang-alang ang pagbabawas ng pagdidilig.\nRekomendasyon: Patayin ang drip line o laktawan ang susunod na nakatakdang pagdidilig at pagbutihin ang drainage ng lupa. 🚰'
-              : '$sensorName: High Moisture Detected! Consider reducing watering.\nRecommendation: Turn off the drip line or skip the next scheduled watering and improve soil drainage. 🚰',
+              ? '$sensorName: Mataas na Moisture na nararanasan! Isaalang-alang ang pagbabawas ng pagdidilig.\nRekomendasyon: Patayin ang drip line o laktawan ang susunod na nakatakdang pagdidilig at pagbutihin ang drainage ng lupa. ' //🚰
+              : '$sensorName: High Moisture Detected! Consider reducing watering.\nRecommendation: Turn off the drip line or skip the next scheduled watering and improve soil drainage. ',
           const Color.fromARGB(255, 131, 174, 209),
         );
       }
@@ -217,7 +217,8 @@ class _HelperMsgState extends State<HelperMsg> {
                       color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
                 ),
                 IconButton(
-                  icon: Icon(Icons.volume_up, color: Colors.black),
+                  icon: Icon(Icons.volume_up,
+                      color: Color.fromARGB(255, 42, 83, 39)),
                   onPressed: () async {
                     if (messages.isNotEmpty) {
                       await _speak(messages[_currentIndex]['text']);
@@ -231,6 +232,7 @@ class _HelperMsgState extends State<HelperMsg> {
                 Text('Eng'),
                 Switch(
                   value: _isFilipino,
+                  activeColor: Color.fromARGB(255, 42, 83, 39),
                   onChanged: (value) {
                     setState(() {
                       _isFilipino = value;
