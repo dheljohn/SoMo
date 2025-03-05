@@ -20,7 +20,7 @@ class _DeveloperPageState extends State<DeveloperPage>
       'position': {'top': -10.0, 'left': 70.0, 'width': 100.0, 'height': 140.0},
       'links': {
         'github': 'https://github.com/named-JM',
-        'facebook': 'https://facebook.com/joannamarie',
+        'facebook': 'https://www.facebook.com/JM.cags/',
         'linkedin': 'https://linkedin.com/in/joannamarie',
       }
     },
@@ -32,8 +32,8 @@ class _DeveloperPageState extends State<DeveloperPage>
       'image': 'assets/edhel.png',
       'position': {'top': -12.0, 'left': 60.0, 'width': 120.0, 'height': 140.0},
       'links': {
-        'github': 'https://github.com/edheljohn',
-        'facebook': 'https://facebook.com/edheljohn',
+        'github': 'https://github.com/dheljohn',
+        'facebook': 'https://www.facebook.com/edhel.johnn',
         'linkedin': 'https://linkedin.com/in/edheljohn',
       }
     },
@@ -45,8 +45,8 @@ class _DeveloperPageState extends State<DeveloperPage>
       'image': 'assets/jenny.png',
       'position': {'top': -10.0, 'left': 40.0, 'width': 160.0, 'height': 140.0},
       'links': {
-        'github': 'https://github.com/jennylyn',
-        'facebook': 'https://facebook.com/jennylyn',
+        'github': 'https://github.com/ImJennyLynn',
+        'facebook': 'https://www.facebook.com/jennylyn.vallador',
         'linkedin': 'https://linkedin.com/in/jennylyn',
       }
     },
@@ -59,7 +59,7 @@ class _DeveloperPageState extends State<DeveloperPage>
       'position': {'top': -12.0, 'left': 60.0, 'width': 115.0, 'height': 140.0},
       'links': {
         'github': 'https://github.com/marvin',
-        'facebook': 'https://facebook.com/marvin',
+        'facebook': 'https://www.facebook.com/jonmarvinvidallo',
         'linkedin': 'https://linkedin.com/in/marvin',
       }
     },
