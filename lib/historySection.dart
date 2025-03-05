@@ -39,8 +39,10 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
   StreamSubscription<QuerySnapshot>? _sensorSubscription;
   DateTime? startDate;
   DateTime? endDate;
+  DateTime? selectedDate;
   String selectedSortOrder = "Descending"; // Default sort order
   String selectedFilter = "None"; // Default filter
+  bool isLoading = false; // Loading state
 
   @override
   void initState() {
@@ -48,20 +50,28 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     _fetchData();
   }
 
-  void _fetchData() {
+  void _fetchData() async {
+    setState(() {
+      isLoading = true; // Start loading
+    });
+
     print("Fetching data for: $selectedPlot");
 
     _sensorSubscription?.cancel();
     sensorData.clear();
 
     if (selectedPlot == "All") {
-      _fetchAllPlotsData();
+      await _fetchAllPlotsData();
     } else {
-      _fetchSinglePlotData(selectedPlot);
+      await _fetchSinglePlotData(selectedPlot);
     }
+
+    setState(() {
+      isLoading = false; // Stop loading
+    });
   }
 
-  void _fetchSinglePlotData(String plot) {
+  Future<void> _fetchSinglePlotData(String plot) async {
     _sensorSubscription = FirebaseFirestore.instance
         .collection("Plots")
         .doc(plot)
@@ -82,7 +92,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     });
   }
 
-  void _fetchAllPlotsData() async {
+  Future<void> _fetchAllPlotsData() async {
     List<Map<String, dynamic>> allData = [];
 
     for (String plot in plots.where((p) => p != "All")) {
@@ -114,6 +124,12 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
         DateTime timestamp = (data['timestamp'] as Timestamp).toDate();
         return timestamp.isAfter(startDate!) && timestamp.isBefore(endDate!);
       }).toList();
+    } else if (selectedDate != null) {
+      filteredData = filteredData.where((data) {
+        DateTime timestamp = (data['timestamp'] as Timestamp).toDate();
+        return DateFormat('yyyy-MM-dd').format(timestamp) ==
+            DateFormat('yyyy-MM-dd').format(selectedDate!);
+      }).toList();
     }
 
     if (selectedFilter != "None") {
@@ -143,19 +159,63 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
             return true;
         }
       }).toList();
-    }
 
-    filteredData.sort((a, b) {
-      DateTime dateA = (a['timestamp'] as Timestamp).toDate();
-      DateTime dateB = (b['timestamp'] as Timestamp).toDate();
-      return selectedSortOrder == "Ascending"
-          ? dateA.compareTo(dateB)
-          : dateB.compareTo(dateA);
-    });
+      filteredData.sort((a, b) {
+        double valueA, valueB;
+        switch (selectedFilter) {
+          case "High Moisture":
+          case "Low Moisture":
+            valueA = a['average_moisture'];
+            valueB = b['average_moisture'];
+            break;
+          case "High Temperature":
+          case "Low Temperature":
+            valueA = a['temperature'];
+            valueB = b['temperature'];
+            break;
+          case "High Humidity":
+          case "Low Humidity":
+            valueA = a['humidity'];
+            valueB = b['humidity'];
+            break;
+          default:
+            valueA = 0;
+            valueB = 0;
+        }
+        return selectedSortOrder == "Ascending"
+            ? valueA.compareTo(valueB)
+            : valueB.compareTo(valueA);
+      });
+    } else {
+      filteredData.sort((a, b) {
+        DateTime dateA = (a['timestamp'] as Timestamp).toDate();
+        DateTime dateB = (b['timestamp'] as Timestamp).toDate();
+        return selectedSortOrder == "Ascending"
+            ? dateA.compareTo(dateB)
+            : dateB.compareTo(dateA);
+      });
+    }
 
     setState(() {
       sensorData = filteredData;
     });
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        startDate = null;
+        endDate = null;
+      });
+      _fetchData();
+    }
   }
 
   Future<void> _selectDateRange(BuildContext context) async {
@@ -171,9 +231,54 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
       setState(() {
         startDate = picked.start;
         endDate = picked.end;
+        selectedDate = null;
       });
       _fetchData();
     }
+  }
+
+  Future<void> _showDatePickerDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Date Option'),
+          content: Text.rich(
+            TextSpan(
+              text: 'Pick a date format: ',
+              children: <TextSpan>[
+                TextSpan(
+                  text: 'one specific date',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(text: ' or '),
+                TextSpan(
+                  text: 'range ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(text: 'with start and end dates'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Single Date'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _selectDate(context);
+              },
+            ),
+            TextButton(
+              child: Text('Date Range'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _selectDateRange(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _downloadCSV() async {
@@ -283,7 +388,10 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
 
   Widget buildFilterDropdown() {
     return PopupMenuButton<String>(
-      icon: Icon(Icons.filter_list),
+      initialValue: selectedFilter,
+      icon: Icon(
+        Icons.filter_list,
+      ),
       onSelected: (value) {
         setState(() {
           selectedFilter = value;
@@ -367,7 +475,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Date Range Picker
+          // Date Picker
           Container(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -395,32 +503,32 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                   ),
                 ),
                 // Dropdown for sorting order
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DropdownButton<String>(
-                    value: selectedSortOrder,
-                    items: ["Ascending", "Descending"].map((order) {
-                      return DropdownMenuItem(
-                        value: order,
-                        child: Text(order),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      if (value != null) {
-                        setState(() {
-                          selectedSortOrder = value;
-                        });
-                        _filterAndSortData();
-                      }
-                    },
+
+                IconButton(
+                  icon: Icon(
+                    selectedSortOrder == "Ascending"
+                        ? Icons.arrow_upward
+                        : Icons.arrow_downward,
                   ),
+                  tooltip: selectedSortOrder == "Ascending"
+                      ? "Sort Ascending"
+                      : "Sort Descending",
+                  onPressed: () {
+                    setState(() {
+                      selectedSortOrder = selectedSortOrder == "Ascending"
+                          ? "Descending"
+                          : "Ascending";
+                    });
+                    _filterAndSortData();
+                  },
                 ),
+
                 // Dropdown for filtering
                 buildFilterDropdown(),
                 Flexible(
                   child: IconButton(
                     icon: Icon(Icons.date_range),
-                    onPressed: () => _selectDateRange(context),
+                    onPressed: () => _showDatePickerDialog(context),
                   ),
                 ),
               ],
@@ -429,72 +537,76 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
 
           // Display Grouped Sensor Data
           Expanded(
-            child: sensorData.isEmpty
-                ? Center(child: Text("No data available"))
-                : ListView(
-                    children: groupedData.entries.map((entry) {
-                      String date = entry.key;
-                      List<Map<String, dynamic>> records = entry.value;
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : sensorData.isEmpty
+                    ? Center(child: Text("No data available"))
+                    : ListView(
+                        children: groupedData.entries.map((entry) {
+                          String date = entry.key;
+                          List<Map<String, dynamic>> records = entry.value;
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 16.0),
-                            child: Text(
-                              date,
-                              style: TextStyle(
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color.fromARGB(255, 0, 73, 39)),
-                            ),
-                          ),
-                          ...records.map((data) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        SensorDetailScreen(sensorData: data),
-                                  ),
-                                );
-                              },
-                              child: Card(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "${data['plot']} - ${DateFormat('h:mm a').format(data['timestamp'].toDate())}",
-                                        style: TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Divider(),
-                                      moistureIndicator(
-                                          data['average_moisture']),
-                                      Text(
-                                          "Temperature: ${data['temperature']}°C - ${interpretTemperature(data['temperature'])}"),
-                                      Text(
-                                          "Humidity: ${data['humidity']}% - ${interpretHumidity(data['humidity'])}"),
-                                      Text(
-                                          "Moisture Sensors: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}"),
-                                    ],
-                                  ),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 16.0),
+                                child: Text(
+                                  date,
+                                  style: TextStyle(
+                                      fontSize: 19,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          const Color.fromARGB(255, 0, 73, 39)),
                                 ),
                               ),
-                            );
-                          }).toList(),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+                              ...records.map((data) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            SensorDetailScreen(
+                                                sensorData: data),
+                                      ),
+                                    );
+                                  },
+                                  child: Card(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 6),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "${data['plot']} - ${DateFormat('h:mm a').format(data['timestamp'].toDate())}",
+                                            style: TextStyle(
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Divider(),
+                                          moistureIndicator(
+                                              data['average_moisture']),
+                                          Text(
+                                              "Temperature: ${data['temperature']}°C - ${interpretTemperature(data['temperature'])}"),
+                                          Text(
+                                              "Humidity: ${data['humidity']}% - ${interpretHumidity(data['humidity'])}"),
+                                          Text(
+                                              "Moisture Sensors: ${data['moisture_1']}, ${data['moisture_2']}, ${data['moisture_3']}, ${data['moisture_4']}"),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ],
+                          );
+                        }).toList(),
+                      ),
           ),
         ],
       ),
@@ -530,8 +642,7 @@ class SensorDetailScreen extends StatelessWidget {
             Text("Moisture Sensor 1: ${sensorData['moisture_1']}%"),
             Text("Moisture Sensor 2: ${sensorData['moisture_2']}%"),
             Text("Moisture Sensor 3: ${sensorData['moisture_3']}%"),
-            Text(
-                "Moisture Sensor 4: ${sensorData['moisture_4']}%"), //lagay comment pang push sa bagong branch
+            Text("Moisture Sensor 4: ${sensorData['moisture_4']}%"),
           ],
         ),
       ),
