@@ -6,7 +6,8 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _circleAnimation;
   bool _showGif = false; // Initially hide GIF
@@ -61,7 +62,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             children: [
               Container(
                 color: _circleAnimation.value >= 1.0
-                    ? const Color.fromARGB(255, 247, 246, 237) // Background turns white
+                    ? const Color.fromARGB(
+                        255, 247, 246, 237) // Background turns white
                     : const Color.fromARGB(255, 100, 122, 99),
               ),
               Center(
