@@ -43,9 +43,11 @@ class _WifiStatusState extends State<WifiStatus> {
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    setState(() {
-      _connectionStatus = result;
-    });
+    if (mounted) {
+      setState(() {
+        _connectionStatus = result;
+      });
+    }
 
     String message;
     Color backgroundColor;
@@ -56,19 +58,25 @@ class _WifiStatusState extends State<WifiStatus> {
     } else {
       bool hasInternet = await _checkInternetAccess();
       if (hasInternet) {
-        switch (result) {
-          case ConnectivityResult.wifi:
-            message = 'Connected to Wi-Fi with Internet';
-            backgroundColor = Colors.green;
-            break;
-          case ConnectivityResult.mobile:
-            message = 'Connected to Mobile Network with Internet';
-            backgroundColor = Colors.blue;
-            break;
-          default:
-            message = 'Connected with Internet';
-            backgroundColor = Colors.green;
-            break;
+        bool isSlow = await _checkInternetSpeed();
+        if (isSlow) {
+          message = 'Internet Connection is Slow';
+          backgroundColor = const Color.fromARGB(255, 151, 137, 8);
+        } else {
+          switch (result) {
+            case ConnectivityResult.wifi:
+              message = 'Connected to Wi-Fi with Internet';
+              backgroundColor = Colors.green;
+              break;
+            case ConnectivityResult.mobile:
+              message = 'Connected to Mobile Network with Internet';
+              backgroundColor = Colors.blue;
+              break;
+            default:
+              message = 'Connected with Internet';
+              backgroundColor = Colors.green;
+              break;
+          }
         }
       } else {
         message = 'No Internet Access';
@@ -76,6 +84,7 @@ class _WifiStatusState extends State<WifiStatus> {
       }
     }
     if (mounted) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
@@ -91,6 +100,21 @@ class _WifiStatusState extends State<WifiStatus> {
       final response = await http.get(Uri.parse('https://www.google.com'));
       if (response.statusCode == 200) {
         return true;
+      }
+    } catch (e) {
+      // Handle error
+    }
+    return false;
+  }
+
+  Future<bool> _checkInternetSpeed() async {
+    try {
+      final stopwatch = Stopwatch()..start();
+      final response = await http.get(Uri.parse('https://www.google.com'));
+      stopwatch.stop();
+      if (response.statusCode == 200) {
+        // Consider the connection slow if it takes more than 2 seconds
+        return stopwatch.elapsedMilliseconds > 200;
       }
     } catch (e) {
       // Handle error
