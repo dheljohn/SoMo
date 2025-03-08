@@ -65,7 +65,7 @@ class Gauges extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "$value%",
+                "${value.toInt()}%",
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

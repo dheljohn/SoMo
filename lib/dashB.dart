@@ -111,7 +111,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       barrierDismissible: false, // Prevent closing without input
       builder: (context) => AlertDialog(
         title: Text(
-          "Enter Password Before Modifying the Plot",
+          "Enter the password before modifying the plot",
         ),
         content: TextField(
           controller: passwordController,
@@ -279,7 +279,8 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.edit, color: Colors.grey),
+                            icon: Icon(Icons.arrow_forward_ios,
+                                color: Colors.grey), // Arrow icon
                             onPressed: () {
                               _showPasswordDialog(
                                   context); // Show password dialog on click
