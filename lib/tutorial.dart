@@ -110,7 +110,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                   style: TextStyle(
                     color: Color.fromARGB(255, 42, 83, 39),
                     fontWeight: FontWeight.bold,
-                    fontSize: screenWidth * 0.05,
+                    fontSize: screenWidth * 0.065,
                   ),
                 ),
                 SizedBox(height: constraints.maxHeight * 0.03),
@@ -135,7 +135,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                             style: TextStyle(
                               color: Color.fromARGB(255, 42, 83, 39),
                               fontWeight: FontWeight.bold,
-                              fontSize: screenWidth * 0.05,
+                              fontSize: screenWidth * 0.06,
                             ),
                           ),
                           SizedBox(height: constraints.maxHeight * 0.01),
@@ -144,14 +144,14 @@ class _TutorialScreenState extends State<TutorialScreen> {
                             "- Turn on the prototype.\n"
                             "- Ensure it's within Farm's Wi-Fi range.\n"
                             "- Wait for sensor calibration.",
-                            style: TextStyle(fontSize: screenWidth * 0.035),
+                            style: TextStyle(fontSize: screenWidth * 0.050),
                           ),
                           SizedBox(height: constraints.maxHeight * 0.01),
                           Text(
                             "2. Place the Soil Sensors\n"
                             "- Insert sensors into the soil.\n"
                             "- Sensors will start measuring.",
-                            style: TextStyle(fontSize: screenWidth * 0.035),
+                            style: TextStyle(fontSize: screenWidth * 0.050),
                           ),
                           SizedBox(height: constraints.maxHeight * 0.01),
                           Text(
@@ -159,7 +159,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                             "- Scan the QR code on the enclosure.\n"
                             "- Download and install the app.\n"
                             "- Open the app to view data.",
-                            style: TextStyle(fontSize: screenWidth * 0.035),
+                            style: TextStyle(fontSize: screenWidth * 0.050),
                           ),
                           SizedBox(height: constraints.maxHeight * 0.01),
                           Text(
@@ -167,7 +167,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                             "- App notifies if levels are abnormal.\n"
                             "- Tap the notification to acknowledge.\n"
                             "- Prototype returns to standby mode.",
-                            style: TextStyle(fontSize: screenWidth * 0.035),
+                            style: TextStyle(fontSize: screenWidth * 0.050),
                           ),
                         ],
                       ),
