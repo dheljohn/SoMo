@@ -12,6 +12,8 @@ class _WifiStatusState extends State<WifiStatus> {
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  String? _hintMessage;
+  Color? _hintColor;
 
   @override
   void initState() {
@@ -26,20 +28,18 @@ class _WifiStatusState extends State<WifiStatus> {
   }
 
   Future<void> _initConnectivity() async {
-    List<ConnectivityResult> resultList;
+    ConnectivityResult result;
     try {
-      resultList = await _connectivity.checkConnectivity();
+      result = (await _connectivity.checkConnectivity()) as ConnectivityResult;
     } catch (e) {
-      resultList = [ConnectivityResult.none]; // Default to none if error occurs
+      result = ConnectivityResult.none; // Default to none if error occurs
     }
 
     if (!mounted) {
       return;
     }
 
-    if (resultList.isNotEmpty) {
-      _updateConnectionStatus(resultList[0]); // Use the first item of the list
-    }
+    _updateConnectionStatus(result);
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
@@ -53,8 +53,8 @@ class _WifiStatusState extends State<WifiStatus> {
     Color backgroundColor;
 
     if (result == ConnectivityResult.none) {
-      message = 'No Internet Connection';
-      backgroundColor = Colors.red;
+      message = 'Waiting for Internet Connection';
+      backgroundColor = const Color.fromARGB(255, 216, 186, 15);
     } else {
       bool hasInternet = await _checkInternetAccess();
       if (hasInternet) {
@@ -83,15 +83,22 @@ class _WifiStatusState extends State<WifiStatus> {
         backgroundColor = Colors.orange;
       }
     }
+
     if (mounted) {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: backgroundColor,
-          duration: Duration(seconds: 3),
-        ),
-      );
+      setState(() {
+        _hintMessage = message;
+        _hintColor = backgroundColor;
+      });
+
+      // Hide the hint message after 3 seconds
+      Future.delayed(Duration(seconds: 3), () {
+        if (mounted) {
+          setState(() {
+            _hintMessage = null;
+            _hintColor = null;
+          });
+        }
+      });
     }
   }
 
@@ -114,7 +121,7 @@ class _WifiStatusState extends State<WifiStatus> {
       stopwatch.stop();
       if (response.statusCode == 200) {
         // Consider the connection slow if it takes more than 2 seconds
-        return stopwatch.elapsedMilliseconds > 200;
+        return stopwatch.elapsedMilliseconds > 2000;
       }
     } catch (e) {
       // Handle error
@@ -130,39 +137,38 @@ class _WifiStatusState extends State<WifiStatus> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
-    // String statusMessage;
-    // IconData statusIcon;
-
-    // switch (_connectionStatus) {
-    //   case ConnectivityResult.wifi:
-    //     // statusMessage = 'Connected to Wi-Fi';
-    //     statusIcon = Icons.wifi;
-    //     break;
-    //   case ConnectivityResult.mobile:
-    //     // statusMessage = 'Connected to Mobile Network';
-    //     statusIcon = Icons.signal_cellular_alt;
-    //     break;
-    //   case ConnectivityResult.none:
-    //   default:
-    //     // statusMessage = 'No Internet Connection';
-    //     statusIcon = Icons.signal_wifi_off;
-    //     break;
-    // }
-
-    // return Row(
-
-    //   mainAxisAlignment: MainAxisAlignment.center,
-    //   children: [
-    //     Icon(statusIcon, color: Colors.green ) ,
-
-    //     SizedBox(width: 10),
-
-    //     // Text(
-    //     //   statusMessage,
-    //     //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-    //     // ),
-    //   ],
-    // );
+    return Stack(
+      children: [
+        Container(), // Your main content goes here
+        if (_hintMessage != null)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: _hintColor,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Icon(
+                  //   Icons.info,
+                  //   color: Colors.white,
+                  // ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _hintMessage!,
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }
