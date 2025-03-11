@@ -242,9 +242,11 @@ class _HomeState extends State<Home> {
                       .transparent, // Keeps it transparent to show Container color
                   elevation: 0,
                   type: BottomNavigationBarType.fixed,
-                  selectedItemColor: const Color.fromARGB(255, 125, 171, 124),
+                  selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
                   unselectedItemColor: Colors.white70,
-                  showSelectedLabels: false,
+                  showSelectedLabels: true,
+                  selectedLabelStyle:
+                      const TextStyle(fontWeight: FontWeight.bold),
                   showUnselectedLabels: false,
                   currentIndex: _currentIndex,
                   onTap: (index) {

@@ -464,16 +464,11 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 100, 122, 99),
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'Sensor History',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Center(
+            child: Text(
+          "Sensor Data History",
+          style: TextStyle(fontSize: 20),
+        )),
         // actions: [
         //   IconButton(
         //     icon: Icon(Icons.download),
