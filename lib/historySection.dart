@@ -464,13 +464,22 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sensor Data History"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.download),
-            onPressed: _downloadCSV,
+        backgroundColor: const Color.fromARGB(255, 100, 122, 99),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          'Sensor History',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
-        ],
+        ),
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.download),
+        //     onPressed: _downloadCSV,
+        //   ),
+        // ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -530,6 +539,11 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                     icon: Icon(Icons.date_range),
                     onPressed: () => _showDatePickerDialog(context),
                   ),
+                ),
+
+                IconButton(
+                  icon: Icon(Icons.download),
+                  onPressed: _downloadCSV,
                 ),
               ],
             ),

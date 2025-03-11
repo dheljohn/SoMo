@@ -137,7 +137,7 @@ class AboutTab extends StatelessWidget {
               const FeatureItem(
                 title: "🔍 Recommendations",
                 description:
-                    "Get AI-based watering suggestions based on soil moisture data and weather conditions.",
+                    "Get watering suggestions based on soil moisture data and weather conditions.",
               ),
               const FeatureItem(
                 title: "🔔 Notifications",

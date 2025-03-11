@@ -209,6 +209,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: screenHeight * 0.02),
+
                 // Date Container
                 Container(
                   padding: EdgeInsets.all(screenWidth * 0.04),
@@ -236,11 +237,11 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                               DateFormat('MMMM d, yyyy').format(DateTime.now()),
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: screenWidth * 0.06,
+                                fontSize: screenWidth * 0.05,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: screenWidth * 0.01),
+                            SizedBox(height: screenWidth * 0.00),
                             Text(
                               DateFormat('EEEE').format(DateTime.now()),
                               style: TextStyle(
@@ -267,12 +268,12 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                                 size: 24,
                                 color: const Color.fromARGB(255, 81, 135, 83),
                               ),
-                              SizedBox(width: 8),
+                              SizedBox(width: screenWidth * 0.02),
                               Expanded(
                                 child: Text(
                                   selectedPlot ?? "Loading...",
                                   style: TextStyle(
-                                    fontSize: 30,
+                                    fontSize: screenWidth * 0.069,
                                     fontWeight: FontWeight.bold,
                                     color:
                                         const Color.fromARGB(255, 81, 135, 83),
@@ -429,7 +430,27 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
             ),
           ),
         ),
-        WifiStatus(), // Add WifiStatus widget to the Stack
+        WifiStatus(),
+        // Positioned(
+        //   top: 0,
+        //   left: 0,
+        //   right: 0,
+        //   child: Container(
+        //     color: const Color.fromARGB(255, 247, 246, 237),
+        //     padding: EdgeInsets.symmetric(
+        //         vertical: screenHeight * 0.01, horizontal: screenWidth * 0.05),
+        //     child: Center(
+        //       child: Text(
+        //         'Dashboard',
+        //         style: TextStyle(
+        //           color: Color.fromARGB(255, 81, 135, 83),
+        //           fontSize: screenHeight * 0.027,
+        //           fontWeight: FontWeight.bold,
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ), // Add WifiStatus widget to the Stack
       ],
     );
   }
