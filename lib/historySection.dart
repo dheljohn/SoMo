@@ -111,7 +111,8 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     }
 
     setState(() {
-      sensorData = allData;
+      sensorData = allData; //display all data
+      //sensorData = allData.take(20).toList(); // fetch only 20 data by default
       _filterAndSortData();
     });
   }
@@ -197,7 +198,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     }
 
     setState(() {
-      sensorData = filteredData;
+      sensorData = filteredData; // fetch all data
     });
   }
 
@@ -463,19 +464,16 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Center(
-            child: Text(
-          "Sensor Data History",
-          style: TextStyle(fontSize: 20),
-        )),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.download),
-        //     onPressed: _downloadCSV,
-        //   ),
-        // ],
-      ),
+      //appBar: AppBar(
+      // title: Text("Sensor Data History"),
+      // actions: [
+      //   IconButton(
+      //     icon: Icon(Icons.download),
+      //     onPressed: _downloadCSV,
+      //   ),
+      // ],
+
+      // ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -535,7 +533,6 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                     onPressed: () => _showDatePickerDialog(context),
                   ),
                 ),
-
                 IconButton(
                   icon: Icon(Icons.download),
                   onPressed: _downloadCSV,

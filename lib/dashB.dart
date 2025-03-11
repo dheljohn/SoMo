@@ -332,7 +332,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                 //                 ),
                 //               ),
 
-                SizedBox(height: screenHeight * 0.01),
+                SizedBox(height: screenHeight * 0.001),
                 Gauges(dataProvider: dataProvider),
 
                 SizedBox(height: screenHeight * 0.01),
@@ -420,7 +420,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                   child: Container(
                     color: const Color.fromARGB(255, 247, 246, 237),
                     margin: EdgeInsets.all(screenWidth * 0.02),
-                    height: screenHeight * 0.19,
+                    height: screenHeight * 0.237,
                     width: double.infinity,
                     child: const HelperMsg(),
                   ),
