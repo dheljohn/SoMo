@@ -33,7 +33,7 @@ class HistoryDisplay extends StatefulWidget {
 }
 
 class _HistoryDisplayState extends State<HistoryDisplay> {
-  String selectedPlot = "All"; // Default selection
+  String selectedPlot = "Plot1"; // Default selection
   final List<String> plots = ["All", "Plot1", "Plot2", "Plot3"];
   List<Map<String, dynamic>> sensorData = [];
   StreamSubscription<QuerySnapshot>? _sensorSubscription;
@@ -77,6 +77,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
         .doc(plot)
         .collection("sensorData")
         .orderBy("timestamp", descending: true)
+        .limit(20) // Fetch only 20 data
         .snapshots()
         .listen((snapshot) {
       setState(() {
@@ -101,6 +102,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
           .doc(plot)
           .collection("sensorData")
           .orderBy("timestamp", descending: true)
+          .limit(20) // Fetch only 20 data at first app run
           .get();
 
       for (var doc in snapshot.docs) {
