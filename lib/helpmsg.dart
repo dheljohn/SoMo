@@ -55,11 +55,19 @@ void checkSensor(String sensorName, double moistureValue) {
         const Color.fromARGB(255, 150, 150, 150));
   } else if (moistureValue <= 30) {
     addMessage(
-        '$sensorName: Low Moisture Detected! Consider watering the soil.\nRecommendation: Water the soil as needed. 🌱', 
+        '$sensorName: Extremely Dry Soil detected! \nRecommendation: Water the soil as needed. 🌱', 
         const Color.fromARGB(255, 253, 133, 124));
-  } else if (moistureValue >= 70) {
+  } else if (moistureValue <= 45) {
     addMessage(
-        '$sensorName: High Moisture Detected! Consider reducing watering.\nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰', 
+        '$sensorName: Well Drained Soil Detected! \nRecommendation: Considering watering soon. 🌱', 
+       const Color.fromARGB(255, 236, 188, 66));
+   } else if (moistureValue <= 75) {
+    addMessage(
+        '$sensorName: Moist Soil Detected. \nIdeal Moisture Level. 🌱', 
+        const Color.fromARGB(255, 103, 172, 105));
+  } else if (moistureValue >= 76) {
+    addMessage(
+        '$sensorName: Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰', 
         const Color.fromARGB(255, 131, 174, 209));
   }
 }

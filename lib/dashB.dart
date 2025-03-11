@@ -240,42 +240,45 @@ void _showPasswordDialog(BuildContext context) {
       ),
       // SizedBox(width: screenWidth * 0.04), // Spacing between columns
       // Right Column
-   Expanded(
-  child: Container(
-    padding: EdgeInsets.all(screenWidth * 0.02),
-    decoration: BoxDecoration(
-      color: const Color.fromARGB(255, 255, 255, 240),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Row(
-      children: [
-        Icon(
-          Icons.grass,
-          size: 24,
-          color: const Color.fromARGB(255, 81, 135, 83),
-        ),
-        SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            selectedPlot ?? "Loading...",
-            style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-              color: const Color.fromARGB(255, 81, 135, 83),
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        IconButton(
-          icon: Icon(Icons.edit, color: Colors.grey),
-          onPressed: () {
-            _showPasswordDialog(context); // Show password dialog on click
-          },
-        ),
-      ],
-    ),
-  ),
-),
+
+      //ADDED THE PLOT HEREEE
+      PlotSelection(),
+//    Expanded(
+//   child: Container(
+//     padding: EdgeInsets.all(screenWidth * 0.02),
+//     decoration: BoxDecoration(
+//       color: const Color.fromARGB(255, 255, 255, 240),
+//       borderRadius: BorderRadius.circular(8),
+//     ),
+//     child: Row(
+//       children: [
+//         Icon(
+//           Icons.grass,
+//           size: 24,
+//           color: const Color.fromARGB(255, 81, 135, 83),
+//         ),
+//         SizedBox(width: 8),
+//         Expanded(
+//           child: Text(
+//             selectedPlot ?? "Loading...",
+//             style: TextStyle(
+//               fontSize: 30,
+//               fontWeight: FontWeight.bold,
+//               color: const Color.fromARGB(255, 81, 135, 83),
+//             ),
+//             overflow: TextOverflow.ellipsis,
+//           ),
+//         ),
+//         IconButton(
+//           icon: Icon(Icons.edit, color: Colors.grey),
+//           onPressed: () {
+//             _showPasswordDialog(context); // Show password dialog on click
+//           },
+//         ),
+//       ],
+//     ),
+//   ),
+// ),
     ],
   ),
 ),                  
@@ -315,8 +318,8 @@ void _showPasswordDialog(BuildContext context) {
   //                 ),
   //               ),
               
-            
-
+            // SizedBox(height: screenHeight * 0.01),
+            // PlotSelection(),
             SizedBox(height: screenHeight * 0.01),
         Gauges(dataProvider: dataProvider),
            

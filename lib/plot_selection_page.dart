@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart'; 
+import 'package:cloud_firestore/cloud_firestore.dart';   
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,13 +34,11 @@ class _PlotSelectionState extends State<PlotSelection> {
   }
 
   void _savePlotToFirebase(String plot) async {
-    // Save to Firestore (for historical logs)
     await firestore.collection("selected_plots").doc("currentPlot").set({
       "plot": plot,
       "timestamp": FieldValue.serverTimestamp(),
     });
 
-    // Save to Realtime Database (for live updates)
     await realtimeDB.child("SelectedPlot").set({"plotName": plot});
 
     print("Plot selected: $plot");
@@ -48,43 +46,48 @@ class _PlotSelectionState extends State<PlotSelection> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Select Plot")),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Choose a plot:", style: TextStyle(fontSize: 18)),
-              SizedBox(height: 20),
-              DropdownButton<String>(
-                value: selectedPlot,
-                hint: Text("Select a plot"),
-                items: plots.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      selectedPlot = newValue;
-                    });
-                    _savePlot(newValue);
-                  }
-                },
-              ),
-              SizedBox(height: 20),
-              Text(
-                selectedPlot != null ? "Selected Plot: $selectedPlot" : "No plot selected",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          width: 170,
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.blueGrey, width: 1),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: DropdownButton<String>(
+            value: selectedPlot,
+            dropdownColor: Colors.white,
+            underline: SizedBox(),
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.blueGrey[800],
+            ),
+            items: plots.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Row(
+                  children: [
+                    Icon(Icons.eco, color: Colors.green), 
+                    SizedBox(width: 8),
+                    Text(value),
+                  ],
+                ),
+              );
+            }).toList(),
+            onChanged: (newValue) {
+              if (newValue != null) {
+                setState(() {
+                  selectedPlot = newValue;
+                });
+                _savePlot(newValue);
+              }
+            },
           ),
         ),
-      ),
+      ],
     );
   }
 }
