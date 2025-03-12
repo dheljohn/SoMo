@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';   
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,12 +9,12 @@ class PlotSelection extends StatefulWidget {
 }
 
 class _PlotSelectionState extends State<PlotSelection> {
-  final List<String> plots = ['Plot1', 'Plot2', 'Plot3'];
-  String? selectedPlot;
+  final List<String> plots = ['Lettuce', 'Pechay', 'Mustard'];
+  String? selectedPlot = 'Lettuce'; // Default to the first item
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final DatabaseReference realtimeDB = FirebaseDatabase.instance.ref();
 
-@override
+  @override
   void initState() {
     super.initState();
     _loadSavedPlot();
@@ -22,8 +22,12 @@ class _PlotSelectionState extends State<PlotSelection> {
 
   Future<void> _loadSavedPlot() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedPlot = prefs.getString('selected_plot');
+
     setState(() {
-      selectedPlot = prefs.getString('selected_plot');
+      selectedPlot = (savedPlot != null && plots.contains(savedPlot))
+          ? savedPlot
+          : plots.first;
     });
   }
 
@@ -46,7 +50,6 @@ class _PlotSelectionState extends State<PlotSelection> {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -71,7 +74,7 @@ class _PlotSelectionState extends State<PlotSelection> {
                 value: value,
                 child: Row(
                   children: [
-                    Icon(Icons.eco, color: Colors.green), 
+                    Icon(Icons.eco, color: Colors.green),
                     SizedBox(width: 8),
                     Text(value),
                   ],
@@ -86,7 +89,6 @@ class _PlotSelectionState extends State<PlotSelection> {
                 _savePlot(newValue);
               }
             },
-
           ),
         ),
       ],
