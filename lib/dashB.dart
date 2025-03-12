@@ -6,6 +6,7 @@ import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
 import 'package:soil_monitoring_app/helpmsg.dart';
 import 'package:soil_monitoring_app/plot_selection_page.dart';
+import 'package:soil_monitoring_app/wifiStat.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -194,163 +195,268 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       }
     }
 
-    return Container(
-      color: const Color.fromARGB(255, 247, 246, 237),
-      padding: EdgeInsets.all(screenWidth * 0.04),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: screenHeight * 0.02),
-            // Date Container
-            Container(
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 138, 167, 136),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 5,
-                    spreadRadius: 2,
+    return Stack(
+      children: [
+        Container(
+          color: const Color.fromARGB(255, 247, 246, 237),
+          padding: EdgeInsets.only(
+              left: screenWidth * 0.04,
+              right: screenWidth * 0.04,
+              top: screenWidth * 0.04,
+              bottom: screenWidth * 0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: screenHeight * 0.02),
+
+                // Date Container
+                Container(
+                  padding: EdgeInsets.all(screenWidth * 0.04),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 138, 167, 136),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        spreadRadius: 2,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Row(
-                // Changed from Column to Row for two-column layout
-                children: [
-                  // Left Column
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          DateFormat('MMMM d, yyyy').format(DateTime.now()),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: screenWidth * 0.06,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  child: Row(
+                    // Changed from Column to Row for two-column layout
+                    children: [
+                      // Left Column
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Display WiFi status snackbar
+                            Text(
+                              DateFormat('MMMM d, yyyy').format(DateTime.now()),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: screenWidth * 0.045,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: screenWidth * 0.00),
+                            Text(
+                              DateFormat('EEEE').format(DateTime.now()),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: screenWidth * 0.05,
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: screenWidth * 0.01),
-                        Text(
-                          DateFormat('EEEE').format(DateTime.now()),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: screenWidth * 0.05,
-                          ),
+                      ),
+                      // SizedBox(width: screenWidth * 0.04), // Spacing between columns
+                      // Right Column
+                      // Expanded(
+                      //   child: Container(
+                      //     padding: EdgeInsets.all(screenWidth * 0.02),
+                      //     decoration: BoxDecoration(
+                      //       color: const Color.fromARGB(255, 255, 255, 240),
+                      //       borderRadius: BorderRadius.circular(8),
+                      //     ),
+                      //     child: Row(
+                      //       children: [
+                      //         Icon(
+                      //           Icons.grass,
+                      //           size: screenWidth * 0.06,
+                      //           color: const Color.fromARGB(255, 81, 135, 83),
+                      //         ),
+                      //         SizedBox(width: screenWidth * 0.02),
+                      //         Expanded(
+                      //           child: Text(
+                      //             selectedPlot ?? "Loading...",
+                      //             style: TextStyle(
+                      //               fontSize: screenWidth * 0.05,
+                      //               fontWeight: FontWeight.bold,
+                      //               color:
+                      //                   const Color.fromARGB(255, 81, 135, 83),
+                      //             ),
+                      //             overflow: TextOverflow.ellipsis,
+                      //           ),
+                      //         ),
+                      //         IconButton(
+                      //           icon: Icon(
+                      //             Icons.arrow_forward_ios,
+                      //             color: Colors.grey,
+                      //             size: screenHeight * 0.03,
+                      //           ), // Arrow icon
+                      //           onPressed: () {
+                      //             _showPasswordDialog(
+                      //                 context); // Show password dialog on click
+                      //           },
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+
+                      PlotSelection(),
+                    ],
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                // Align(
+                //                 alignment: Alignment.centerRight,
+                //                 child: GestureDetector(
+                //                   onTap: () {
+                //                     Navigator.push(
+                //                       context,
+                //                       MaterialPageRoute(
+                //                           builder: (context) => PlotSelection()),
+                //                     );
+                //                   },
+
+                //                   child: Container(
+                //                     height: 30,
+                //                     padding: const EdgeInsets.symmetric(
+                //                         vertical: 4, horizontal: 6),
+                //                     decoration: BoxDecoration(
+                //                       color: const Color.fromARGB(255, 247, 246, 237),
+                //                       borderRadius: BorderRadius.circular(8),
+                //                       border: Border.all(
+                //                           color: Color.fromARGB(255, 100, 122, 99), width: 2),
+                //                     ),
+                //                     child: const Text(
+                //                       "Select Plot",
+                //                       style: TextStyle(
+                //                         color: const Color.fromARGB(255, 100, 122, 99),
+                //                         fontSize: 12,
+                //                         fontWeight: FontWeight.w700,
+                //                         fontFamily: 'Roboto',
+                //                         letterSpacing: 1.2,
+                //                       ),
+                //                     ),
+                //                   ),
+                //                 ),
+                //               ),
+
+                SizedBox(height: screenHeight * 0.001),
+                Gauges(dataProvider: dataProvider),
+
+                SizedBox(height: screenHeight * 0.01),
+                Center(
+                  child: Container(
+                    width: screenWidth * 0.85,
+                    padding: EdgeInsets.all(screenWidth * 0.03),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 255, 255, 240),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 5,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Humidity: ',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.03,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              '${dataProvider.humidityValue.toInt()}%',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.04,
+                                fontWeight: FontWeight.bold,
+                                color: getTextColor(
+                                    'humidity', dataProvider.humidityValue),
+                              ),
+                            ),
+                            SizedBox(width: screenWidth * 0.01),
+                            Icon(
+                              Icons.water_drop,
+                              color: getTextColor(
+                                  'humidity', dataProvider.humidityValue),
+                              size: screenWidth * 0.05,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Temperature: ',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.03,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              '${dataProvider.temperatureValue.toInt()}°C',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.04,
+                                fontWeight: FontWeight.bold,
+                                color: getTextColor('temperature',
+                                    dataProvider.temperatureValue),
+                              ),
+                            ),
+                            SizedBox(width: screenWidth * 0.01),
+                            Icon(
+                              Icons.thermostat,
+                              color: getTextColor(
+                                  'temperature', dataProvider.temperatureValue),
+                              size: screenWidth * 0.05,
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                  // SizedBox(width: screenWidth * 0.04), // Spacing between columns
-                  // Right Column
-
-                  //ADDED THE PLOT HEREEE
-                  PlotSelection(),
-                ],
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.02),
-
-            // SizedBox(height: screenHeight * 0.01),
-            // PlotSelection(),
-            SizedBox(height: screenHeight * 0.01),
-            Gauges(dataProvider: dataProvider),
-
-            SizedBox(height: screenHeight * 0.01),
-            Center(
-              child: Container(
-                width: screenWidth * 0.85,
-                padding: EdgeInsets.all(screenWidth * 0.03),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 255, 255, 240),
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 5,
-                      spreadRadius: 2,
-                    ),
-                  ],
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Humidity: ',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.03,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Text(
-                          '${dataProvider.humidityValue}%',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.04,
-                            fontWeight: FontWeight.bold,
-                            color: getTextColor(
-                                'humidity', dataProvider.humidityValue),
-                          ),
-                        ),
-                        SizedBox(width: screenWidth * 0.01),
-                        Icon(
-                          Icons.water_drop,
-                          color: getTextColor(
-                              'humidity', dataProvider.humidityValue),
-                          size: screenWidth * 0.05,
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Temperature: ',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.03,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Text(
-                          '${dataProvider.temperatureValue}°C',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.04,
-                            fontWeight: FontWeight.bold,
-                            color: getTextColor(
-                                'temperature', dataProvider.temperatureValue),
-                          ),
-                        ),
-                        SizedBox(width: screenWidth * 0.01),
-                        Icon(
-                          Icons.thermostat,
-                          color: getTextColor(
-                              'temperature', dataProvider.temperatureValue),
-                          size: screenWidth * 0.05,
-                        ),
-                      ],
-                    ),
-                  ],
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Container(
+                    color: const Color.fromARGB(255, 247, 246, 237),
+                    margin: EdgeInsets.all(screenWidth * 0.02),
+                    height: screenHeight * 0.237,
+                    width: double.infinity,
+                    child: const HelperMsg(),
+                  ),
                 ),
-              ),
+
+                //SizedBox(height: screenHeight * 0),
+              ],
             ),
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                color: const Color.fromARGB(255, 247, 246, 237),
-                margin: EdgeInsets.all(screenWidth * 0.02),
-                height: screenHeight * 0.15,
-                width: double.infinity,
-                child: const HelperMsg(),
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.0),
-          ],
+          ),
         ),
-      ),
+        WifiStatus(),
+        // Positioned(
+        //   top: 0,
+        //   left: 0,
+        //   right: 0,
+        //   child: Container(
+        //     color: const Color.fromARGB(255, 247, 246, 237),
+        //     padding: EdgeInsets.symmetric(
+        //         vertical: screenHeight * 0.01, horizontal: screenWidth * 0.05),
+        //     child: Center(
+        //       child: Text(
+        //         'Dashboard',
+        //         style: TextStyle(
+        //           color: Color.fromARGB(255, 81, 135, 83),
+        //           fontSize: screenHeight * 0.027,
+        //           fontWeight: FontWeight.bold,
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ), // Add WifiStatus widget to the Stack
+      ],
     );
   }
 

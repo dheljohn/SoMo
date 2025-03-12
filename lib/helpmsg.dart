@@ -77,9 +77,13 @@ class _HelperMsgState extends State<HelperMsg> {
 
     void checkSensor(String sensorName, double moistureValue) {
       if (moistureValue <= 5) {
-        addMessage('$sensorName: Sensor not deployed! ⚠️',
-            const Color.fromARGB(255, 150, 150, 150));
-      } else if (moistureValue <= 30) {
+        addMessage(
+          _isFilipino
+              ? '$sensorName: Hindi pa naka-deploy! ⚠️'
+              : '$sensorName: Sensor not deployed! ⚠️', //⚠️
+          const Color.fromARGB(255, 150, 150, 150),
+        );
+      } else if (moistureValue <= 29) {
         addMessage(
             '$sensorName: Extremely Dry Soil detected! \nRecommendation: Water the soil as needed. 🌱',
             const Color.fromARGB(255, 253, 133, 124));
@@ -98,10 +102,10 @@ class _HelperMsgState extends State<HelperMsg> {
       }
     }
 
-    checkSensor(_isFilipino ? 'Sensor 1' : 'Sensor 1', moistureS1);
-    checkSensor(_isFilipino ? 'Sensor 2' : 'Sensor 2', moistureS2);
-    checkSensor(_isFilipino ? 'Sensor 3' : 'Sensor 3', moistureS3);
-    checkSensor(_isFilipino ? 'Sensor 4' : 'Sensor 4', moistureS4);
+    checkSensor(_isFilipino ? 'Pang-unang sensor' : 'Sensor 1', moistureS1);
+    checkSensor(_isFilipino ? 'Pangalawang sensor' : 'Sensor 2', moistureS2);
+    checkSensor(_isFilipino ? 'Pangatlong sensor' : 'Sensor 3', moistureS3);
+    checkSensor(_isFilipino ? 'Pang-apat na sensor' : 'Sensor 4', moistureS4);
   }
 
   void addMessage(String text, Color color) {
@@ -137,7 +141,7 @@ class _HelperMsgState extends State<HelperMsg> {
               : CarouselSlider.builder(
                   itemCount: messages.length,
                   options: CarouselOptions(
-                    height: 140, // Adjust height based on message length
+                    height: 160, // Adjust height based on message length
                     scrollDirection: Axis.vertical,
                     autoPlay:
                         !_isSpeaking, // Control autoPlay based on TTS state
@@ -215,22 +219,16 @@ class _HelperMsgState extends State<HelperMsg> {
                 Switch(
                   value: _isFilipino,
                   activeColor: Color.fromARGB(255, 42, 83, 39),
-                  onChanged: (value) {
-                    setState(() {
-                      _isFilipino = value;
-                      _updateMessages(); // Update messages when language is toggled
-                    });
-                  },
+                  onChanged: _isSpeaking
+                      ? null // Disable switch when TTS is speaking
+                      : (value) {
+                          setState(() {
+                            _isFilipino = value;
+                            _updateMessages(); // Update messages when language is toggled
+                          });
+                        },
                 ),
                 Text('Fil'),
-                // IconButton(
-                //   icon: Icon(Icons.volume_up, color: Colors.black),
-                //   onPressed: () async {
-                //     if (messages.isNotEmpty) {
-                //       await _speak(messages[_currentIndex]['text']);
-                //     }
-                //   },
-                // ),
               ],
             ),
           ],
