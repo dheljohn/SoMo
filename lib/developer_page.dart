@@ -14,8 +14,6 @@ class _DeveloperPageState extends State<DeveloperPage>
     {
       'name': 'Joanna Caguco',
       'role': 'Full Stack Developer',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/jm.png',
       'position': {'top': -10.0, 'left': 70.0, 'width': 100.0, 'height': 140.0},
       'links': {
@@ -25,10 +23,8 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
     {
-      'name': 'Edhel Tubal ',
+      'name': 'Edhel Tubal',
       'role': 'Mobile App Developer',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/edhel.png',
       'position': {'top': -12.0, 'left': 60.0, 'width': 120.0, 'height': 140.0},
       'links': {
@@ -38,10 +34,8 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
     {
-      'name': 'Jenny Vallador ',
+      'name': 'Jenny Vallador',
       'role': 'Frontend Developer',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/jenny.png',
       'position': {'top': -10.0, 'left': 40.0, 'width': 160.0, 'height': 140.0},
       'links': {
@@ -51,10 +45,8 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
     {
-      'name': 'Marvin Vidallo ',
+      'name': 'Marvin Vidallo',
       'role': 'Tech Support',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/marvin.png',
       'position': {'top': -12.0, 'left': 60.0, 'width': 115.0, 'height': 140.0},
       'links': {
@@ -114,78 +106,80 @@ class _DeveloperPageState extends State<DeveloperPage>
                   children: [
                     const SizedBox(width: 40),
                     Container(
-                      width: 350,
+                      width: MediaQuery.of(context).size.width * 0.9,
                       height: 110,
                       margin: const EdgeInsets.symmetric(
-                          horizontal: 46.0, vertical: 20.0),
+                          horizontal: 20.0, vertical: 20.0),
                       alignment: Alignment.center,
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 242, 239, 231),
+                        color: const Color.fromARGB(255, 242, 239, 231),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Color.fromARGB(255, 42, 83, 39),
+                          color: const Color.fromARGB(255, 42, 83, 39),
                           width: 2,
                         ),
                       ),
                       child: Row(
-                        // crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const SizedBox(width: 140),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 3),
-                              Text(
-                                developer['name']!,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 31, 45, 31),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 3),
+                                Text(
+                                  developer['name']!,
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 31, 45, 31),
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                developer['role']!,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Color.fromARGB(255, 120, 122, 120),
+                                Text(
+                                  developer['role']!,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Color.fromARGB(255, 120, 122, 120),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 5),
-                              Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () => _launchURL(
-                                        developer['links']['github']),
-                                    child: Image.asset(
-                                      'assets/github.png',
-                                      width: 30,
-                                      height: 30,
+                                const SizedBox(height: 5),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () => _launchURL(
+                                          developer['links']['github']),
+                                      child: Image.asset(
+                                        'assets/github.png',
+                                        width: 30,
+                                        height: 30,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  GestureDetector(
-                                    onTap: () => _launchURL(
-                                        developer['links']['facebook']),
-                                    child: Image.asset(
-                                      'assets/fb.png',
-                                      width: 30,
-                                      height: 30,
+                                    const SizedBox(width: 10),
+                                    GestureDetector(
+                                      onTap: () => _launchURL(
+                                          developer['links']['facebook']),
+                                      child: Image.asset(
+                                        'assets/fb.png',
+                                        width: 30,
+                                        height: 30,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  GestureDetector(
-                                    onTap: () => _launchURL(
-                                        developer['links']['linkedin']),
-                                    child: Image.asset(
-                                      'assets/linked.png',
-                                      width: 30,
-                                      height: 30,
+                                    const SizedBox(width: 10),
+                                    GestureDetector(
+                                      onTap: () => _launchURL(
+                                          developer['links']['linkedin']),
+                                      child: Image.asset(
+                                        'assets/linked.png',
+                                        width: 30,
+                                        height: 30,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

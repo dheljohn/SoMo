@@ -6,7 +6,6 @@ import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
 import 'package:soil_monitoring_app/helpmsg.dart';
 import 'package:soil_monitoring_app/plot_selection_page.dart';
-import 'package:soil_monitoring_app/wifiStat.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -111,7 +110,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       barrierDismissible: false, // Prevent closing without input
       builder: (context) => AlertDialog(
         title: Text(
-          "Enter the password before modifying the plot",
+          "Enter Password Before Modifying the Plot",
         ),
         content: TextField(
           controller: passwordController,
@@ -197,18 +196,13 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
 
     return Container(
       color: const Color.fromARGB(255, 247, 246, 237),
-      padding: EdgeInsets.only(
-          left: screenWidth * 0.04,
-          right: screenWidth * 0.04,
-          top: screenWidth * 0.04,
-          bottom: screenWidth * 0),
+      padding: EdgeInsets.all(screenWidth * 0.04),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: screenHeight * 0.02),
             // Date Container
-
             Container(
               padding: EdgeInsets.all(screenWidth * 0.04),
               decoration: BoxDecoration(
@@ -230,7 +224,6 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        WifiStatus(), // Display WiFi status snackbar
                         Text(
                           DateFormat('MMMM d, yyyy').format(DateTime.now()),
                           style: TextStyle(
@@ -252,56 +245,9 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                   ),
                   // SizedBox(width: screenWidth * 0.04), // Spacing between columns
                   // Right Column
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(screenWidth * 0.02),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 255, 255, 240),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.grass,
-                            size: 24,
-                            color: const Color.fromARGB(255, 81, 135, 83),
-                          ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              selectedPlot ?? "Loading...",
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: const Color.fromARGB(255, 81, 135, 83),
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.arrow_forward_ios,
-                                color: Colors.grey), // Arrow icon
-                            onPressed: () {
-                              _showPasswordDialog(
-                                  context); // Show password dialog on click
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
 
-          ],
-        ),
-      ),
-      // SizedBox(width: screenWidth * 0.04), // Spacing between columns
-      // Right Column
-
-      //ADDED THE PLOT HEREEE
-      PlotSelection(),
+                  //ADDED THE PLOT HEREEE
+                  PlotSelection(),
 //    Expanded(
 //   child: Container(
 //     padding: EdgeInsets.all(screenWidth * 0.02),
@@ -338,48 +284,47 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
 //     ),
 //   ),
 // ),
-    ],
-  ),
-),                  
+                ],
+              ),
+            ),
             SizedBox(height: screenHeight * 0.02),
-  // Align(
-  //                 alignment: Alignment.centerRight,
-  //                 child: GestureDetector(
-  //                   onTap: () {
-  //                     Navigator.push(
-  //                       context,
-  //                       MaterialPageRoute(
-  //                           builder: (context) => PlotSelection()),
-  //                     );
-  //                   },
-                    
-  //                   child: Container(
-  //                     height: 30,
-  //                     padding: const EdgeInsets.symmetric(
-  //                         vertical: 4, horizontal: 6),
-  //                     decoration: BoxDecoration(
-  //                       color: const Color.fromARGB(255, 247, 246, 237),
-  //                       borderRadius: BorderRadius.circular(8),
-  //                       border: Border.all(
-  //                           color: Color.fromARGB(255, 100, 122, 99), width: 2),
-  //                     ),
-  //                     child: const Text(
-  //                       "Select Plot",
-  //                       style: TextStyle(
-  //                         color: const Color.fromARGB(255, 100, 122, 99),
-  //                         fontSize: 12,
-  //                         fontWeight: FontWeight.w700,
-  //                         fontFamily: 'Roboto',
-  //                         letterSpacing: 1.2,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ),
-              
+            // Align(
+            //                 alignment: Alignment.centerRight,
+            //                 child: GestureDetector(
+            //                   onTap: () {
+            //                     Navigator.push(
+            //                       context,
+            //                       MaterialPageRoute(
+            //                           builder: (context) => PlotSelection()),
+            //                     );
+            //                   },
+
+            //                   child: Container(
+            //                     height: 30,
+            //                     padding: const EdgeInsets.symmetric(
+            //                         vertical: 4, horizontal: 6),
+            //                     decoration: BoxDecoration(
+            //                       color: const Color.fromARGB(255, 247, 246, 237),
+            //                       borderRadius: BorderRadius.circular(8),
+            //                       border: Border.all(
+            //                           color: Color.fromARGB(255, 100, 122, 99), width: 2),
+            //                     ),
+            //                     child: const Text(
+            //                       "Select Plot",
+            //                       style: TextStyle(
+            //                         color: const Color.fromARGB(255, 100, 122, 99),
+            //                         fontSize: 12,
+            //                         fontWeight: FontWeight.w700,
+            //                         fontFamily: 'Roboto',
+            //                         letterSpacing: 1.2,
+            //                       ),
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ),
+
             // SizedBox(height: screenHeight * 0.01),
             // PlotSelection(),
-
             SizedBox(height: screenHeight * 0.01),
             Gauges(dataProvider: dataProvider),
 
@@ -462,18 +407,17 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                 ),
               ),
             ),
-
             Align(
-              alignment: Alignment.bottomLeft,
+              alignment: Alignment.center,
               child: Container(
                 color: const Color.fromARGB(255, 247, 246, 237),
                 margin: EdgeInsets.all(screenWidth * 0.02),
-                height: screenHeight * 0.19,
+                height: screenHeight * 0.15,
                 width: double.infinity,
                 child: const HelperMsg(),
               ),
             ),
-            //SizedBox(height: screenHeight * 0),
+            SizedBox(height: screenHeight * 0.0),
           ],
         ),
       ),
