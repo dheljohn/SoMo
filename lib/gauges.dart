@@ -42,10 +42,9 @@ class Gauges extends StatelessWidget {
   Widget buildGauge(
       BuildContext context, String title, double value, Color bgColor) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final gaugeSize =
-        screenWidth / 3.2; // Adjust the divisor to change the size
+    final gaugeSize = screenWidth / 3; // Adjust the divisor to change the size
     final gaugeHeight =
-        gaugeSize / 1; // Adjust the divisor to change the height
+        gaugeSize / 1.2; // Adjust the divisor to change the height
 
     return Container(
       height: gaugeHeight,
@@ -61,23 +60,23 @@ class Gauges extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 "${value.toInt()}%",
-                style: const TextStyle(
-                  fontSize: 24,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.06,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(
-                height: gaugeSize / 2,
-                width: gaugeSize / 2,
+                height: gaugeSize / 2.9,
+                width: gaugeSize / 2.9,
                 child: SfRadialGauge(
                   axes: <RadialAxis>[
                     RadialAxis(
-                      radiusFactor: 0.7,
+                      radiusFactor: 0.9,
                       showTicks: false,
                       showLabels: false,
                       minimum: 0,
@@ -104,8 +103,8 @@ class Gauges extends StatelessWidget {
           ),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 14,
+            style: TextStyle(
+              fontSize: screenWidth * 0.03,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
@@ -113,7 +112,7 @@ class Gauges extends StatelessWidget {
           Text(
             getWarningMessage(value),
             style: TextStyle(
-              fontSize: 12,
+              fontSize: screenWidth * 0.03,
               fontWeight: FontWeight.bold,
               color: getWarningColor(value),
             ),
@@ -128,7 +127,7 @@ class Gauges extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          const SizedBox(height: 5),
+          const SizedBox(height: 2),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

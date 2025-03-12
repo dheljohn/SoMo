@@ -237,7 +237,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                               DateFormat('MMMM d, yyyy').format(DateTime.now()),
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: screenWidth * 0.05,
+                                fontSize: screenWidth * 0.045,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -265,7 +265,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                             children: [
                               Icon(
                                 Icons.grass,
-                                size: 24,
+                                size: screenWidth * 0.06,
                                 color: const Color.fromARGB(255, 81, 135, 83),
                               ),
                               SizedBox(width: screenWidth * 0.02),
@@ -273,7 +273,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                                 child: Text(
                                   selectedPlot ?? "Loading...",
                                   style: TextStyle(
-                                    fontSize: screenWidth * 0.069,
+                                    fontSize: screenWidth * 0.05,
                                     fontWeight: FontWeight.bold,
                                     color:
                                         const Color.fromARGB(255, 81, 135, 83),
@@ -282,8 +282,11 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                                 ),
                               ),
                               IconButton(
-                                icon: Icon(Icons.arrow_forward_ios,
-                                    color: Colors.grey), // Arrow icon
+                                icon: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.grey,
+                                  size: screenHeight * 0.03,
+                                ), // Arrow icon
                                 onPressed: () {
                                   _showPasswordDialog(
                                       context); // Show password dialog on click
@@ -425,6 +428,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                     child: const HelperMsg(),
                   ),
                 ),
+
                 //SizedBox(height: screenHeight * 0),
               ],
             ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/fcm_service.dart';
 import 'package:soil_monitoring_app/start_page.dart';
 import 'package:flutter/services.dart';
+import 'package:device_preview/device_preview.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,10 +27,18 @@ void main() async {
               messagingSenderId: "367476307418",
               appId: "1:367476307418:web:2cf68b6cba4b8189d1fce3"));
       // await LocalNotification.init();
-      runApp(MaterialApp(
-        home: SplashScreen(),
-        debugShowCheckedModeBanner: false,
-      ));
+      runApp(
+        DevicePreview(
+          enabled: !kReleaseMode, //comment this line to disable device preview
+          builder: (context) => MaterialApp(
+            useInheritedMediaQuery: true,
+            locale: DevicePreview.locale(context),
+            builder: DevicePreview.appBuilder,
+            home: SplashScreen(),
+            debugShowCheckedModeBanner: false,
+          ),
+        ),
+      );
     } catch (e) {
       print('An error occurred: $e');
     }
@@ -39,10 +48,18 @@ void main() async {
     try {
       await Firebase.initializeApp();
       // await LocalNotification.init();
-      runApp(MaterialApp(
-        home: SplashScreen(),
-        debugShowCheckedModeBanner: false,
-      ));
+      runApp(
+        DevicePreview(
+          enabled: !kReleaseMode, //comment this line to disable device preview
+          builder: (context) => MaterialApp(
+            useInheritedMediaQuery: true,
+            locale: DevicePreview.locale(context),
+            builder: DevicePreview.appBuilder,
+            home: SplashScreen(),
+            debugShowCheckedModeBanner: false,
+          ),
+        ),
+      );
     } catch (e) {
       print('An error occurred: $e');
     }
