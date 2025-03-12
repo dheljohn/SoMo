@@ -134,7 +134,7 @@ class Gauges extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "${value.toInt()}%",
+                  value > 5 ? "${value.toInt()}%" : "0%",
                   style: const TextStyle(
                       fontSize: 24, fontWeight: FontWeight.bold),
                 ),
@@ -151,7 +151,11 @@ class Gauges extends StatelessWidget {
                         maximum: 100,
                         pointers: <GaugePointer>[
                           RangePointer(
-                              value: value, color: getWarningColor(value))
+                            value: value >= 5
+                                ? value
+                                : 0, // Show 0% if not deployed
+                            color: getWarningColor(value),
+                          )
                         ],
                       ),
                     ],
