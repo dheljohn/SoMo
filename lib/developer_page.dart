@@ -106,17 +106,9 @@ class _DeveloperPageState extends State<DeveloperPage>
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    // const SizedBox(
-                    //   width: 40,
-                    //   // height: 40,
-                    // ),
                     Container(
-width: screenWidth * 1.5,
+                      width: screenWidth * 1.5,
                       height: 110, //100 default
-                      // margin: const EdgeInsets.symmetric(
-                      //   horizontal: 44.0,
-                      //   vertical: 20.0,
-                      // ), //20 default
                       margin:
                           const EdgeInsets.fromLTRB(46, 40, 46, 0), //20 default
                       alignment: Alignment.center,
@@ -132,7 +124,7 @@ width: screenWidth * 1.5,
                       child: Row(
                         children: [
                           const SizedBox(width: 140),
-  Column(
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -183,10 +175,10 @@ width: screenWidth * 1.5,
                                       width: screenWidth * 0.07,
                                       height: screenWidth * 0.07,
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ],
                       ),

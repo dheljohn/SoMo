@@ -77,7 +77,7 @@ class _HelperMsgState extends State<HelperMsg> {
 
     void checkSensor(String sensorName, double moistureValue) {
       if (moistureValue <= 5) {
-addMessage(
+        addMessage(
           _isFilipino
               ? '$sensorName: Hindi pa naka-deploy! ⚠️'
               : '$sensorName: Sensor not deployed! ⚠️', //⚠️
@@ -88,7 +88,7 @@ addMessage(
             '$sensorName: Extremely Dry Soil detected! \nRecommendation: Water the soil as needed. 🌱',
             const Color.fromARGB(255, 253, 133, 124));
       } else if (moistureValue <= 45) {
-  addMessage(
+        addMessage(
             '$sensorName: Well Drained Soil Detected! \nRecommendation: Considering watering soon. 🌱',
             const Color.fromARGB(255, 236, 188, 66));
       } else if (moistureValue <= 75) {
