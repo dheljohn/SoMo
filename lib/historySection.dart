@@ -33,7 +33,7 @@ class HistoryDisplay extends StatefulWidget {
 }
 
 class _HistoryDisplayState extends State<HistoryDisplay> {
-  String selectedPlot = "All"; // Default selection
+  String selectedPlot = "Plot1"; // Default selection
   final List<String> plots = ["All", "Plot1", "Plot2", "Plot3"];
   List<Map<String, dynamic>> sensorData = [];
   StreamSubscription<QuerySnapshot>? _sensorSubscription;
@@ -77,6 +77,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
         .doc(plot)
         .collection("sensorData")
         .orderBy("timestamp", descending: true)
+        .limit(20) // Fetch only 20 data
         .snapshots()
         .listen((snapshot) {
       setState(() {
@@ -101,6 +102,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
           .doc(plot)
           .collection("sensorData")
           .orderBy("timestamp", descending: true)
+          .limit(20) // Fetch only 20 data at first app run
           .get();
 
       for (var doc in snapshot.docs) {
@@ -111,7 +113,8 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     }
 
     setState(() {
-      sensorData = allData;
+      sensorData = allData; //display all data
+      //sensorData = allData.take(20).toList(); // fetch only 20 data by default
       _filterAndSortData();
     });
   }
@@ -197,7 +200,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     }
 
     setState(() {
-      sensorData = filteredData;
+      sensorData = filteredData; // fetch all data
     });
   }
 
@@ -273,6 +276,44 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
               onPressed: () {
                 Navigator.of(context).pop();
                 _selectDateRange(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showDownloadConfirmationDialog() async {
+    String plotinfo =
+        selectedPlot != "All" ? "Plot: $selectedPlot" : "All Plots";
+    String filterInfo =
+        selectedFilter != "None" ? "Filter: $selectedFilter" : "Filter: None";
+    String dateInfo = selectedDate != null
+        ? "Date: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}"
+        : startDate != null && endDate != null
+            ? "Date Range: ${DateFormat('yyyy-MM-dd').format(startDate!)} to ${DateFormat('yyyy-MM-dd').format(endDate!)}"
+            : "No date filter applied";
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Download'),
+          content: Text(
+              'You are about to download the CSV with the following filters:\n\n$plotinfo\n$filterInfo\n$dateInfo'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Download'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _downloadCSV();
               },
             ),
           ],
@@ -433,6 +474,45 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     );
   }
 
+  void _showSensorDetailsModal(Map<String, dynamic> sensorData) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Sensor Details"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text("Plot: ${sensorData['plot']}"),
+                Text(
+                    "Timestamp: ${DateFormat('yyyy-MM-dd h:mm a').format(sensorData['timestamp'].toDate())}"),
+                SizedBox(height: 10),
+                Text(
+                    "Temperature: ${sensorData['temperature']}°C - ${interpretTemperature(sensorData['temperature'])}"),
+                Text(
+                    "Humidity: ${sensorData['humidity']}% - ${interpretHumidity(sensorData['humidity'])}"),
+                SizedBox(height: 10),
+                Text("Average Moisture: ${sensorData['average_moisture']}%"),
+                Text("Moisture Sensor 1: ${sensorData['moisture_1']}%"),
+                Text("Moisture Sensor 2: ${sensorData['moisture_2']}%"),
+                Text("Moisture Sensor 3: ${sensorData['moisture_3']}%"),
+                Text("Moisture Sensor 4: ${sensorData['moisture_4']}%"),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Map<String, List<Map<String, dynamic>>> groupedData = {};
@@ -463,15 +543,16 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Sensor Data History"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.download),
-            onPressed: _downloadCSV,
-          ),
-        ],
-      ),
+      //appBar: AppBar(
+      // title: Text("Sensor Data History"),
+      // actions: [
+      //   IconButton(
+      //     icon: Icon(Icons.download),
+      //     onPressed: _downloadCSV,
+      //   ),
+      // ],
+
+      // ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -531,6 +612,10 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                     onPressed: () => _showDatePickerDialog(context),
                   ),
                 ),
+                IconButton(
+                  icon: Icon(Icons.download),
+                  onPressed: _showDownloadConfirmationDialog,
+                ),
               ],
             ),
           ),
@@ -561,17 +646,18 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                                           const Color.fromARGB(255, 0, 73, 39)),
                                 ),
                               ),
-                              ...records.map((data) {
+                              ...records.take(20).map((data) {
                                 return GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            SensorDetailScreen(
-                                                sensorData: data),
-                                      ),
-                                    );
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) =>
+                                    //         SensorDetailScreen(
+                                    //             sensorData: data),
+                                    //   ),
+                                    // );
+                                    _showSensorDetailsModal(data);
                                   },
                                   child: Card(
                                     margin: EdgeInsets.symmetric(

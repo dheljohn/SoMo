@@ -3,24 +3,28 @@ import 'package:flutter/material.dart';
 class SoilMoistureInfo extends StatelessWidget {
   final List<Map<String, dynamic>> moistureLevels = [
     {
-      'range': '15-30%',
+      'range': '15-29%',
       'color': const Color.fromARGB(255, 253, 133, 124),
-      'description': 'Extremely dry soil. Immediate watering required. Plants may wilt and suffer damage.',
+      'description':
+          'Extremely dry soil. Immediate watering required. Plants may wilt and suffer damage.',
     },
     {
       'range': '30-45%',
       'color': const Color.fromARGB(255, 236, 188, 66),
-      'description': 'Dry / well-drained soil. Consider watering soon. Some drought-tolerant plants can survive.',
+      'description':
+          'Dry / well-drained soil. Consider watering soon. Some drought-tolerant plants can survive.',
     },
     {
-      'range': '45-75%',
+      'range': '46-75%',
       'color': const Color.fromARGB(255, 103, 172, 105),
-      'description': 'Moist soil. Ideal condition for most plants. Ensures healthy growth.',
+      'description':
+          'Moist soil. Ideal condition for most plants. Ensures healthy growth.',
     },
     {
-      'range': '75-90%',
+      'range': '76-90%',
       'color': const Color.fromARGB(255, 131, 174, 209),
-      'description': 'Wet soil. Avoid overwatering. Too much moisture can lead to root rot.',
+      'description':
+          'Wet soil. Avoid overwatering. Too much moisture can lead to root rot.',
     },
   ];
 
@@ -28,17 +32,20 @@ class SoilMoistureInfo extends StatelessWidget {
     {
       'type': 'Sand Soil',
       'color': Colors.brown[300],
-      'description': 'Drains water quickly and dries out faster. Requires frequent watering.',
+      'description':
+          'Drains water quickly and dries out faster. Requires frequent watering.',
     },
     {
       'type': 'Loam Soil',
       'color': Colors.brown[500],
-      'description': 'Best for most plants. Retains moisture well while allowing good drainage.',
+      'description':
+          'Best for most plants. Retains moisture well while allowing good drainage.',
     },
     {
       'type': 'Clay Soil',
       'color': Colors.brown[700],
-      'description': 'Holds water for long periods. Drains slowly, increasing the risk of waterlogging.',
+      'description':
+          'Holds water for long periods. Drains slowly, increasing the risk of waterlogging.',
     },
   ];
 
@@ -68,7 +75,10 @@ class SoilMoistureInfo extends StatelessWidget {
                   [
                     const Text(
                       'Soil Moisture Levels',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 100, 122, 99)),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: const Color.fromARGB(255, 100, 122, 99)),
                     ),
                   ],
                 ),
@@ -124,7 +134,8 @@ class SoilMoistureInfo extends StatelessWidget {
                                   children: [
                                     Text(
                                       level['description'],
-                                      style: const TextStyle(color: Colors.black87, fontSize: 14),
+                                      style: const TextStyle(
+                                          color: Colors.black87, fontSize: 14),
                                     ),
                                     const SizedBox(height: 8),
                                   ],
@@ -144,14 +155,18 @@ class SoilMoistureInfo extends StatelessWidget {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               sliver: SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       'Soil Types & Moisture Retention',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 100, 122, 99)),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: const Color.fromARGB(255, 100, 122, 99)),
                     ),
                     const SizedBox(height: 10),
                     ...soilTypes.map((soil) {
@@ -188,12 +203,15 @@ class SoilMoistureInfo extends StatelessWidget {
                                 children: [
                                   Text(
                                     soil['type'],
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
                                     soil['description'],
-                                    style: const TextStyle(color: Colors.black87, fontSize: 14),
+                                    style: const TextStyle(
+                                        color: Colors.black87, fontSize: 14),
                                   ),
                                 ],
                               ),

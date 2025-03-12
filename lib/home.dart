@@ -197,14 +197,17 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600; // Adjust breakpoint as needed
     return DataProvider(
-        humidityValue: humidity_v,
-        temperatureValue: temperature_v,
-        moistureA: moisture_a,
-        moistureS1: moisture_s1,
-        moistureS2: moisture_s2,
-        moistureS3: moisture_s3,
-        moistureS4: moisture_s4,
+      humidityValue: humidity_v,
+      temperatureValue: temperature_v,
+      moistureA: moisture_a,
+      moistureS1: moisture_s1,
+      moistureS2: moisture_s2,
+      moistureS3: moisture_s3,
+      moistureS4: moisture_s4,
+      child: SafeArea(
         child: Scaffold(
           appBar: appBar,
           body: Stack(
@@ -229,7 +232,6 @@ class _HomeState extends State<Home> {
                 color: const Color.fromARGB(255, 100, 122, 99),
                 border: Border.all(
                   color: Color.fromARGB(255, 42, 83, 39),
-                  width: 2,
                 ),
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -242,9 +244,11 @@ class _HomeState extends State<Home> {
                       .transparent, // Keeps it transparent to show Container color
                   elevation: 0,
                   type: BottomNavigationBarType.fixed,
-                  selectedItemColor: const Color.fromARGB(255, 125, 171, 124),
+                  selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
                   unselectedItemColor: Colors.white70,
-                  showSelectedLabels: false,
+                  showSelectedLabels: true,
+                  selectedFontSize: screenWidth * 0.03,
+
                   showUnselectedLabels: false,
                   currentIndex: _currentIndex,
                   onTap: (index) {
@@ -286,7 +290,9 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget _buildIcon(IconData iconData, int index, int _currentIndex) {

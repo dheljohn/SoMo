@@ -15,7 +15,7 @@ class _DeveloperPageState extends State<DeveloperPage>
       'name': 'Joanna Caguco',
       'role': 'Full Stack Developer',
       'image': 'assets/jm.png',
-      'position': {'top': -10.0, 'left': 70.0, 'width': 100.0, 'height': 140.0},
+      'position': {'top': 9.0, 'left': 70.0, 'width': 100.0, 'height': 140.0},
       'links': {
         'github': 'https://github.com/named-JM',
         'facebook': 'https://www.facebook.com/JM.cags/',
@@ -26,7 +26,7 @@ class _DeveloperPageState extends State<DeveloperPage>
       'name': 'Edhel Tubal',
       'role': 'Mobile App Developer',
       'image': 'assets/edhel.png',
-      'position': {'top': -12.0, 'left': 60.0, 'width': 120.0, 'height': 140.0},
+      'position': {'top': 8.0, 'left': 60.0, 'width': 120.0, 'height': 140.0},
       'links': {
         'github': 'https://github.com/dheljohn',
         'facebook': 'https://www.facebook.com/edhel.johnn',
@@ -37,7 +37,7 @@ class _DeveloperPageState extends State<DeveloperPage>
       'name': 'Jenny Vallador',
       'role': 'Frontend Developer',
       'image': 'assets/jenny.png',
-      'position': {'top': -10.0, 'left': 40.0, 'width': 160.0, 'height': 140.0},
+      'position': {'top': 10.0, 'left': 40.0, 'width': 160.0, 'height': 140.0},
       'links': {
         'github': 'https://github.com/ImJennyLynn',
         'facebook': 'https://www.facebook.com/jennylyn.vallador',
@@ -48,7 +48,7 @@ class _DeveloperPageState extends State<DeveloperPage>
       'name': 'Marvin Vidallo',
       'role': 'Tech Support',
       'image': 'assets/marvin.png',
-      'position': {'top': -12.0, 'left': 60.0, 'width': 115.0, 'height': 140.0},
+      'position': {'top': 9.0, 'left': 60.0, 'width': 115.0, 'height': 140.0},
       'links': {
         'github': 'https://github.com/marvin',
         'facebook': 'https://www.facebook.com/jonmarvinvidallo',
@@ -85,10 +85,12 @@ class _DeveloperPageState extends State<DeveloperPage>
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData mediaQuery = MediaQuery.of(context);
+    double screenWidth = mediaQuery.size.width;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 248, 249, 247),
       body: Padding(
-        padding: const EdgeInsets.only(top: 40.0),
+        padding: const EdgeInsets.only(top: 0.0),
         child: ListView.builder(
           itemCount: developers.length,
           itemBuilder: (context, index) {
@@ -104,12 +106,11 @@ class _DeveloperPageState extends State<DeveloperPage>
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    const SizedBox(width: 40),
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      height: 110,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 20.0),
+                      width: screenWidth * 1.5,
+                      height: 110, //100 default
+                      margin:
+                          const EdgeInsets.fromLTRB(46, 40, 46, 0), //20 default
                       alignment: Alignment.center,
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
@@ -123,63 +124,61 @@ class _DeveloperPageState extends State<DeveloperPage>
                       child: Row(
                         children: [
                           const SizedBox(width: 140),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 3),
-                                Text(
-                                  developer['name']!,
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromARGB(255, 31, 45, 31),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(height: screenWidth * 0.014),
+                              Text(
+                                developer['name']!,
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.04,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 31, 45, 31),
+                                ),
+                              ),
+                              Text(
+                                developer['role']!,
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.028,
+                                  color: Color.fromARGB(255, 120, 122, 120),
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => _launchURL(
+                                        developer['links']['github']),
+                                    child: Image.asset(
+                                      'assets/github.png',
+                                      width: screenWidth * 0.07,
+                                      height: screenWidth * 0.07,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  developer['role']!,
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    color: Color.fromARGB(255, 120, 122, 120),
+                                  const SizedBox(width: 10),
+                                  GestureDetector(
+                                    onTap: () => _launchURL(
+                                        developer['links']['facebook']),
+                                    child: Image.asset(
+                                      'assets/fb.png',
+                                      width: screenWidth * 0.07,
+                                      height: screenWidth * 0.07,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 5),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () => _launchURL(
-                                          developer['links']['github']),
-                                      child: Image.asset(
-                                        'assets/github.png',
-                                        width: 30,
-                                        height: 30,
-                                      ),
+                                  const SizedBox(width: 10),
+                                  GestureDetector(
+                                    onTap: () => _launchURL(
+                                        developer['links']['linkedin']),
+                                    child: Image.asset(
+                                      'assets/linked.png',
+                                      width: screenWidth * 0.07,
+                                      height: screenWidth * 0.07,
                                     ),
-                                    const SizedBox(width: 10),
-                                    GestureDetector(
-                                      onTap: () => _launchURL(
-                                          developer['links']['facebook']),
-                                      child: Image.asset(
-                                        'assets/fb.png',
-                                        width: 30,
-                                        height: 30,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    GestureDetector(
-                                      onTap: () => _launchURL(
-                                          developer['links']['linkedin']),
-                                      child: Image.asset(
-                                        'assets/linked.png',
-                                        width: 30,
-                                        height: 30,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ],
                       ),
