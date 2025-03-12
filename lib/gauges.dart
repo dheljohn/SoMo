@@ -140,11 +140,9 @@ class Gauges extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "${value.toInt()}%",
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.06,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  value > 5 ? "${value.toInt()}%" : "0%",
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: gaugeSize / 2.9,
@@ -159,18 +157,10 @@ class Gauges extends StatelessWidget {
                         maximum: 100,
                         pointers: <GaugePointer>[
                           RangePointer(
-                            value: value,
-                            color: value < 30 && value >= 15
-                                ? const Color.fromARGB(255, 253, 133, 124)
-                                : value < 46
-                                    ? const Color.fromARGB(255, 236, 188, 66)
-                                    : value >= 76
-                                        ? const Color.fromARGB(
-                                            255, 131, 174, 209)
-                                        : const Color.fromARGB(
-                                            255, 81, 129, 77),
-                            enableAnimation: true,
-                            cornerStyle: CornerStyle.bothCurve,
+                            value: value >= 5
+                                ? value
+                                : 0, // Show 0% if not deployed
+                            color: getWarningColor(value),
                           ),
                         ],
                       ),
