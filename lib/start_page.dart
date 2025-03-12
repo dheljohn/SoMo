@@ -1,102 +1,5 @@
-// import 'package:flutter/material.dart';
-// import 'package:soil_monitoring_app/home.dart';
-
-// class SplashScreen extends StatefulWidget {
-//   @override
-//   _SplashScreenState createState() => _SplashScreenState();
-// }
-
-// class _SplashScreenState extends State<SplashScreen>
-//     with SingleTickerProviderStateMixin {
-//   late AnimationController _controller;
-//   late Animation<double> _circleAnimation;
-//   bool _showGif = false; // Initially hide GIF
-
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     _controller = AnimationController(
-//       duration: const Duration(milliseconds: 2500), // Smooth transition time
-//       vsync: this,
-//     );
-
-//     _circleAnimation = Tween<double>(begin: 0.0, end: 3.0).animate(
-//       CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
-//     );
-
-//     _controller.forward();
-
-//     // Start GIF animation AFTER the circle transition completes (2.5s delay)
-//     Future.delayed(const Duration(milliseconds: 2500), () {
-//       setState(() {
-//         _showGif = true; // Show GIF after circle animation
-//       });
-
-//       // Navigate to Home after GIF animation completes (6s)
-//       Future.delayed(const Duration(seconds: 6), () {
-//         Navigator.pushReplacement(
-//           context,
-//           MaterialPageRoute(builder: (context) => Home()),
-//         );
-//       });
-//     });
-//   }
-
-//   @override
-//   void dispose() {
-//     _controller.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: AnimatedBuilder(
-//         animation: _controller,
-//         builder: (context, child) {
-//           double screenSize = MediaQuery.of(context).size.width * 3;
-//           double circleSize = screenSize * _circleAnimation.value;
-
-//           return Stack(
-//             children: [
-//               Container(
-//                 color: _circleAnimation.value >= 1.0
-//                     ? const Color.fromARGB(
-//                         255, 247, 246, 237) // Background turns white
-//                     : const Color.fromARGB(255, 100, 122, 99),
-//               ),
-//               Center(
-//                 child: Container(
-//                   width: circleSize,
-//                   height: circleSize,
-//                   decoration: const BoxDecoration(
-//                     color: Color.fromARGB(255, 247, 246, 237),
-//                     shape: BoxShape.circle,
-//                   ),
-//                 ),
-//               ),
-//               Center(
-//                 child: _showGif // Only show GIF after the circle transition
-//                     ? Image.asset(
-//                         'assets/LOGO.gif',
-//                         width: 250,
-//                         height: 250,
-//                       )
-//                     : const SizedBox(), // Hide GIF initially
-//               ),
-//             ],
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-
-//below is tappable splash screen
 import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/home.dart';
-import 'dart:async';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -106,50 +9,36 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _circleAnimation;
-  bool _showGif = false; // Initially hide GIF
-  final Completer<void> _completer = Completer<void>();
+  late Animation<double> _spreadAnimation;
+  bool _showGif = false;
 
   @override
   void initState() {
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 2500), // Smooth transition time
+      duration: const Duration(milliseconds: 2500),
       vsync: this,
     );
 
-    _circleAnimation = Tween<double>(begin: 0.0, end: 3.0).animate(
+    _spreadAnimation = Tween<double>(begin: 0.0, end: 1.5).animate(
       CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
     );
 
     _controller.forward();
 
-    // Start GIF animation AFTER the circle transition completes (2.5s delay)
     Future.delayed(const Duration(milliseconds: 2500), () {
-      if (!_completer.isCompleted) {
-        setState(() {
-          _showGif = true; // Show GIF after circle animation
-        });
+      setState(() {
+        _showGif = true;
+      });
 
-        // Navigate to Home after GIF animation completes (6s)
-        Future.delayed(const Duration(seconds: 6), () {
-          if (!_completer.isCompleted) {
-            _navigateToHome();
-          }
-        });
-      }
+      Future.delayed(const Duration(seconds: 4), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
+      });
     });
-  }
-
-  void _navigateToHome() {
-    if (!_completer.isCompleted) {
-      _completer.complete();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Home()),
-      );
-    }
   }
 
   @override
@@ -160,46 +49,58 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        onTap: _navigateToHome, // Skip animation on tap
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            double screenSize = MediaQuery.of(context).size.width * 3;
-            double circleSize = screenSize * _circleAnimation.value;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
-            return Stack(
-              children: [
-                Container(
-                  color: _circleAnimation.value >= 1.0
-                      ? const Color.fromARGB(
-                          255, 247, 246, 237) // Background turns white
-                      : const Color.fromARGB(255, 100, 122, 99),
-                ),
-                Center(
-                  child: Container(
-                    width: circleSize,
-                    height: circleSize,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 247, 246, 237),
-                      shape: BoxShape.circle,
-                    ),
+    return Scaffold(
+      body: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Stack(
+            children: [
+              Container(
+                color: _spreadAnimation.value >= 1.0
+                    ? const Color.fromARGB(255, 242, 239, 231)
+                    : const Color.fromARGB(255, 100, 122, 99),
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Container(
+                  width: screenWidth * _spreadAnimation.value,
+                  height: screenHeight * _spreadAnimation.value,
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 242, 239, 231),
+                    borderRadius:
+                        BorderRadius.only(bottomRight: Radius.circular(300)),
                   ),
                 ),
-                Center(
-                  child: _showGif // Only show GIF after the circle transition
-                      ? Image.asset(
-                          'assets/LOGO.gif',
-                          width: 250,
-                          height: 250,
-                        )
-                      : const SizedBox(), // Hide GIF initially
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  width: screenWidth * _spreadAnimation.value,
+                  height: screenHeight * _spreadAnimation.value,
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 242, 239, 231),
+                    borderRadius:
+                        BorderRadius.only(topLeft: Radius.circular(300)),
+                  ),
                 ),
-              ],
-            );
-          },
-        ),
+              ),
+              Center(
+                child: _showGif
+                    ? Image.asset(
+                        'assets/LOGO.gif',
+                        width: 250,
+                        height: 250,
+                      )
+                    : const SizedBox(),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

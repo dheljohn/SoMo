@@ -247,8 +247,8 @@ class _HomeState extends State<Home> {
                   selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
                   unselectedItemColor: Colors.white70,
                   showSelectedLabels: true,
-                  selectedLabelStyle:
-                      const TextStyle(fontWeight: FontWeight.bold),
+                  selectedFontSize: screenWidth * 0.03,
+
                   showUnselectedLabels: false,
                   currentIndex: _currentIndex,
                   onTap: (index) {

@@ -254,48 +254,50 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                       ),
                       // SizedBox(width: screenWidth * 0.04), // Spacing between columns
                       // Right Column
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.all(screenWidth * 0.02),
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 255, 255, 240),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.grass,
-                                size: screenWidth * 0.06,
-                                color: const Color.fromARGB(255, 81, 135, 83),
-                              ),
-                              SizedBox(width: screenWidth * 0.02),
-                              Expanded(
-                                child: Text(
-                                  selectedPlot ?? "Loading...",
-                                  style: TextStyle(
-                                    fontSize: screenWidth * 0.05,
-                                    fontWeight: FontWeight.bold,
-                                    color:
-                                        const Color.fromARGB(255, 81, 135, 83),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.grey,
-                                  size: screenHeight * 0.03,
-                                ), // Arrow icon
-                                onPressed: () {
-                                  _showPasswordDialog(
-                                      context); // Show password dialog on click
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      // Expanded(
+                      //   child: Container(
+                      //     padding: EdgeInsets.all(screenWidth * 0.02),
+                      //     decoration: BoxDecoration(
+                      //       color: const Color.fromARGB(255, 255, 255, 240),
+                      //       borderRadius: BorderRadius.circular(8),
+                      //     ),
+                      //     child: Row(
+                      //       children: [
+                      //         Icon(
+                      //           Icons.grass,
+                      //           size: screenWidth * 0.06,
+                      //           color: const Color.fromARGB(255, 81, 135, 83),
+                      //         ),
+                      //         SizedBox(width: screenWidth * 0.02),
+                      //         Expanded(
+                      //           child: Text(
+                      //             selectedPlot ?? "Loading...",
+                      //             style: TextStyle(
+                      //               fontSize: screenWidth * 0.05,
+                      //               fontWeight: FontWeight.bold,
+                      //               color:
+                      //                   const Color.fromARGB(255, 81, 135, 83),
+                      //             ),
+                      //             overflow: TextOverflow.ellipsis,
+                      //           ),
+                      //         ),
+                      //         IconButton(
+                      //           icon: Icon(
+                      //             Icons.arrow_forward_ios,
+                      //             color: Colors.grey,
+                      //             size: screenHeight * 0.03,
+                      //           ), // Arrow icon
+                      //           onPressed: () {
+                      //             _showPasswordDialog(
+                      //                 context); // Show password dialog on click
+                      //           },
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+
+                      PlotSelection(),
                     ],
                   ),
                 ),
