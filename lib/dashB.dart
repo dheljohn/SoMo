@@ -293,41 +293,92 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            SizedBox(height: screenHeight * 0.02),
-            // Align(
-            //                 alignment: Alignment.centerRight,
-            //                 child: GestureDetector(
-            //                   onTap: () {
-            //                     Navigator.push(
-            //                       context,
-            //                       MaterialPageRoute(
-            //                           builder: (context) => PlotSelection()),
-            //                     );
-            //                   },
 
-            //                   child: Container(
-            //                     height: 30,
-            //                     padding: const EdgeInsets.symmetric(
-            //                         vertical: 4, horizontal: 6),
-            //                     decoration: BoxDecoration(
-            //                       color: const Color.fromARGB(255, 247, 246, 237),
-            //                       borderRadius: BorderRadius.circular(8),
-            //                       border: Border.all(
-            //                           color: Color.fromARGB(255, 100, 122, 99), width: 2),
-            //                     ),
-            //                     child: const Text(
-            //                       "Select Plot",
-            //                       style: TextStyle(
-            //                         color: const Color.fromARGB(255, 100, 122, 99),
-            //                         fontSize: 12,
-            //                         fontWeight: FontWeight.w700,
-            //                         fontFamily: 'Roboto',
-            //                         letterSpacing: 1.2,
-            //                       ),
-            //                     ),
-            //                   ),
-            //                 ),
-            //               ),
+          ],
+        ),
+      ),
+      // SizedBox(width: screenWidth * 0.04), // Spacing between columns
+      // Right Column
+
+      //ADDED THE PLOT HEREEE
+      PlotSelection(),
+//    Expanded(
+//   child: Container(
+//     padding: EdgeInsets.all(screenWidth * 0.02),
+//     decoration: BoxDecoration(
+//       color: const Color.fromARGB(255, 255, 255, 240),
+//       borderRadius: BorderRadius.circular(8),
+//     ),
+//     child: Row(
+//       children: [
+//         Icon(
+//           Icons.grass,
+//           size: 24,
+//           color: const Color.fromARGB(255, 81, 135, 83),
+//         ),
+//         SizedBox(width: 8),
+//         Expanded(
+//           child: Text(
+//             selectedPlot ?? "Loading...",
+//             style: TextStyle(
+//               fontSize: 30,
+//               fontWeight: FontWeight.bold,
+//               color: const Color.fromARGB(255, 81, 135, 83),
+//             ),
+//             overflow: TextOverflow.ellipsis,
+//           ),
+//         ),
+//         IconButton(
+//           icon: Icon(Icons.edit, color: Colors.grey),
+//           onPressed: () {
+//             _showPasswordDialog(context); // Show password dialog on click
+//           },
+//         ),
+//       ],
+//     ),
+//   ),
+// ),
+    ],
+  ),
+),                  
+            SizedBox(height: screenHeight * 0.02),
+  // Align(
+  //                 alignment: Alignment.centerRight,
+  //                 child: GestureDetector(
+  //                   onTap: () {
+  //                     Navigator.push(
+  //                       context,
+  //                       MaterialPageRoute(
+  //                           builder: (context) => PlotSelection()),
+  //                     );
+  //                   },
+                    
+  //                   child: Container(
+  //                     height: 30,
+  //                     padding: const EdgeInsets.symmetric(
+  //                         vertical: 4, horizontal: 6),
+  //                     decoration: BoxDecoration(
+  //                       color: const Color.fromARGB(255, 247, 246, 237),
+  //                       borderRadius: BorderRadius.circular(8),
+  //                       border: Border.all(
+  //                           color: Color.fromARGB(255, 100, 122, 99), width: 2),
+  //                     ),
+  //                     child: const Text(
+  //                       "Select Plot",
+  //                       style: TextStyle(
+  //                         color: const Color.fromARGB(255, 100, 122, 99),
+  //                         fontSize: 12,
+  //                         fontWeight: FontWeight.w700,
+  //                         fontFamily: 'Roboto',
+  //                         letterSpacing: 1.2,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+              
+            // SizedBox(height: screenHeight * 0.01),
+            // PlotSelection(),
 
             SizedBox(height: screenHeight * 0.01),
             Gauges(dataProvider: dataProvider),

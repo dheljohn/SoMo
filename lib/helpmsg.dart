@@ -75,21 +75,31 @@ class _HelperMsgState extends State<HelperMsg> {
       );
     }
 
-    if (temperatureValue <= 15) {
-      addMessage(
-        _isFilipino
-            ? 'Mababang Temperatura ang nararanasan! Subukang pataasin ang temperatura.\nRekomendasyon: Ilantad ang mga halaman kung san may sikat ng araw. ' //❄️
-            : 'Low Temperature Detected! Consider increasing temperature.\nRecommendation: Expose plants to more sunlight. ',
-        const Color.fromARGB(255, 131, 174, 209),
-      );
-    } else if (temperatureValue >= 30) {
-      addMessage(
-        _isFilipino
-            ? 'Mataas na Temperatura ang nararanasan! Subukang pababain ang temperatura.\nRekomendasyon: Magbigay lilim, o diligan ang mga halaman. ' //🔥
-            : 'High Temperature Detected! Consider decreasing temperature.\nRecommendation: Provide shade, or water plants. ',
-        const Color.fromARGB(255, 253, 133, 124),
-      );
-    }
+
+void checkSensor(String sensorName, double moistureValue) {
+  if (moistureValue <= 5) {
+    addMessage(
+        '$sensorName: Sensor not deployed! ⚠️', 
+        const Color.fromARGB(255, 150, 150, 150));
+  } else if (moistureValue <= 30) {
+    addMessage(
+        '$sensorName: Extremely Dry Soil detected! \nRecommendation: Water the soil as needed. 🌱', 
+        const Color.fromARGB(255, 253, 133, 124));
+  } else if (moistureValue <= 45) {
+    addMessage(
+        '$sensorName: Well Drained Soil Detected! \nRecommendation: Considering watering soon. 🌱', 
+       const Color.fromARGB(255, 236, 188, 66));
+   } else if (moistureValue <= 75) {
+    addMessage(
+        '$sensorName: Moist Soil Detected. \nIdeal Moisture Level. 🌱', 
+        const Color.fromARGB(255, 103, 172, 105));
+  } else if (moistureValue >= 76) {
+    addMessage(
+        '$sensorName: Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰', 
+        const Color.fromARGB(255, 131, 174, 209));
+  }
+}
+
 
     void checkSensor(String sensorName, double moistureValue) {
       if (moistureValue <= 5) {
