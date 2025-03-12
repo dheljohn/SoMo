@@ -29,7 +29,7 @@ class AboutPage extends StatelessWidget {
               unselectedLabelColor: Color.fromARGB(200, 255, 255, 255),
               indicatorColor: Colors.white,
               tabs: [
-                Tab(text: "Soil Moisture Levels"),
+                Tab(text: "Soil Moisture \n     Levels"),
                 Tab(text: "Application"),
                 Tab(text: "Developers"),
               ],
@@ -62,19 +62,21 @@ class AboutTab extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // App Image
-            Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  'assets/app.jpg', 
-                  width: 250,
-                  height: 150,
-                  fit: BoxFit.cover,
+              // App Image
+              Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(
+                    'assets/app.jpg',
+                    width: 250,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
+
             ),
             const SizedBox(height: 20),
               Text(
@@ -124,18 +126,19 @@ class AboutTab extends StatelessWidget {
             //   ),
             // ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Key Features Section
-            const Text(
-              "Key Features",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 42, 83, 39),
+              // Key Features Section
+              const Text(
+                "Key Features",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 42, 83, 39),
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
+              const SizedBox(height: 10),
+
 
             // Features List
             const FeatureItem(
@@ -155,8 +158,8 @@ class AboutTab extends StatelessWidget {
                   "Stay updated with alerts when soil conditions require attention.",
             ),
           ],
+
         ),
-      ),
       ),
     );
   }
@@ -167,7 +170,8 @@ class FeatureItem extends StatelessWidget {
   final String title;
   final String description;
 
-  const FeatureItem({super.key, required this.title, required this.description});
+  const FeatureItem(
+      {super.key, required this.title, required this.description});
 
   @override
   Widget build(BuildContext context) {

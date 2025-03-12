@@ -14,7 +14,7 @@ class _PlotSelectionState extends State<PlotSelection> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final DatabaseReference realtimeDB = FirebaseDatabase.instance.ref();
 
-  @override
+@override
   void initState() {
     super.initState();
     _loadSavedPlot();
@@ -46,6 +46,7 @@ class _PlotSelectionState extends State<PlotSelection> {
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -85,6 +86,7 @@ class _PlotSelectionState extends State<PlotSelection> {
                 _savePlot(newValue);
               }
             },
+
           ),
         ),
       ],

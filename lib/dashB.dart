@@ -6,6 +6,7 @@ import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
 import 'package:soil_monitoring_app/helpmsg.dart';
 import 'package:soil_monitoring_app/plot_selection_page.dart';
+import 'package:soil_monitoring_app/wifiStat.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -100,45 +101,49 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         return 'Unknown Weather';
     }
   }
-void _showPasswordDialog(BuildContext context) {
-  TextEditingController passwordController = TextEditingController();
-  String correctPassword = "12345"; // Set your password here
 
-  showDialog(
-    context: context,
-    barrierDismissible: false, // Prevent closing without input
-    builder: (context) => AlertDialog(
-      title: Text("Enter Password Before Modifying the Plot",  ),
-      content: TextField(
-        controller: passwordController,
-        obscureText: true,
-        decoration: InputDecoration(hintText: "Password"),
+  void _showPasswordDialog(BuildContext context) {
+    TextEditingController passwordController = TextEditingController();
+    String correctPassword = "12345"; // Set your password here
+
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing without input
+      builder: (context) => AlertDialog(
+        title: Text(
+          "Enter the password before modifying the plot",
+        ),
+        content: TextField(
+          controller: passwordController,
+          obscureText: true,
+          decoration: InputDecoration(hintText: "Password"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), // Close dialog
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              if (passwordController.text == correctPassword) {
+                Navigator.pop(context); // Close dialog
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PlotSelection()),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Incorrect password!")),
+                );
+              }
+            },
+            child: Text("Submit"),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context), // Close dialog
-          child: Text("Cancel"),
-        ),
-        TextButton(
-          onPressed: () {
-            if (passwordController.text == correctPassword) {
-              Navigator.pop(context); // Close dialog
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PlotSelection()),
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Incorrect password!")),
-              );
-            }
-          },
-          child: Text("Submit"),
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final dataProvider = DataProvider.of(context);
@@ -166,7 +171,7 @@ void _showPasswordDialog(BuildContext context) {
     super.dispose();
   }
 
- Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
+  Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -192,49 +197,103 @@ void _showPasswordDialog(BuildContext context) {
 
     return Container(
       color: const Color.fromARGB(255, 247, 246, 237),
-      padding: EdgeInsets.all(screenWidth * 0.04),
+      padding: EdgeInsets.only(
+          left: screenWidth * 0.04,
+          right: screenWidth * 0.04,
+          top: screenWidth * 0.04,
+          bottom: screenWidth * 0),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: screenHeight * 0.02),
             // Date Container
-           Container(
-  padding: EdgeInsets.all(screenWidth * 0.04),
-  decoration: BoxDecoration(
-    color: const Color.fromARGB(255, 138, 167, 136),
-    borderRadius: BorderRadius.circular(12),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.1),
-        blurRadius: 5,
-        spreadRadius: 2,
-      ),
-    ],
-  ),
-  child: Row( // Changed from Column to Row for two-column layout
-    children: [
-      // Left Column
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              DateFormat('MMMM d, yyyy').format(DateTime.now()),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: screenWidth * 0.06,
-                fontWeight: FontWeight.bold,
+
+            Container(
+              padding: EdgeInsets.all(screenWidth * 0.04),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 138, 167, 136),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 5,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Row(
+                // Changed from Column to Row for two-column layout
+                children: [
+                  // Left Column
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        WifiStatus(), // Display WiFi status snackbar
+                        Text(
+                          DateFormat('MMMM d, yyyy').format(DateTime.now()),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: screenWidth * 0.06,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: screenWidth * 0.01),
+                        Text(
+                          DateFormat('EEEE').format(DateTime.now()),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: screenWidth * 0.05,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // SizedBox(width: screenWidth * 0.04), // Spacing between columns
+                  // Right Column
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(screenWidth * 0.02),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 255, 255, 240),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.grass,
+                            size: 24,
+                            color: const Color.fromARGB(255, 81, 135, 83),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              selectedPlot ?? "Loading...",
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: const Color.fromARGB(255, 81, 135, 83),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.arrow_forward_ios,
+                                color: Colors.grey), // Arrow icon
+                            onPressed: () {
+                              _showPasswordDialog(
+                                  context); // Show password dialog on click
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: screenWidth * 0.01),
-            Text(
-              DateFormat('EEEE').format(DateTime.now()),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: screenWidth * 0.05,
-              ),
-            ),
+
           ],
         ),
       ),
@@ -320,10 +379,10 @@ void _showPasswordDialog(BuildContext context) {
               
             // SizedBox(height: screenHeight * 0.01),
             // PlotSelection(),
+
             SizedBox(height: screenHeight * 0.01),
-        Gauges(dataProvider: dataProvider),
-           
-            
+            Gauges(dataProvider: dataProvider),
+
             SizedBox(height: screenHeight * 0.01),
             Center(
               child: Container(
@@ -403,24 +462,23 @@ void _showPasswordDialog(BuildContext context) {
                 ),
               ),
             ),
-               Align(
-              alignment: Alignment.center,
+
+            Align(
+              alignment: Alignment.bottomLeft,
               child: Container(
                 color: const Color.fromARGB(255, 247, 246, 237),
                 margin: EdgeInsets.all(screenWidth * 0.02),
-                height: screenHeight * 0.15,
+                height: screenHeight * 0.19,
                 width: double.infinity,
                 child: const HelperMsg(),
               ),
             ),
-            SizedBox(height: screenHeight * 0.0),
+            //SizedBox(height: screenHeight * 0),
           ],
         ),
       ),
     );
-    
   }
-
 
   Widget _soilMoistureGauge(double screenWidth) {
     return Image.asset(

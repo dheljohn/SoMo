@@ -61,7 +61,6 @@ class _SplashScreenState extends State<SplashScreen>
               Container(
                 color: _spreadAnimation.value >= 1.0
                     ? const Color.fromARGB(255, 242, 239, 231)
-
                     : const Color.fromARGB(255, 100, 122, 99),
               ),
               Positioned(

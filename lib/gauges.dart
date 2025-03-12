@@ -10,6 +10,7 @@ class Gauges extends StatelessWidget {
   String getWarningMessage(double value) {
     if (value <= 5) {
       return 'Sensor not deployed';
+
     } else if (value <= 30) {
       return 'Extremely Dry Soil!';
     } else if (value < 45) {
@@ -36,6 +37,7 @@ String getRecommendationMessage(double value) {
   }
 
  Color getWarningColor(double value) {
+
     if (value <= 5) {
       return Colors.grey;
     } else if (value == 15 || value <= 30) {
@@ -50,6 +52,7 @@ String getRecommendationMessage(double value) {
       return Colors.green;
     }
   }
+
 void showSensorModal(BuildContext context, String title, double value) {
   showDialog(
     context: context,
@@ -112,6 +115,15 @@ void showSensorModal(BuildContext context, String title, double value) {
 }
 
 
+  Widget buildGauge(
+      BuildContext context, String title, double value, Color bgColor) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final gaugeSize =
+        screenWidth / 3.2; // Adjust the divisor to change the size
+    final gaugeHeight =
+        gaugeSize / 1; // Adjust the divisor to change the height
+
+
   Widget buildGauge(BuildContext context, String title, double value, Color bgColor) {
     return GestureDetector(
       onTap: () => showSensorModal(context, title, value),
@@ -150,6 +162,7 @@ void showSensorModal(BuildContext context, String title, double value) {
                       ),
                     ],
                   ),
+
                 ),
               ],
             ),
@@ -169,6 +182,7 @@ void showSensorModal(BuildContext context, String title, double value) {
     return Center(
       child: Column(
         children: [
+
          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -176,15 +190,18 @@ void showSensorModal(BuildContext context, String title, double value) {
                   Colors.orange.shade50),
               buildGauge(context, 'Soil Moisture S2', dataProvider.moistureS2,
                    Colors.orange.shade50),
+
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
               buildGauge(context, 'Soil Moisture S3', dataProvider.moistureS3,
                   Colors.orange.shade50),
               buildGauge(context, 'Soil Moisture S4', dataProvider.moistureS4,
                   Colors.orange.shade50),
+
             ],
           ),
         ],
