@@ -50,14 +50,14 @@ class _PlotSelectionState extends State<PlotSelection> {
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData = MediaQuery.of(context);
+MediaQueryData queryData = MediaQuery.of(context);
     double screenHeight = queryData.size.height;
     double screenWidth = queryData.size.width;
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
-          width: screenWidth * 0.37,
+width: screenWidth * 0.37,
           height: screenHeight * 0.07,
           padding: EdgeInsets.symmetric(
               horizontal: screenWidth * 0.02, vertical: screenWidth * 0.02),
@@ -71,7 +71,7 @@ class _PlotSelectionState extends State<PlotSelection> {
             dropdownColor: Colors.white,
             underline: SizedBox(),
             style: TextStyle(
-              fontSize: screenWidth * 0.045,
+fontSize: screenWidth * 0.045,
               color: Colors.blueGrey[800],
             ),
             items: plots.map((String value) {
@@ -79,7 +79,7 @@ class _PlotSelectionState extends State<PlotSelection> {
                 value: value,
                 child: Row(
                   children: [
-                    Icon(Icons.eco,
+Icon(Icons.eco,
                         color: Colors.green, size: screenWidth * 0.05),
                     SizedBox(width: screenWidth * 0.02),
                     Text(value),

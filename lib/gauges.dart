@@ -10,7 +10,7 @@ class Gauges extends StatelessWidget {
   String getWarningMessage(double value) {
     if (value <= 5) {
       return 'Sensor not deployed';
-    } else if (value <= 29) {
+} else if (value <= 29) {
       return 'Extremely Dry Soil!';
     } else if (value < 46) {
       return 'Well Drained Soil!';
@@ -24,9 +24,10 @@ class Gauges extends StatelessWidget {
   String getRecommendationMessage(double value) {
     if (value <= 5) {
       return 'Sensor not deployed';
-    } else if (value <= 29) {
+ } else if (value <= 29) {
       return ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
     } else if (value <= 46) {
+=======
       return 'Well Drained Soil!\nRecommendation: Considering watering soon.🌱';
     } else if (value <= 75) {
       return 'Moist Soil. \nIdeal Moisture Level. 🌱';
@@ -105,7 +106,7 @@ class Gauges extends StatelessWidget {
                   //   ),
                   // ),
                 ],
-              ),
+ ),
             ),
           ),
         );
@@ -206,7 +207,7 @@ class Gauges extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          const SizedBox(height: 2),
+const SizedBox(height: 2),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -223,7 +224,7 @@ class Gauges extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
+Expanded(
                 child: buildGauge(context, 'Soil Moisture S3',
                     dataProvider.moistureS3, Colors.orange.shade50),
               ),

@@ -92,6 +92,7 @@ class AboutTab extends StatelessWidget {
                 textAlign: TextAlign.justify,
               ),
 
+
               const SizedBox(height: 20),
 
               // Key Features Section

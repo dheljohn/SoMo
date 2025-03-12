@@ -14,8 +14,6 @@ class _DeveloperPageState extends State<DeveloperPage>
     {
       'name': 'Joanna Caguco',
       'role': 'Full Stack Developer',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/jm.png',
       'position': {'top': 9.0, 'left': 70.0, 'width': 100.0, 'height': 140.0},
       'links': {
@@ -25,10 +23,8 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
     {
-      'name': 'Edhel Tubal ',
+      'name': 'Edhel Tubal',
       'role': 'Mobile App Developer',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/edhel.png',
       'position': {'top': 8.0, 'left': 60.0, 'width': 120.0, 'height': 140.0},
       'links': {
@@ -38,10 +34,8 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
     {
-      'name': 'Jenny Vallador ',
+      'name': 'Jenny Vallador',
       'role': 'Frontend Developer',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/jenny.png',
       'position': {'top': 10.0, 'left': 40.0, 'width': 160.0, 'height': 140.0},
       'links': {
@@ -51,10 +45,8 @@ class _DeveloperPageState extends State<DeveloperPage>
       }
     },
     {
-      'name': 'Marvin Vidallo ',
+      'name': 'Marvin Vidallo',
       'role': 'Tech Support',
-      'description':
-          'Lorem ipsum dolor sit amet. Et modi suscipit a enim optio.',
       'image': 'assets/marvin.png',
       'position': {'top': 9.0, 'left': 60.0, 'width': 115.0, 'height': 140.0},
       'links': {
@@ -119,7 +111,7 @@ class _DeveloperPageState extends State<DeveloperPage>
                     //   // height: 40,
                     // ),
                     Container(
-                      width: screenWidth * 1.5,
+width: screenWidth * 1.5,
                       height: 110, //100 default
                       // margin: const EdgeInsets.symmetric(
                       //   horizontal: 44.0,
@@ -130,18 +122,17 @@ class _DeveloperPageState extends State<DeveloperPage>
                       alignment: Alignment.center,
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 242, 239, 231),
+                        color: const Color.fromARGB(255, 242, 239, 231),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Color.fromARGB(255, 42, 83, 39),
+                          color: const Color.fromARGB(255, 42, 83, 39),
                           width: 2,
                         ),
                       ),
                       child: Row(
-                        // crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const SizedBox(width: 140),
-                          Column(
+  Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -192,10 +183,10 @@ class _DeveloperPageState extends State<DeveloperPage>
                                       width: screenWidth * 0.07,
                                       height: screenWidth * 0.07,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

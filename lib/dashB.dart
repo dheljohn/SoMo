@@ -6,7 +6,6 @@ import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
 import 'package:soil_monitoring_app/helpmsg.dart';
 import 'package:soil_monitoring_app/plot_selection_page.dart';
-import 'package:soil_monitoring_app/wifiStat.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -111,7 +110,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       barrierDismissible: false, // Prevent closing without input
       builder: (context) => AlertDialog(
         title: Text(
-          "Enter the password before modifying the plot",
+          "Enter Password Before Modifying the Plot",
         ),
         content: TextField(
           controller: passwordController,
@@ -195,7 +194,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       }
     }
 
-    return Stack(
+return Stack(
       children: [
         Container(
           color: const Color.fromARGB(255, 247, 246, 237),
@@ -419,8 +418,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-
-                Align(
+Align(
                   alignment: Alignment.bottomLeft,
                   child: Container(
                     color: const Color.fromARGB(255, 247, 246, 237),
