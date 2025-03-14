@@ -76,7 +76,7 @@ class _HelperMsgState extends State<HelperMsg> {
     }
 
     void checkSensor(String sensorName, double moistureValue) {
-      if (moistureValue <= 5) {
+      if (moistureValue < 15) {
         addMessage(
           _isFilipino
               ? '$sensorName: Hindi pa naka-deploy! ⚠️'
