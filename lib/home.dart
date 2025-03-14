@@ -246,10 +246,12 @@ class _HomeState extends State<Home> {
                   type: BottomNavigationBarType.fixed,
                   selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
                   unselectedItemColor: Colors.white70,
-                  showSelectedLabels: true,
-                  selectedFontSize: screenWidth * 0.03,
 
-                  showUnselectedLabels: false,
+                  showSelectedLabels: true,
+                  selectedFontSize: screenWidth * 0.035,
+
+                  showUnselectedLabels: true,
+                  unselectedFontSize: screenWidth * 0.03,
                   currentIndex: _currentIndex,
                   onTap: (index) {
                     setState(() {
