@@ -75,10 +75,9 @@ class _DeveloperPageState extends State<DeveloperPage>
     }
   }
 
-  void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
       throw 'Could not launch $url';
     }
   }
