@@ -8,7 +8,7 @@ class Gauges extends StatelessWidget {
   const Gauges({required this.dataProvider, Key? key}) : super(key: key);
 
   String getWarningMessage(double value) {
-    if (value <= 5) {
+    if (value < 15) {
       return 'Sensor not deployed';
     } else if (value <= 29) {
       return 'Extremely Dry Soil!';
@@ -22,7 +22,7 @@ class Gauges extends StatelessWidget {
   }
 
   String getRecommendationMessage(double value) {
-    if (value <= 5) {
+    if (value < 15) {
       return 'Sensor not deployed';
     } else if (value <= 29) {
       return ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
@@ -36,7 +36,7 @@ class Gauges extends StatelessWidget {
   }
 
   Color getWarningColor(double value) {
-    if (value <= 5) {
+    if (value < 15) {
       return Colors.grey;
     } else if (value == 15 || value <= 29) {
       return const Color.fromARGB(255, 253, 133, 124);
@@ -140,7 +140,7 @@ class Gauges extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  value > 5 ? "${value.toInt()}%" : "0%",
+                  value > 14 ? "${value.toInt()}%" : "0%",
                   style: const TextStyle(
                       fontSize: 24, fontWeight: FontWeight.bold),
                 ),
@@ -157,7 +157,7 @@ class Gauges extends StatelessWidget {
                         maximum: 100,
                         pointers: <GaugePointer>[
                           RangePointer(
-                            value: value >= 5
+                            value: value > 14
                                 ? value
                                 : 0, // Show 0% if not deployed
                             color: getWarningColor(value),
