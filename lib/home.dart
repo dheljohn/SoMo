@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -9,6 +8,8 @@ import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
 import 'package:soil_monitoring_app/navBar.dart';
 import 'package:soil_monitoring_app/tutorial.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+import 'package:soil_monitoring_app/global_switch.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -215,7 +216,7 @@ class _HomeState extends State<Home> {
               IndexedStack(
                 index: _currentIndex,
                 children: [
-                  const DashB(),
+                  DashB(),
                   TutorialScreen(),
                   HistoryDisplay(),
                   AboutPage(),
@@ -246,10 +247,8 @@ class _HomeState extends State<Home> {
                   type: BottomNavigationBarType.fixed,
                   selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
                   unselectedItemColor: Colors.white70,
-
                   showSelectedLabels: true,
                   selectedFontSize: screenWidth * 0.035,
-
                   showUnselectedLabels: true,
                   unselectedFontSize: screenWidth * 0.03,
                   currentIndex: _currentIndex,

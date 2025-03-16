@@ -1,34 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+import 'package:provider/provider.dart';
+import 'package:soil_monitoring_app/global_switch.dart';
+import 'package:soil_monitoring_app/language_provider.dart'; // Import global switch controller
 
-class SwitchButton extends StatefulWidget {
-  const SwitchButton({Key? key}) : super(key: key);
-
-  @override
-  State<SwitchButton> createState() => _SwitchButtonState();
-}
-
-class _SwitchButtonState extends State<SwitchButton> {
-  bool _isSwitched = false;
+class SwitchButton extends StatelessWidget {
+  const SwitchButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: AdvancedSwitch(
-          width: 50.0,
-          height: 25.0,
-          //value: _isSwitched,
-          activeColor: Colors.green,
-          inactiveColor: Colors.red,
-          borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-          onChanged: (value) {
-            setState(() {
-              _isSwitched = value;
-            });
-          },
-        ),
-      ),
+    final languageProvider =
+        Provider.of<LanguageProvider>(context, listen: false);
+
+    return AdvancedSwitch(
+      controller: globalSwitchController, // Use global controller
+      activeColor: const Color.fromARGB(255, 42, 83, 39),
+      inactiveColor: const Color.fromARGB(255, 42, 83, 39),
+      activeChild: const Text('Fil'),
+      inactiveChild: const Text('Eng'),
+      borderRadius: BorderRadius.circular(15),
+      width: 60,
+      height: 30,
+      onChanged: (value) {
+        languageProvider.toggleLanguage(value);
+      },
     );
   }
 }

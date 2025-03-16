@@ -9,6 +9,7 @@ class Gauges extends StatelessWidget {
 
   String getWarningMessage(double value) {
     if (value < 15) {
+      // return 'Sensor not deployed';
       return 'Sensor not deployed';
     } else if (value <= 29) {
       return 'Extremely Dry Soil!';

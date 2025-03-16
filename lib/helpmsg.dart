@@ -1,7 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
+import 'package:soil_monitoring_app/global_switch.dart';
+import 'package:soil_monitoring_app/language_provider.dart';
 
 class HelperMsg extends StatefulWidget {
   const HelperMsg({super.key});
@@ -12,7 +15,8 @@ class HelperMsg extends StatefulWidget {
 
 class _HelperMsgState extends State<HelperMsg> {
   int _currentIndex = 0;
-  bool _isFilipino = false; // Toggle state for language
+
+  // bool isFilipino = globalSwitchController.value; // Toggle state for language
   final FlutterTts flutterTts = FlutterTts(); // Initialize FlutterTts
   bool _isSpeaking = false; // Flag to track TTS state
   List<Map<String, dynamic>> messages = [];
@@ -44,7 +48,10 @@ class _HelperMsgState extends State<HelperMsg> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _updateMessages(); // Initialize messages
+    setState(() {
+      _updateMessages();
+    });
+    _updateMessages();
   }
 
   void _updateMessages() {
@@ -56,19 +63,21 @@ class _HelperMsgState extends State<HelperMsg> {
     final moistureS2 = dataProvider?.moistureS2 ?? 0.0;
     final moistureS3 = dataProvider?.moistureS3 ?? 0.0;
     final moistureS4 = dataProvider?.moistureS4 ?? 0.0;
+    final provider = context.read<LanguageProvider>();
+    final isFilipino = provider.isFilipino;
 
     messages.clear(); // Clear existing messages
 
     if (humidityValue <= 30) {
       addMessage(
-        _isFilipino
+        isFilipino
             ? 'Mababang kahalumigmigan ang nararanasan! Subukang pataasin ang kahalumigmigan.\nRekomendasyon: Maglagay ng mga lagayang may tubig malapit sa mga halaman upang mapataas ang kahalumigmigan. '
             : 'Low Humidity Detected! Consider increasing humidity.\nRecommendation: Place water trays near plants to raise humidity. ', //🌵
         const Color.fromARGB(255, 253, 133, 124),
       );
     } else if (humidityValue >= 70) {
       addMessage(
-        _isFilipino
+        isFilipino
             ? 'Mataas na kahalumigmigan ang nararanasan! Subukang pababain ang kahalumigmigan.\nRekomendasyon: Pagbutihin ang bentilasyon, o iwasan ang sobrang pagdidilig. ' //💦
             : 'High Humidity Detected! Consider decreasing humidity.\nRecommendation: Improve ventilation, or avoid overwatering. ',
         const Color.fromARGB(255, 131, 174, 209),
@@ -78,7 +87,7 @@ class _HelperMsgState extends State<HelperMsg> {
     void checkSensor(String sensorName, double moistureValue) {
       if (moistureValue < 15) {
         addMessage(
-          _isFilipino
+          isFilipino
               ? '$sensorName: Hindi pa naka-deploy! ⚠️'
               : '$sensorName: Sensor not deployed! ⚠️', //⚠️
           const Color.fromARGB(255, 150, 150, 150),
@@ -102,10 +111,10 @@ class _HelperMsgState extends State<HelperMsg> {
       }
     }
 
-    checkSensor(_isFilipino ? 'Pang-unang sensor' : 'Sensor 1', moistureS1);
-    checkSensor(_isFilipino ? 'Pangalawang sensor' : 'Sensor 2', moistureS2);
-    checkSensor(_isFilipino ? 'Pangatlong sensor' : 'Sensor 3', moistureS3);
-    checkSensor(_isFilipino ? 'Pang-apat na sensor' : 'Sensor 4', moistureS4);
+    checkSensor(isFilipino ? 'Pang-unang sensor' : 'Sensor 1', moistureS1);
+    checkSensor(isFilipino ? 'Pangalawang sensor' : 'Sensor 2', moistureS2);
+    checkSensor(isFilipino ? 'Pangatlong sensor' : 'Sensor 3', moistureS3);
+    checkSensor(isFilipino ? 'Pang-apat na sensor' : 'Sensor 4', moistureS4);
   }
 
   void addMessage(String text, Color color) {
@@ -118,13 +127,15 @@ class _HelperMsgState extends State<HelperMsg> {
 
   Future<void> _speak(String text) async {
     await flutterTts.stop(); // Stop any ongoing TTS
-    await flutterTts.setLanguage(_isFilipino ? 'fil-PH' : 'en-US');
+    // await flutterTts.setLanguage(isFilipino ? 'fil-PH' : 'en-US');
     await flutterTts.setPitch(1.0);
     await flutterTts.speak(text);
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isFilipino = context.watch<LanguageProvider>().isFilipino;
+
     return Column(
       children: [
         Padding(
@@ -134,7 +145,9 @@ class _HelperMsgState extends State<HelperMsg> {
           child: messages.isEmpty
               ? Center(
                   child: Text(
-                    'No warnings detected!',
+                    isFilipino
+                        ? 'Hindi naka-deployed and sensor'
+                        : 'No warnings detected!',
                     style: TextStyle(color: Colors.green, fontSize: 16),
                   ),
                 )
@@ -211,24 +224,6 @@ class _HelperMsgState extends State<HelperMsg> {
                     }
                   },
                 ),
-              ],
-            ),
-            Row(
-              children: [
-                Text('Eng'),
-                Switch(
-                  value: _isFilipino,
-                  activeColor: Color.fromARGB(255, 42, 83, 39),
-                  onChanged: _isSpeaking
-                      ? null // Disable switch when TTS is speaking
-                      : (value) {
-                          setState(() {
-                            _isFilipino = value;
-                            _updateMessages(); // Update messages when language is toggled
-                          });
-                        },
-                ),
-                Text('Fil'),
               ],
             ),
           ],
