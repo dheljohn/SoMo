@@ -117,6 +117,7 @@ flutter:
     - assets/LOGO.gif
     - assets/app.jpg
     - assets/info.png
+    - assets/tagalog.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
