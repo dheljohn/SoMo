@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/developer_page.dart';
 import 'package:soil_monitoring_app/soilmoistures_info.dart';
+import 'package:soil_monitoring_app/language_provider.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    bool isFilipino = context.watch<LanguageProvider>().isFilipino;
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -15,23 +19,23 @@ class AboutPage extends StatelessWidget {
           child: AppBar(
             backgroundColor: const Color.fromARGB(255, 100, 122, 99),
             iconTheme: const IconThemeData(color: Colors.white),
-            title: const Text(
-              'About',
-              style: TextStyle(
+            title: Text(
+              isFilipino ? 'Tulong sa Aplikasyon' : 'About',
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
             centerTitle: true,
-            bottom: const TabBar(
+            bottom: TabBar(
               labelColor: Colors.white,
-              unselectedLabelColor: Color.fromARGB(200, 255, 255, 255),
+              unselectedLabelColor: const Color.fromARGB(200, 255, 255, 255),
               indicatorColor: Colors.white,
               tabs: [
-                Tab(text: "Soil Moisture \n     Levels"),
-                Tab(text: "Application"),
-                Tab(text: "Developers"),
+                const Tab(text: "Soil Moisture \n     Levels"),
+                const Tab(text: "Application"),
+                Tab(text: isFilipino ? "Mga Gumawa" : "Developers"),
               ],
             ),
           ),
@@ -91,7 +95,6 @@ class AboutTab extends StatelessWidget {
                 style: TextStyle(fontSize: 16, color: Colors.black54),
                 textAlign: TextAlign.justify,
               ),
-
 
               const SizedBox(height: 20),
 
