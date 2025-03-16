@@ -8,6 +8,9 @@ import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:soil_monitoring_app/global_switch.dart';
+import 'package:soil_monitoring_app/language_provider.dart';
+import 'package:provider/provider.dart';
 
 String interpretMoisture(double moisture) {
   if (moisture < 30) return "Low (Soil is dry, needs watering)";
@@ -285,6 +288,8 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
   }
 
   Future<void> _showDownloadConfirmationDialog() async {
+    final provider = context.read<LanguageProvider>();
+    final isFilipino = provider.isFilipino;
     String plotinfo =
         selectedPlot != "All" ? "Plot: $selectedPlot" : "All Plots";
     String filterInfo =
@@ -299,9 +304,11 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Download'),
-          content: Text(
-              'You are about to download the CSV with the following filters:\n\n$plotinfo\n$filterInfo\n$dateInfo'),
+          title: Text(
+              isFilipino ? 'Kumpirmahin ang Pag-download' : 'Confirm Download'),
+          content: Text(isFilipino
+              ? 'Sigurado ka ba na gusto mo i-download ang PDF report na mayroong mga sumusunod na filter:\n\n$plotinfo\n$filterInfo\n$dateInfo'
+              : 'Are you sure you want to download the PDF report with the following filters:\n\n$plotinfo\n$filterInfo\n$dateInfo'),
           actions: <Widget>[
             TextButton(
               child: Text('Cancel'),
@@ -515,6 +522,8 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    bool isFilipino = context.watch<LanguageProvider>().isFilipino;
+
     Map<String, List<Map<String, dynamic>>> groupedData = {};
 
     for (var data in sensorData) {

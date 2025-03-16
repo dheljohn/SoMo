@@ -22,10 +22,6 @@ class DashB extends StatefulWidget {
 }
 
 class _DashBState extends State<DashB> with TickerProviderStateMixin {
-  // Get month in Filipino
-
-  // Translate manually using a condition
-
   bool isFilipino = globalSwitchController.value;
   final Future<FirebaseApp> _fApp = Firebase.initializeApp();
   String? _weather;
