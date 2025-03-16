@@ -15,7 +15,7 @@ class Navbar extends StatelessWidget {
           DrawerHeader(
             child: Center(
               child: Image.asset(
-                'assets/logo.png', 
+                'assets/logo.png',
                 width: 200,
                 height: 200,
               ),
@@ -24,7 +24,7 @@ class Navbar extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.info, color: Colors.white),
             title: const Text('About', style: TextStyle(color: Colors.white)),
-             onTap: () {
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AboutPage()),
@@ -33,7 +33,8 @@ class Navbar extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.people, color: Colors.white),
-            title: const Text('Developers', style: TextStyle(color: Colors.white)),
+            title:
+                const Text('Developers', style: TextStyle(color: Colors.white)),
             onTap: () {
               Navigator.push(
                 context,
@@ -48,7 +49,8 @@ class Navbar extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.settings, color: Colors.white),
-            title: const Text('Settings', style: TextStyle(color: Colors.white)),
+            title:
+                const Text('Settings', style: TextStyle(color: Colors.white)),
             onTap: () {},
           ),
           ListTile(

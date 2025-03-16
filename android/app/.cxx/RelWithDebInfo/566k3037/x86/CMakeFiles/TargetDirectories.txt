@@ -1,0 +1,2 @@
+C:/Users/Echel/Desktop/soil_monitoring_git/android/app/.cxx/RelWithDebInfo/566k3037/x86/CMakeFiles/edit_cache.dir
+C:/Users/Echel/Desktop/soil_monitoring_git/android/app/.cxx/RelWithDebInfo/566k3037/x86/CMakeFiles/rebuild_cache.dir

@@ -1,12 +1,19 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:soil_monitoring_app/dashB.dart';
 import 'package:soil_monitoring_app/fcm_service.dart';
 import 'package:soil_monitoring_app/home.dart';
 import 'package:soil_monitoring_app/start_page.dart';
+import 'package:flutter/services.dart';
+import 'package:device_preview/device_preview.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    // DeviceOrientation.portraitDown,
+  ]);
 
   // await Firebase.initializeApp();
   if (kIsWeb) {
@@ -22,10 +29,19 @@ void main() async {
               messagingSenderId: "367476307418",
               appId: "1:367476307418:web:2cf68b6cba4b8189d1fce3"));
       // await LocalNotification.init();
-      runApp(MaterialApp(
-        home: SplashScreen(),
-        debugShowCheckedModeBanner: false,
-      ));
+      runApp(
+        DevicePreview(
+          enabled: !kReleaseMode, //comment this line to disable device preview
+          builder: (context) => MaterialApp(
+            useInheritedMediaQuery: true,
+            locale: DevicePreview.locale(context),
+            builder: DevicePreview.appBuilder,
+            //home: SplashScreen(), //undo comment to enable splash screen
+            home: Home(), //comment for debugging
+            debugShowCheckedModeBanner: false,
+          ),
+        ),
+      );
     } catch (e) {
       print('An error occurred: $e');
     }
@@ -35,10 +51,18 @@ void main() async {
     try {
       await Firebase.initializeApp();
       // await LocalNotification.init();
-      runApp(MaterialApp(
-        home: SplashScreen(),
-        debugShowCheckedModeBanner: false,
-      ));
+      runApp(
+        DevicePreview(
+          enabled: !kReleaseMode, //comment this line to disable device preview
+          builder: (context) => MaterialApp(
+            useInheritedMediaQuery: true,
+            locale: DevicePreview.locale(context),
+            builder: DevicePreview.appBuilder,
+            home: SplashScreen(),
+            debugShowCheckedModeBanner: false,
+          ),
+        ),
+      );
     } catch (e) {
       print('An error occurred: $e');
     }
@@ -58,7 +82,6 @@ void main() async {
   //   debugShowCheckedModeBanner: false,
   // ));
 }
-
 
 // void main() async {
 //   WidgetsFlutterBinding.ensureInitialized();

@@ -51,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    
+
     return Scaffold(
       body: AnimatedBuilder(
         animation: _controller,
@@ -61,7 +61,6 @@ class _SplashScreenState extends State<SplashScreen>
               Container(
                 color: _spreadAnimation.value >= 1.0
                     ? const Color.fromARGB(255, 242, 239, 231)
-
                     : const Color.fromARGB(255, 100, 122, 99),
               ),
               Positioned(
@@ -72,7 +71,8 @@ class _SplashScreenState extends State<SplashScreen>
                   height: screenHeight * _spreadAnimation.value,
                   decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 242, 239, 231),
-                    borderRadius: BorderRadius.only(bottomRight: Radius.circular(300)),
+ borderRadius:
+                        BorderRadius.only(bottomRight: Radius.circular(300)),
                   ),
                 ),
               ),
@@ -84,7 +84,8 @@ class _SplashScreenState extends State<SplashScreen>
                   height: screenHeight * _spreadAnimation.value,
                   decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 242, 239, 231),
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(300)),
+ borderRadius:
+                        BorderRadius.only(topLeft: Radius.circular(300)),
                   ),
                 ),
               ),

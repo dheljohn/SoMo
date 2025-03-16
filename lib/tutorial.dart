@@ -21,8 +21,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
   void _initializeVideoPlayer() {
     _controller = VideoPlayerController.network(
       'https://www.w3schools.com/html/mov_bbb.mp4',
-    )
-      ..initialize().then((_) {
+    )..initialize().then((_) {
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -62,8 +61,12 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+
     return Scaffold(
-      backgroundColor:const Color.fromARGB(255, 247, 246, 237), 
+backgroundColor:const Color.fromARGB(255, 247, 246, 237), 
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
