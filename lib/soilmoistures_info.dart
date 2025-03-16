@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class SoilMoistureInfo extends StatelessWidget {
   final List<Map<String, dynamic>> moistureLevels = [
@@ -224,9 +226,32 @@ class SoilMoistureInfo extends StatelessWidget {
                 ),
               ),
             ),
+            
+SliverToBoxAdapter(
+  child: Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Center(
+      child: TextButton(
+        onPressed: () {
+          launchUrl(Uri.parse('https://www.acurite.com/blogs/acurite-in-your-home/soil-moisture-guide-for-plants-and-vegetables#:~:text=It%20is%20important%20to%20note,between%2041%25%20%2D%2080%25.')); // Replace with actual link
+        },
+        child: const Text(
+          'Source: Soil Moisture Information',
+          style: TextStyle(
+            fontSize: 17,
+            color: Colors.blue,
+            decoration: TextDecoration.underline,
+          ),
+        ),
+      ),
+    ),
+  ),
+),
+
           ],
         ),
       ),
     );
   }
+  
 }
