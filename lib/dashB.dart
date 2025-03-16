@@ -1,12 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/gauges.dart';
+import 'package:soil_monitoring_app/global_switch.dart';
 import 'package:soil_monitoring_app/helpmsg.dart';
+import 'package:soil_monitoring_app/language_provider.dart';
 import 'package:soil_monitoring_app/plot_selection_page.dart';
+import 'package:soil_monitoring_app/switch_button.dart';
 import 'package:soil_monitoring_app/wifiStat.dart';
+import 'package:intl/intl.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -16,6 +22,11 @@ class DashB extends StatefulWidget {
 }
 
 class _DashBState extends State<DashB> with TickerProviderStateMixin {
+  // Get month in Filipino
+
+  // Translate manually using a condition
+
+  bool isFilipino = globalSwitchController.value;
   final Future<FirebaseApp> _fApp = Firebase.initializeApp();
   String? _weather;
   String? _location;
@@ -61,10 +72,73 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         });
       }
     });
+    globalSwitchController.addListener(() {
+      if (mounted) {
+        setState(() {
+          isFilipino = globalSwitchController.value;
+        });
+      }
+    });
   }
 
   String _getFormattedDate() {
-    return DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
+    String formattedDate = DateFormat(' MMMM d, yyyy').format(DateTime.now());
+
+    if (isFilipino) {
+      formattedDate = _translateMonth(formattedDate);
+    }
+
+    return formattedDate;
+  }
+
+  String _getFormattedWeek() {
+    String formattedWeek = DateFormat('EEEE').format(DateTime.now());
+
+    if (isFilipino) {
+      formattedWeek = _translateWeek(formattedWeek);
+    }
+
+    return formattedWeek;
+  }
+
+  String _translateMonth(String date) {
+    return date.replaceAllMapped(
+      RegExp(
+          r'January|February|March|April|May|June|July|August|September|October|November|December'),
+      (match) {
+        return {
+          'January': 'Enero',
+          'February': 'Pebrero',
+          'March': 'Marso',
+          'April': 'Abril',
+          'May': 'Mayo',
+          'June': 'Hunyo',
+          'July': 'Hulyo',
+          'August': 'Agosto',
+          'September': 'Setyembre',
+          'October': 'Oktubre',
+          'November': 'Nobyembre',
+          'December': 'Disyembre',
+        }[match[0]]!;
+      },
+    );
+  }
+
+  String _translateWeek(String date) {
+    return date.replaceAllMapped(
+      RegExp(r'Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday'),
+      (match) {
+        return {
+          'Monday': 'Lunes',
+          'Tuesday': 'Martes',
+          'Wednesday': 'Miyerkules',
+          'Thursday': 'Huwebes',
+          'Friday': 'Biyernes',
+          'Saturday': 'Sabado',
+          'Sunday': 'Linggo',
+        }[match[0]]!;
+      },
+    );
   }
 
   String _getWeatherDescription(int weatherCode) {
@@ -147,6 +221,8 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final dataProvider = DataProvider.of(context);
+    final isFilipino = context.watch<LanguageProvider>().isFilipino;
+
     if (dataProvider == null) {
       return const Text("DataProvider is null");
     }
@@ -208,6 +284,73 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: screenHeight * 0.009),
+                //container ng date
+                Container(
+                  // padding: EdgeInsets.only(
+                  //     left: screenWidth * 0.04,
+                  //     right: screenWidth * 0.0,
+                  //     top: screenWidth * 0.0,
+                  //     bottom: screenWidth * 0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 138, 167, 136),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    // Changed from Column to Row for two-column layout
+
+                    children: [
+                      // Left Column
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Display WiFi status snackbar
+                            Text(
+                              _getFormattedDate(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: screenWidth * 0.045,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            SizedBox(height: screenWidth * 0.00),
+
+                            Text(
+                              _getFormattedWeek(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: screenWidth * 0.035,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // AdvancedSwitch(
+                      //   //controller: _controller,
+                      //   controller: _controller,
+                      //   activeColor: Color.fromARGB(255, 42, 83, 39),
+                      //   inactiveColor: Color.fromARGB(255, 42, 83, 39),
+                      //   activeChild: Text('Fil'),
+                      //   inactiveChild: Text('Eng'),
+                      //   borderRadius: BorderRadius.circular(15),
+                      //   width: 60,
+                      //   height: 30,
+                      //   //enabled: !_isSpeaking,
+                      // ),
+                      SwitchButton(),
+                      //advanced switch here that will control the language for all dart
+                    ],
+                  ),
+                ),
+
                 SizedBox(height: screenHeight * 0.02),
 
                 // Date Container
@@ -226,6 +369,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                   ),
                   child: Row(
                     // Changed from Column to Row for two-column layout
+
                     children: [
                       // Left Column
                       Expanded(
@@ -252,90 +396,12 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                           ],
                         ),
                       ),
-                      // SizedBox(width: screenWidth * 0.04), // Spacing between columns
-                      // Right Column
-                      // Expanded(
-                      //   child: Container(
-                      //     padding: EdgeInsets.all(screenWidth * 0.02),
-                      //     decoration: BoxDecoration(
-                      //       color: const Color.fromARGB(255, 255, 255, 240),
-                      //       borderRadius: BorderRadius.circular(8),
-                      //     ),
-                      //     child: Row(
-                      //       children: [
-                      //         Icon(
-                      //           Icons.grass,
-                      //           size: screenWidth * 0.06,
-                      //           color: const Color.fromARGB(255, 81, 135, 83),
-                      //         ),
-                      //         SizedBox(width: screenWidth * 0.02),
-                      //         Expanded(
-                      //           child: Text(
-                      //             selectedPlot ?? "Loading...",
-                      //             style: TextStyle(
-                      //               fontSize: screenWidth * 0.05,
-                      //               fontWeight: FontWeight.bold,
-                      //               color:
-                      //                   const Color.fromARGB(255, 81, 135, 83),
-                      //             ),
-                      //             overflow: TextOverflow.ellipsis,
-                      //           ),
-                      //         ),
-                      //         IconButton(
-                      //           icon: Icon(
-                      //             Icons.arrow_forward_ios,
-                      //             color: Colors.grey,
-                      //             size: screenHeight * 0.03,
-                      //           ), // Arrow icon
-                      //           onPressed: () {
-                      //             _showPasswordDialog(
-                      //                 context); // Show password dialog on click
-                      //           },
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
 
                       PlotSelection(),
                     ],
                   ),
                 ),
-                SizedBox(height: screenHeight * 0.02),
-                // Align(
-                //                 alignment: Alignment.centerRight,
-                //                 child: GestureDetector(
-                //                   onTap: () {
-                //                     Navigator.push(
-                //                       context,
-                //                       MaterialPageRoute(
-                //                           builder: (context) => PlotSelection()),
-                //                     );
-                //                   },
-
-                //                   child: Container(
-                //                     height: 30,
-                //                     padding: const EdgeInsets.symmetric(
-                //                         vertical: 4, horizontal: 6),
-                //                     decoration: BoxDecoration(
-                //                       color: const Color.fromARGB(255, 247, 246, 237),
-                //                       borderRadius: BorderRadius.circular(8),
-                //                       border: Border.all(
-                //                           color: Color.fromARGB(255, 100, 122, 99), width: 2),
-                //                     ),
-                //                     child: const Text(
-                //                       "Select Plot",
-                //                       style: TextStyle(
-                //                         color: const Color.fromARGB(255, 100, 122, 99),
-                //                         fontSize: 12,
-                //                         fontWeight: FontWeight.w700,
-                //                         fontFamily: 'Roboto',
-                //                         letterSpacing: 1.2,
-                //                       ),
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ),
+                // SizedBox(height: screenHeight * 0.02),
 
                 SizedBox(height: screenHeight * 0.001),
                 Gauges(dataProvider: dataProvider),
@@ -362,7 +428,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                         Row(
                           children: [
                             Text(
-                              'Humidity: ',
+                              isFilipino ? 'Halumigmig: ' : 'Humidity: ',
                               style: TextStyle(
                                 fontSize: screenWidth * 0.03,
                                 fontWeight: FontWeight.bold,
@@ -390,7 +456,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                         Row(
                           children: [
                             Text(
-                              'Temperature: ',
+                              isFilipino ? 'Temperatura: ' : '   Temperature: ',
                               style: TextStyle(
                                 fontSize: screenWidth * 0.03,
                                 fontWeight: FontWeight.bold,
