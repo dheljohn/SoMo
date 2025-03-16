@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
+import 'package:soil_monitoring_app/global_switch.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:soil_monitoring_app/language_provider.dart';
+import 'package:provider/provider.dart';
 
 class Gauges extends StatelessWidget {
   final DataProvider dataProvider;
@@ -8,17 +11,19 @@ class Gauges extends StatelessWidget {
   const Gauges({required this.dataProvider, Key? key}) : super(key: key);
 
   String getWarningMessage(double value) {
+    bool isFilipino =
+        globalSwitchController.value; // Get the current language state
+
     if (value < 15) {
-      // return 'Sensor not deployed';
-      return 'Sensor not deployed';
+      return isFilipino ? 'Hindi pa naka-deploy' : 'Sensor not deployed';
     } else if (value <= 29) {
-      return 'Extremely Dry Soil!';
+      return isFilipino ? 'Matinding tuyong lupa!' : 'Extremely Dry Soil!';
     } else if (value < 46) {
-      return 'Well Drained Soil!';
+      return isFilipino ? 'Magandang pag-drain ng lupa!' : 'Well Drained Soil!';
     } else if (value <= 75) {
-      return 'Moist Soil';
+      return isFilipino ? 'Basang-basa na lupa' : 'Moist Soil';
     } else {
-      return 'Wet Soil';
+      return isFilipino ? 'Napakabasang lupa!' : 'Wet Soil';
     }
   }
 
@@ -194,6 +199,8 @@ class Gauges extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isFilipino = context.watch<LanguageProvider>().isFilipino;
+
     return Center(
       child: Column(
         children: [
