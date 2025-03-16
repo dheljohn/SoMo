@@ -1,10 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:provider/provider.dart';
+
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/global_switch.dart';
 import 'package:soil_monitoring_app/language_provider.dart';
+import 'package:provider/provider.dart';
 
 class HelperMsg extends StatefulWidget {
   const HelperMsg({super.key});
