@@ -84,6 +84,20 @@ class _HelperMsgState extends State<HelperMsg> {
       );
     }
 
+    if (temperatureValue <= 15) {
+      addMessage(
+          isFilipino
+              ? 'Mababang temperatura ang na-detect! Subukang pataasin ang temperatura.\nRekomendasyon: Maglagay ng mga lagayang may tubig malapit sa mga halaman upang mapataas ang kahalumigmigan.'
+              : 'Low Temperature Detected! Consider increasing temperature.\nRecommendation: Expose plants to more sunlight. ❄️',
+          const Color.fromARGB(255, 131, 174, 209));
+    } else if (temperatureValue >= 30) {
+      addMessage(
+          isFilipino
+              ? 'Mataas na temperatura ang nararanasan! Subukang pababain ang temperatura.'
+              : 'High Temperature Detected! Consider decreasing temperature.\nRecommendation: Provide shade, or water plants. 🔥',
+          const Color.fromARGB(255, 253, 133, 124));
+    }
+
     void checkSensor(String sensorName, double moistureValue) {
       if (moistureValue < 15) {
         addMessage(
