@@ -13,6 +13,8 @@ import 'package:soil_monitoring_app/plot_selection_page.dart';
 import 'package:soil_monitoring_app/switch_button.dart';
 import 'package:soil_monitoring_app/wifiStat.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class DashB extends StatefulWidget {
   const DashB({super.key});
@@ -22,10 +24,6 @@ class DashB extends StatefulWidget {
 }
 
 class _DashBState extends State<DashB> with TickerProviderStateMixin {
-  // Get month in Filipino
-
-  // Translate manually using a condition
-
   bool isFilipino = globalSwitchController.value;
   final Future<FirebaseApp> _fApp = Firebase.initializeApp();
   String? _weather;
@@ -38,6 +36,8 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+      _requestNotificationPermission();
+
     DatabaseReference ref =
         FirebaseDatabase.instance.ref("SelectedPlot/plotName");
 
@@ -80,6 +80,48 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       }
     });
   }
+
+  void _requestNotificationPermission() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+  } else {
+    print('User declined or has not accepted permission');
+  }
+}
+// Removed duplicate _requestNotificationPermission method
+
+void _showNotificationDialog() {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => AlertDialog(
+      title: Text("Enable Notifications"),
+      content: Text("This app requires notifications to function properly. Please allow notifications in settings."),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text("Cancel"),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            _requestNotificationPermission();
+          },
+          child: Text("Enable"),
+        ),
+      ],
+    ),
+  );
+}
+
 
   String _getFormattedDate() {
     String formattedDate = DateFormat(' MMMM d, yyyy').format(DateTime.now());
