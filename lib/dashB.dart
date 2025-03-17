@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
@@ -11,6 +11,7 @@ import 'package:soil_monitoring_app/helpmsg.dart';
 import 'package:soil_monitoring_app/language_provider.dart';
 import 'package:soil_monitoring_app/plot_selection_page.dart';
 import 'package:soil_monitoring_app/switch_button.dart';
+import 'package:soil_monitoring_app/tts_provider.dart';
 import 'package:soil_monitoring_app/wifiStat.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -292,6 +293,9 @@ void _showNotificationDialog() {
   Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    final languageProvider =
+        Provider.of<LanguageProvider>(context, listen: false);
+    final isSpeaking = context.watch<TtsProvider>().isSpeaking;
 
     // Function to get text color based on value and type
     Color getTextColor(String type, double value) {
@@ -375,19 +379,21 @@ void _showNotificationDialog() {
                           ],
                         ),
                       ),
-                      // AdvancedSwitch(
-                      //   //controller: _controller,
-                      //   controller: _controller,
-                      //   activeColor: Color.fromARGB(255, 42, 83, 39),
-                      //   inactiveColor: Color.fromARGB(255, 42, 83, 39),
-                      //   activeChild: Text('Fil'),
-                      //   inactiveChild: Text('Eng'),
-                      //   borderRadius: BorderRadius.circular(15),
-                      //   width: 60,
-                      //   height: 30,
-                      //   //enabled: !_isSpeaking,
-                      // ),
-                      SwitchButton(),
+                      AdvancedSwitch(
+                        controller: globalSwitchController,
+                        activeColor: const Color.fromARGB(255, 42, 83, 39),
+                        inactiveColor: const Color.fromARGB(255, 42, 83, 39),
+                        activeChild: const Text('Fil'),
+                        inactiveChild: const Text('Eng'),
+                        borderRadius: BorderRadius.circular(15),
+                        width: 60,
+                        height: 30,
+                        enabled: !isSpeaking, // Disable when TTS is active
+                        onChanged: (value) {
+                          languageProvider.toggleLanguage(value);
+                        },
+                      )
+                      // SwitchButton(),
                       //advanced switch here that will control the language for all dart
                     ],
                   ),
