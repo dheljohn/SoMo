@@ -6,6 +6,7 @@ import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/global_switch.dart';
 import 'package:soil_monitoring_app/language_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:soil_monitoring_app/tts_provider.dart';
 
 class HelperMsg extends StatefulWidget {
   const HelperMsg({super.key});
@@ -19,36 +20,35 @@ class _HelperMsgState extends State<HelperMsg> {
 
   // bool isFilipino = globalSwitchController.value; // Toggle state for language
   final FlutterTts flutterTts = FlutterTts(); // Initialize FlutterTts
-  bool _isSpeaking = false; // Flag to track TTS state
+  // final TtsProvider ttsProvider =
+  //     Provider.of<TtsProvider>(context, listen: false);
+  TtsProvider? ttsProvider; // Nullable to prevent initialization errors
+
   List<Map<String, dynamic>> messages = [];
 
   @override
   void initState() {
     super.initState();
     flutterTts.setStartHandler(() {
-      setState(() {
-        _isSpeaking = true;
-      });
+      ttsProvider?.setActive(true); // Use null check to avoid errors
     });
 
     flutterTts.setCompletionHandler(() {
-      setState(() {
-        _isSpeaking = false;
-      });
+      ttsProvider?.setActive(false);
     });
 
     flutterTts.setErrorHandler((msg) {
-      setState(() {
-        _isSpeaking = false;
-      });
+      ttsProvider?.setActive(false);
     });
-
-    //_updateMessages();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    ttsProvider ??=
+        Provider.of<TtsProvider>(context, listen: false); // Initialize once
+
     setState(() {
       _updateMessages();
     });
@@ -66,8 +66,9 @@ class _HelperMsgState extends State<HelperMsg> {
     final moistureS4 = dataProvider?.moistureS4 ?? 0.0;
     final provider = context.read<LanguageProvider>();
     final isFilipino = provider.isFilipino;
+    if (ttsProvider?.isSpeaking == true) return; // Prevent message reset
 
-    messages.clear(); // Clear existing messages
+    messages.clear(); // Clear only if TTS is not active
 
     if (humidityValue <= 30) {
       addMessage(
@@ -133,7 +134,8 @@ class _HelperMsgState extends State<HelperMsg> {
   }
 
   void addMessage(String text, Color color) {
-    if (!_isSpeaking) {
+    if (ttsProvider?.isSpeaking == false) {
+      // Null-safe check
       setState(() {
         messages.add({'text': text, 'color': color});
       });
@@ -141,10 +143,10 @@ class _HelperMsgState extends State<HelperMsg> {
   }
 
   Future<void> _speak(String text) async {
-    await flutterTts.stop(); // Stop any ongoing TTS
-    // await flutterTts.setLanguage(isFilipino ? 'fil-PH' : 'en-US');
-    await flutterTts.setPitch(1.0);
+    await flutterTts.stop();
+    ttsProvider?.setActive(true);
     await flutterTts.speak(text);
+    // Keep the current slide while speaking
   }
 
   @override
@@ -171,8 +173,14 @@ class _HelperMsgState extends State<HelperMsg> {
                   options: CarouselOptions(
                     height: 160, // Adjust height based on message length
                     scrollDirection: Axis.vertical,
-                    autoPlay:
-                        !_isSpeaking, // Control autoPlay based on TTS state
+                    autoPlay: !context
+                        .watch<TtsProvider>()
+                        .isSpeaking, // Correct logic
+                    pauseAutoPlayOnTouch: true, // Allow manual interaction
+                    pauseAutoPlayOnManualNavigate:
+                        true, // Pause when manually scrolling
+                    pauseAutoPlayInFiniteScroll: true, // Pause on last slide
+
                     autoPlayInterval: const Duration(seconds: 5),
                     enlargeCenterPage: false,
                     viewportFraction: 1.0,
