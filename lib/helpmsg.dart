@@ -110,19 +110,27 @@ class _HelperMsgState extends State<HelperMsg> {
         );
       } else if (moistureValue <= 29) {
         addMessage(
-            '$sensorName: Extremely Dry Soil detected! \nRecommendation: Water the soil as needed. 🌱',
+            isFilipino
+                ? 'Lorem'
+                : '$sensorName: Extremely Dry Soil detected! \nRecommendation: Water the soil as needed. 🌱',
             const Color.fromARGB(255, 253, 133, 124));
       } else if (moistureValue <= 45) {
         addMessage(
-            '$sensorName: Well Drained Soil Detected! \nRecommendation: Considering watering soon. 🌱',
+            isFilipino
+                ? 'Lorem'
+                : '$sensorName: Well Drained Soil Detected! \nRecommendation: Considering watering soon. 🌱',
             const Color.fromARGB(255, 236, 188, 66));
       } else if (moistureValue <= 75) {
         addMessage(
-            '$sensorName: Moist Soil Detected. \nIdeal Moisture Level. 🌱',
+            isFilipino
+                ? 'Lorem'
+                : '$sensorName: Moist Soil Detected. \nIdeal Moisture Level. 🌱',
             const Color.fromARGB(255, 103, 172, 105));
       } else if (moistureValue >= 76) {
         addMessage(
-            '$sensorName: Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰',
+            isFilipino
+                ? 'Lorem'
+                : '$sensorName: Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰',
             const Color.fromARGB(255, 131, 174, 209));
       }
     }
@@ -210,9 +218,10 @@ class _HelperMsgState extends State<HelperMsg> {
                           Expanded(
                             child: Text(
                               messages[index]['text'],
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.040,
                               ),
                             ),
                           ),
@@ -229,18 +238,22 @@ class _HelperMsgState extends State<HelperMsg> {
               children: [
                 Image.asset(
                   'assets/somo.png',
-                  width: 25,
-                  height: 25,
+                  width: MediaQuery.of(context).size.width * 0.090,
+                  height: MediaQuery.of(context).size.width * 0.090,
                 ),
-                const SizedBox(width: 8),
-                const Text(
+                SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+                Text(
                   "SOMO",
                   style: TextStyle(
-                      color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
+                      color: Color.fromARGB(255, 125, 171, 124),
+                      fontSize: MediaQuery.of(context).size.width * 0.040),
                 ),
                 IconButton(
-                  icon: Icon(Icons.volume_up,
-                      color: Color.fromARGB(255, 42, 83, 39)),
+                  icon: Icon(
+                    Icons.volume_up,
+                    color: Color.fromARGB(255, 42, 83, 39),
+                    size: MediaQuery.of(context).size.width * 0.060,
+                  ),
                   onPressed: () async {
                     if (messages.isNotEmpty) {
                       await _speak(messages[_currentIndex]['text']);
