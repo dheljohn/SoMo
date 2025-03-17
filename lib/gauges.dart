@@ -28,16 +28,25 @@ class Gauges extends StatelessWidget {
   }
 
   String getRecommendationMessage(double value) {
+    bool isFilipino =
+        globalSwitchController.value; // Get the current language state
+
     if (value < 15) {
-      return 'Sensor not deployed';
+      return isFilipino ? 'Hindi pa naka-deploy' : 'Sensor not deployed';
     } else if (value <= 29) {
-      return ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
+      return isFilipino
+          ? 'Lorem'
+          : ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
     } else if (value <= 46) {
-      return 'Well Drained Soil!\nRecommendation: Considering watering soon.🌱';
+      return isFilipino
+          ? 'Lorem'
+          : 'Well Drained Soil!\nRecommendation: Considering watering soon.🌱';
     } else if (value <= 75) {
-      return 'Moist Soil. \nIdeal Moisture Level. 🌱';
+      return isFilipino ? 'Lorem' : 'Moist Soil. \nIdeal Moisture Level. 🌱';
     } else {
-      return 'Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰';
+      return isFilipino
+          ? 'Lorem'
+          : 'Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰';
     }
   }
 
@@ -147,8 +156,9 @@ class Gauges extends StatelessWidget {
               children: [
                 Text(
                   value > 14 ? "${value.toInt()}%" : "0%",
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.060,
+                      fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: gaugeSize / 2.9,
@@ -183,12 +193,22 @@ class Gauges extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
-            Text(
-              getWarningMessage(value),
-              style: TextStyle(
-                fontSize: screenWidth * 0.03,
-                fontWeight: FontWeight.bold,
-                color: getWarningColor(value),
+            SizedBox(
+              height: MediaQuery.of(context).size.width * 0.01,
+            ),
+            Expanded(
+              flex: 2,
+              child: Text(
+                getWarningMessage(value),
+
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.029,
+                  fontWeight: FontWeight.bold,
+                  color: getWarningColor(value),
+                ),
+                softWrap: true, // ✅ Allows text to wrap instead of cutting off
+                overflow: TextOverflow.visible, // ✅ Ensures text is readable
+                maxLines: 2,
               ),
             ),
           ],
@@ -199,7 +219,7 @@ class Gauges extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isFilipino = context.watch<LanguageProvider>().isFilipino;
+    // bool isFilipino = context.watch<LanguageProvider>().isFilipino;
 
     return Center(
       child: Column(

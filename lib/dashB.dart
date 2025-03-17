@@ -316,7 +316,8 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                               _getFormattedDate(),
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: screenWidth * 0.045,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.045,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -327,27 +328,15 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                               _getFormattedWeek(),
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: screenWidth * 0.035,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.035,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      AdvancedSwitch(
-                        controller: globalSwitchController,
-                        activeColor: const Color.fromARGB(255, 42, 83, 39),
-                        inactiveColor: const Color.fromARGB(255, 42, 83, 39),
-                        activeChild: const Text('Fil'),
-                        inactiveChild: const Text('Eng'),
-                        borderRadius: BorderRadius.circular(15),
-                        width: 60,
-                        height: 30,
-                        enabled: !isSpeaking, // Disable when TTS is active
-                        onChanged: (value) {
-                          languageProvider.toggleLanguage(value);
-                        },
-                      )
-                      // SwitchButton(),
+
+                      SwitchButton(),
                       //advanced switch here that will control the language for all dart
                     ],
                   ),
@@ -405,85 +394,90 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                 ),
                 // SizedBox(height: screenHeight * 0.02),
 
-                SizedBox(height: screenHeight * 0.001),
+                SizedBox(height: screenHeight * 0.01),
                 Gauges(dataProvider: dataProvider),
 
                 SizedBox(height: screenHeight * 0.01),
                 Center(
-                  child: Container(
-                    width: screenWidth * 0.85,
-                    padding: EdgeInsets.all(screenWidth * 0.03),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 255, 255, 240),
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 5,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              isFilipino ? 'Halumigmig: ' : 'Humidity: ',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.03,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Container(
+                      width: screenWidth * 0.85,
+                      padding: EdgeInsets.all(screenWidth * 0.03),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 255, 255, 240),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 5,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                isFilipino ? 'Halumigmig: ' : 'Humidity: ',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.03,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '${dataProvider.humidityValue.toInt()}%',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.04,
-                                fontWeight: FontWeight.bold,
+                              Text(
+                                '${dataProvider.humidityValue.toInt()}%',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.04,
+                                  fontWeight: FontWeight.bold,
+                                  color: getTextColor(
+                                      'humidity', dataProvider.humidityValue),
+                                ),
+                              ),
+                              SizedBox(width: screenWidth * 0.01),
+                              Icon(
+                                Icons.water_drop,
                                 color: getTextColor(
                                     'humidity', dataProvider.humidityValue),
+                                size: screenWidth * 0.05,
                               ),
-                            ),
-                            SizedBox(width: screenWidth * 0.01),
-                            Icon(
-                              Icons.water_drop,
-                              color: getTextColor(
-                                  'humidity', dataProvider.humidityValue),
-                              size: screenWidth * 0.05,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              isFilipino ? 'Temperatura: ' : '   Temperature: ',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.03,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                isFilipino
+                                    ? 'Temperatura: '
+                                    : '   Temperature: ',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.03,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '${dataProvider.temperatureValue.toInt()}°C',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.04,
-                                fontWeight: FontWeight.bold,
+                              Text(
+                                '${dataProvider.temperatureValue.toInt()}°C',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.04,
+                                  fontWeight: FontWeight.bold,
+                                  color: getTextColor('temperature',
+                                      dataProvider.temperatureValue),
+                                ),
+                              ),
+                              SizedBox(width: screenWidth * 0.01),
+                              Icon(
+                                Icons.thermostat,
                                 color: getTextColor('temperature',
                                     dataProvider.temperatureValue),
+                                size: screenWidth * 0.05,
                               ),
-                            ),
-                            SizedBox(width: screenWidth * 0.01),
-                            Icon(
-                              Icons.thermostat,
-                              color: getTextColor(
-                                  'temperature', dataProvider.temperatureValue),
-                              size: screenWidth * 0.05,
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -492,7 +486,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                   child: Container(
                     color: const Color.fromARGB(255, 247, 246, 237),
                     margin: EdgeInsets.all(screenWidth * 0.02),
-                    height: screenHeight * 0.237,
+                    height: screenHeight * 0.34, //0.237
                     width: double.infinity,
                     child: const HelperMsg(),
                   ),

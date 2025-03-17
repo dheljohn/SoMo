@@ -12,19 +12,36 @@ class SwitchButton extends StatelessWidget {
         Provider.of<LanguageProvider>(context, listen: false);
     final isSpeaking = context.watch<TtsProvider>().isSpeaking;
 
-    return AdvancedSwitch(
-      controller: globalSwitchController,
-      activeColor: const Color.fromARGB(255, 42, 83, 39),
-      inactiveColor: const Color.fromARGB(255, 42, 83, 39),
-      activeChild: const Text('Fil'),
-      inactiveChild: const Text('Eng'),
-      borderRadius: BorderRadius.circular(15),
-      width: 60,
-      height: 30,
-      enabled: !isSpeaking, // Disable when TTS is active
-      onChanged: (value) {
-        languageProvider.toggleLanguage(value);
-      },
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: AdvancedSwitch(
+        controller: globalSwitchController,
+        activeColor: const Color.fromARGB(255, 42, 83, 39),
+        inactiveColor: const Color.fromARGB(255, 42, 83, 39),
+        activeChild: Padding(
+            padding: const EdgeInsets.all(1.0),
+            child: Text(
+              'Fil',
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.030,
+              ),
+            )),
+        inactiveChild: Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: Text(
+              'Eng',
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.030,
+              ),
+            )),
+        borderRadius: BorderRadius.circular(15),
+        width: MediaQuery.of(context).size.width * 0.140,
+        height: MediaQuery.of(context).size.width * 0.0650,
+        enabled: !isSpeaking, // Disable when TTS is active
+        onChanged: (value) {
+          languageProvider.toggleLanguage(value);
+        },
+      ),
     );
   }
 }
