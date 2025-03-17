@@ -75,12 +75,14 @@ class AboutTab extends StatelessWidget {
                 ),
               ),
 
-              Text(
-                'SOMO',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 42, 83, 39),
+              Center(
+                child: Text(
+                  'SOMO',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 42, 83, 39),
+                  ),
                 ),
               ),
               SizedBox(height: 10),

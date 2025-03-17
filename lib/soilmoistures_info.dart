@@ -91,8 +91,8 @@ class SoilMoistureInfo extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  const Text(
-                    'Soil Moisture Levels',
+                  Text(
+                    isFilipino ? 'Lorem' : 'Soil Moisture Levels',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -159,6 +159,8 @@ class SoilMoistureInfo extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
+                        const Divider(thickness: 1, color: Colors.grey),
+                        const SizedBox(height: 8),
                       ],
                     );
                   },
@@ -167,51 +169,93 @@ class SoilMoistureInfo extends StatelessWidget {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.all(16.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               sliver: SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: soilTypes.map((soil) {
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 2,
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              color: soil['color'],
-                              borderRadius: BorderRadius.circular(4),
+                  children: [
+                    Text(
+                      isFilipino ? 'LOrem' : 'Soil Types & Moisture Retention',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: const Color.fromARGB(255, 100, 122, 99)),
+                    ),
+                    const SizedBox(height: 10),
+                    ...soilTypes.map((soil) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              soil['description'],
-                              style: const TextStyle(
-                                color: Colors.black87,
-                                fontSize: 14,
+                          ],
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: soil['color'],
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    soil['type'],
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    soil['description'],
+                                    style: const TextStyle(
+                                        color: Colors.black87, fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ],
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: TextButton(
+                    onPressed: () {
+                      launchUrl(Uri.parse(
+                          'https://www.acurite.com/blogs/acurite-in-your-home/soil-moisture-guide-for-plants-and-vegetables#:~:text=It%20is%20important%20to%20note,between%2041%25%20%2D%2080%25.')); // Replace with actual link
+                    },
+                    child: const Text(
+                      'Source: Soil Moisture Information',
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
                       ),
-                    );
-                  }).toList(),
+                    ),
+                  ),
                 ),
               ),
             ),
