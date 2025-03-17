@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/global_switch.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:soil_monitoring_app/language_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class Gauges extends StatelessWidget {
   final DataProvider dataProvider;
@@ -14,7 +14,7 @@ class Gauges extends StatelessWidget {
     bool isFilipino =
         globalSwitchController.value; // Get the current language state
 
-    if (value < 15) {
+    if (value < 8) {
       return isFilipino ? 'Hindi pa naka-deploy' : 'Sensor not deployed';
     } else if (value <= 29) {
       return isFilipino ? 'Matinding tuyong lupa!' : 'Extremely Dry Soil!';
@@ -28,10 +28,11 @@ class Gauges extends StatelessWidget {
   }
 
   String getRecommendationMessage(double value) {
+    //Followed less than 8 strat
     bool isFilipino =
         globalSwitchController.value; // Get the current language state
 
-    if (value < 15) {
+    if (value < 8) {
       return isFilipino ? 'Hindi pa naka-deploy' : 'Sensor not deployed';
     } else if (value <= 29) {
       return isFilipino
@@ -51,7 +52,7 @@ class Gauges extends StatelessWidget {
   }
 
   Color getWarningColor(double value) {
-    if (value < 15) {
+    if (value < 8) {
       return Colors.grey;
     } else if (value == 15 || value <= 29) {
       return const Color.fromARGB(255, 253, 133, 124);
@@ -155,7 +156,7 @@ class Gauges extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  value > 14 ? "${value.toInt()}%" : "0%",
+                  value >= 9 ? "${value.toInt()}%" : "0%",
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.060,
                       fontWeight: FontWeight.bold),

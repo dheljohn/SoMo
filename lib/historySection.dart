@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:soil_monitoring_app/global_switch.dart';
 import 'package:soil_monitoring_app/language_provider.dart';
@@ -320,7 +321,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
               child: Text('Download'),
               onPressed: () {
                 Navigator.of(context).pop();
-                _downloadCSV();
+                _downloadPDF();
               },
             ),
           ],
@@ -329,6 +330,78 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     );
   }
 
+  //download pdf function
+  Future<void> _downloadPDF() async {
+    var status = await Permission.manageExternalStorage.request();
+    if (!status.isGranted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Storage permission denied")),
+      );
+      return;
+    }
+
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text("Sensor Data Report",
+                  style: pw.TextStyle(
+                      fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+              pw.Table.fromTextArray(
+                headers: [
+                  "Plot",
+                  "Date",
+                  "Time",
+                  "Avg Moisture",
+                  "Humidity",
+                  "Temperature"
+                ],
+                data: sensorData.map((data) {
+                  DateTime timestamp =
+                      (data['timestamp'] as Timestamp).toDate();
+                  return [
+                    data['plot'] ?? "Unknown",
+                    DateFormat('MMMM d, yyyy').format(timestamp),
+                    DateFormat('h:mm a').format(timestamp),
+                    "${data['average_moisture']}%",
+                    "${data['humidity']}%",
+                    "${data['temperature']}°C"
+                  ];
+                }).toList(),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    Directory? directory = await getExternalStorageDirectory();
+    if (directory == null) {
+      throw "Failed to get storage directory";
+    }
+
+    String fileName = selectedPlot == "All"
+        ? "all_plots_sensor_data.pdf"
+        : "${selectedPlot}_sensor_data.pdf";
+    String filePath = "${directory.path}/$fileName";
+    File file = File(filePath);
+
+    await file.writeAsBytes(await pdf.save());
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("PDF saved: $filePath"),
+    ));
+
+    // Open the file after download
+    OpenFile.open(filePath);
+  }
+
+  //downloadcsv function
   Future<void> _downloadCSV() async {
     var status = await Permission.manageExternalStorage.request();
     if (!status.isGranted) {
