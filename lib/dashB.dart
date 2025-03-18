@@ -37,7 +37,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-      _requestNotificationPermission();
+    _requestNotificationPermission();
 
     DatabaseReference ref =
         FirebaseDatabase.instance.ref("SelectedPlot/plotName");
@@ -83,46 +83,46 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   }
 
   void _requestNotificationPermission() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
 
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print('User granted permission');
-  } else {
-    print('User declined or has not accepted permission');
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
   }
-}
 // Removed duplicate _requestNotificationPermission method
 
-void _showNotificationDialog() {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) => AlertDialog(
-      title: Text("Enable Notifications"),
-      content: Text("This app requires notifications to function properly. Please allow notifications in settings."),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text("Cancel"),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-            _requestNotificationPermission();
-          },
-          child: Text("Enable"),
-        ),
-      ],
-    ),
-  );
-}
-
+  void _showNotificationDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text("Enable Notifications"),
+        content: Text(
+            "This app requires notifications to function properly. Please allow notifications in settings."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _requestNotificationPermission();
+            },
+            child: Text("Enable"),
+          ),
+        ],
+      ),
+    );
+  }
 
   String _getFormattedDate() {
     String formattedDate = DateFormat(' MMMM d, yyyy').format(DateTime.now());
@@ -330,117 +330,45 @@ void _showNotificationDialog() {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: screenHeight * 0.009),
-                //container ng date
-                Container(
-                  // padding: EdgeInsets.only(
-                  //     left: screenWidth * 0.04,
-                  //     right: screenWidth * 0.0,
-                  //     top: screenWidth * 0.0,
-                  //     bottom: screenWidth * 0),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 138, 167, 136),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 5,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    // Changed from Column to Row for two-column layout
-
-                    children: [
-                      // Left Column
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Display WiFi status snackbar
-                            Text(
-                              _getFormattedDate(),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.045,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-
-                            SizedBox(height: screenWidth * 0.00),
-
-                            Text(
-                              _getFormattedWeek(),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.035,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SwitchButton(),
-                      //advanced switch here that will control the language for all dart
-                    ],
-                  ),
-                ),
-
                 SizedBox(height: screenHeight * 0.02),
 
+                PlotSelection(),
                 // Date Container
-                Container(
-                  padding: EdgeInsets.all(screenWidth * 0.04),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 138, 167, 136),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 5,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    // Changed from Column to Row for two-column layout
+                // Container(
+                //   padding: EdgeInsets.all(screenWidth * 0.04),
+                //   decoration: BoxDecoration(
+                //     color: const Color.fromARGB(255, 138, 167, 136),
+                //     borderRadius: BorderRadius.circular(12),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: Colors.black.withOpacity(0.1),
+                //         blurRadius: 5,
+                //         spreadRadius: 2,
+                //       ),
+                //     ],
+                //   ),
+                //   child: Row(
+                //     // Changed from Column to Row for two-column layout
 
-                    children: [
-                      // Left Column
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Display WiFi status snackbar
-                            Text(
-                              DateFormat('MMMM d, yyyy').format(DateTime.now()),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: screenWidth * 0.045,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: screenWidth * 0.00),
-                            Text(
-                              DateFormat('EEEE').format(DateTime.now()),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: screenWidth * 0.05,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                //     children: [
+                //       // Left Column
+                //       Expanded(
+                //         child: Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             // Display WiFi status snackbar
 
-                      PlotSelection(),
-                    ],
-                  ),
-                ),
+                //           ],
+                //         ),
+                //       ),
+
+                //       PlotSelection(),
+                //     ],
+                //   ),
+                // ),
                 // SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: screenHeight * 0.02),
 
-                SizedBox(height: screenHeight * 0.01),
                 Gauges(dataProvider: dataProvider),
 
                 SizedBox(height: screenHeight * 0.01),
