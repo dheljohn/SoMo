@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -8,8 +9,6 @@ import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/historySection.dart';
 import 'package:soil_monitoring_app/navBar.dart';
 import 'package:soil_monitoring_app/tutorial.dart';
-import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
-import 'package:soil_monitoring_app/global_switch.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -156,44 +155,81 @@ class _HomeState extends State<Home> {
           moisture_s3 = moisture3;
           moisture_s4 = moisture4;
         });
+        if (moisture1 < 40 && moisture1 >= 15) {
+          _showGroupedNotification('Sensor 1 detected dry soil.');
+        }
+        if (moisture2 < 40 && moisture2 >= 15) {
+          _showGroupedNotification('Sensor 2 detected dry soil.');
+        }
+        if (moisture3 < 40 && moisture3 >= 15) {
+          _showGroupedNotification('Sensor 3 detected dry soil.');
+        }
+        if (moisture4 < 40 && moisture4 >= 15) {
+          _showGroupedNotification('Sensor 4 detected dry soil.');
+        }
+
+        //not group. only individual this logic is for individual notification
+        // so if you want to show individual notification then uncomment this code
+        // but this just display the recent changes, so if the sensor are synced then it will show only one notification
         // Check individual sensor readings
-        if (moisture1 < 40 && moisture1 >= 15 ||
-            moisture2 < 40 && moisture2 >= 15 ||
-            moisture3 < 40 && moisture3 >= 15 ||
-            moisture4 < 40 && moisture4 >= 15) {
-          if (moisture1 < 40 && moisture1 >= 15) {
-            _showNotification('Sensor 1 detected dry soil.');
-          }
-          if (moisture2 < 40 && moisture2 >= 15) {
-            _showNotification('Sensor 2 detected dry soil.');
-          }
-          if (moisture3 < 40 && moisture3 >= 15) {
-            _showNotification('Sensor 3 detected dry soil.');
-          }
-          if (moisture4 < 40 && moisture4 >= 15) {
-            _showNotification('Sensor 4 detected dry soil.');
-          }
-          // _showNotification('One of the sensors detected dry soil.');
-        } else if (moisture1 > 75 ||
-            moisture2 > 75 ||
-            moisture3 > 75 ||
-            moisture4 > 75) {
-          if (moisture1 > 75) {
-            _showNotification('Sensor 1 detected wet soil.');
-          }
-          if (moisture2 > 75) {
-            _showNotification('Sensor 2 detected wet soil.');
-          }
-          if (moisture3 > 75) {
-            _showNotification('Sensor 3 detected wet soil.');
-          }
-          if (moisture4 > 75) {
-            _showNotification('Sensor 4 detected wet soil.');
-          }
-          // _showNotification('One of the sensors detected wet soil.');
+        // if (moisture1 < 40 && moisture1 >= 15 ||
+        //     moisture2 < 40 && moisture2 >= 15 ||
+        //     moisture3 < 40 && moisture3 >= 15 ||
+        //     moisture4 < 40 && moisture4 >= 15) {
+        //   if (moisture1 < 40 && moisture1 >= 15) {
+        //     _showNotification('Sensor 1 detected dry soil.');
+        //   }
+        //   if (moisture2 < 40 && moisture2 >= 15) {
+        //     _showNotification('Sensor 2 detected dry soil.');
+        //   }
+        //   if (moisture3 < 40 && moisture3 >= 15) {
+        //     _showNotification('Sensor 3 detected dry soil.');
+        //   }
+        //   if (moisture4 < 40 && moisture4 >= 15) {
+        //     _showNotification('Sensor 4 detected dry soil.');
+        //   }
+        //   // _showNotification('One of the sensors detected dry soil.');
+        // }
+        // **Grouped Notifications for Wet Soil**
+        if (moisture1 > 75) {
+          _showGroupedNotification('Sensor 1 detected wet soil.');
+        }
+        if (moisture2 > 75) {
+          _showGroupedNotification('Sensor 2 detected wet soil.');
+        }
+        if (moisture3 > 75) {
+          _showGroupedNotification('Sensor 3 detected wet soil.');
+        }
+        if (moisture4 > 75) {
+          _showGroupedNotification('Sensor 4 detected wet soil.');
         }
       }
     });
+  }
+
+  Future<void> _showGroupedNotification(String message) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'soil_monitoring_channel',
+      'Soil Monitoring Alerts',
+      importance: Importance.high,
+      priority: Priority.high,
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound('notif_sound'),
+      groupKey: 'soil_alerts_group', // Group Key for multiple notifications
+      setAsGroupSummary: false,
+    );
+
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    int uniqueId = DateTime.now().millisecondsSinceEpoch.remainder(100000);
+    await flutterLocalNotificationsPlugin.show(
+      uniqueId, // Unique ID per notification
+      'Soil Moisture Alert',
+      message,
+      platformChannelSpecifics,
+    );
   }
 
   @override

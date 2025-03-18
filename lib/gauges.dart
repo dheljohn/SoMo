@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
+import 'package:soil_monitoring_app/global_switch.dart';
+import 'package:soil_monitoring_app/language_provider.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class Gauges extends StatelessWidget {
@@ -8,36 +11,48 @@ class Gauges extends StatelessWidget {
   const Gauges({required this.dataProvider, Key? key}) : super(key: key);
 
   String getWarningMessage(double value) {
-    if (value < 15) {
-      // return 'Sensor not deployed';
-      return 'Sensor not deployed';
+    bool isFilipino =
+        globalSwitchController.value; // Get the current language state
+
+    if (value < 8) {
+      return isFilipino ? 'Hindi pa naka-deploy' : 'Sensor not deployed';
     } else if (value <= 29) {
-      return 'Extremely Dry Soil!';
+      return isFilipino ? 'Matinding tuyong lupa!' : 'Extremely Dry Soil!';
     } else if (value < 46) {
-      return 'Well Drained Soil!';
+      return isFilipino ? 'Magandang pag-drain ng lupa!' : 'Well Drained Soil!';
     } else if (value <= 75) {
-      return 'Moist Soil';
+      return isFilipino ? 'Basang-basa na lupa' : 'Moist Soil';
     } else {
-      return 'Wet Soil';
+      return isFilipino ? 'Napakabasang lupa!' : 'Wet Soil';
     }
   }
 
   String getRecommendationMessage(double value) {
-    if (value < 15) {
-      return 'Sensor not deployed';
+    //Followed less than 8 strat
+    bool isFilipino =
+        globalSwitchController.value; // Get the current language state
+
+    if (value < 8) {
+      return isFilipino ? 'Hindi pa naka-deploy' : 'Sensor not deployed';
     } else if (value <= 29) {
-      return ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
+      return isFilipino
+          ? 'Lorem'
+          : ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
     } else if (value <= 46) {
-      return 'Well Drained Soil!\nRecommendation: Considering watering soon.🌱';
+      return isFilipino
+          ? 'Lorem'
+          : 'Well Drained Soil!\nRecommendation: Considering watering soon.🌱';
     } else if (value <= 75) {
-      return 'Moist Soil. \nIdeal Moisture Level. 🌱';
+      return isFilipino ? 'Lorem' : 'Moist Soil. \nIdeal Moisture Level. 🌱';
     } else {
-      return 'Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰';
+      return isFilipino
+          ? 'Lorem'
+          : 'Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰';
     }
   }
 
   Color getWarningColor(double value) {
-    if (value < 15) {
+    if (value < 8) {
       return Colors.grey;
     } else if (value == 15 || value <= 29) {
       return const Color.fromARGB(255, 253, 133, 124);
@@ -141,9 +156,10 @@ class Gauges extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  value > 14 ? "${value.toInt()}%" : "0%",
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
+                  value >= 9 ? "${value.toInt()}%" : "0%",
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.060,
+                      fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: gaugeSize / 2.9,
@@ -178,12 +194,22 @@ class Gauges extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
-            Text(
-              getWarningMessage(value),
-              style: TextStyle(
-                fontSize: screenWidth * 0.03,
-                fontWeight: FontWeight.bold,
-                color: getWarningColor(value),
+            SizedBox(
+              height: MediaQuery.of(context).size.width * 0.01,
+            ),
+            Expanded(
+              flex: 2,
+              child: Text(
+                getWarningMessage(value),
+
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.029,
+                  fontWeight: FontWeight.bold,
+                  color: getWarningColor(value),
+                ),
+                softWrap: true, // ✅ Allows text to wrap instead of cutting off
+                overflow: TextOverflow.visible, // ✅ Ensures text is readable
+                maxLines: 2,
               ),
             ),
           ],
@@ -194,6 +220,8 @@ class Gauges extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // bool isFilipino = context.watch<LanguageProvider>().isFilipino;
+
     return Center(
       child: Column(
         children: [

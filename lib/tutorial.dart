@@ -64,6 +64,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     final provider = context.read<LanguageProvider>();
     final isFilipino = provider.isFilipino;
 
@@ -94,7 +95,9 @@ class _TutorialScreenState extends State<TutorialScreen> {
                               : _isError
                                   ? Center(
                                       child: Text("Failed to load video.",
+
                                           style: TextStyle(color: Colors.white)))
+
                                   : AspectRatio(
                                       aspectRatio:
                                           _controller.value.aspectRatio,
