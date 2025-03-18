@@ -15,18 +15,10 @@ class AboutPage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(90),
+          preferredSize: const Size.fromHeight(60), //to 60
           child: AppBar(
             backgroundColor: const Color.fromARGB(255, 100, 122, 99),
             iconTheme: const IconThemeData(color: Colors.white),
-            title: Text(
-              isFilipino ? 'Tulong sa Aplikasyon' : 'About',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             centerTitle: true,
             bottom: TabBar(
               labelColor: Colors.white,
@@ -58,6 +50,8 @@ class AboutTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isFilipino = context.watch<LanguageProvider>().isFilipino;
+
     return Container(
       color: const Color.fromARGB(255, 242, 239, 231),
       child: SingleChildScrollView(
@@ -81,17 +75,21 @@ class AboutTab extends StatelessWidget {
                 ),
               ),
 
-              Text(
-                'SOMO',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 42, 83, 39),
+              Center(
+                child: Text(
+                  'SOMO',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 42, 83, 39),
+                  ),
                 ),
               ),
               SizedBox(height: 10),
               Text(
-                'SOMO (Soil Moisture Monitoring) is an application designed to help you keep track of soil moisture conditions in real-time. Whether you are a farmer, gardener, or plant enthusiast, SOMO provides data on soil moisture, temperature, and humidity, ensuring your plants get the right amount of water they need to thrive.',
+                isFilipino
+                    ? 'Lorem'
+                    : 'SOMO (Soil Moisture Monitoring) is an application designed to help you keep track of soil moisture conditions in real-time. Whether you are a farmer, gardener, or plant enthusiast, SOMO provides data on soil moisture, temperature, and humidity, ensuring your plants get the right amount of water they need to thrive.',
                 style: TextStyle(fontSize: 16, color: Colors.black54),
                 textAlign: TextAlign.justify,
               ),
@@ -99,9 +97,9 @@ class AboutTab extends StatelessWidget {
               const SizedBox(height: 20),
 
               // Key Features Section
-              const Text(
-                "Key Features",
-                style: TextStyle(
+              Text(
+                isFilipino ? "Lorem" : "Key Features", // pa translate
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 42, 83, 39),
@@ -110,21 +108,24 @@ class AboutTab extends StatelessWidget {
               const SizedBox(height: 10),
 
               // Features List
-              const FeatureItem(
+              FeatureItem(
                 title: "📊 Dashboard",
-                description:
-                    "Monitor real-time soil moisture levels, temperature, and humidity all in one place.",
+                description: isFilipino
+                    ? "Lorem"
+                    : "Monitor real-time soil moisture levels, temperature, and humidity all in one place.",
               ),
-              const FeatureItem(
+              FeatureItem(
                 title: "💬 Helper Message",
-                description:
-                    "Receive a warning message and watering recommendation based on soil moisture levels. ",
+                description: isFilipino
+                    ? "LoREM"
+                    : "Receive a warning message and watering recommendation based on soil moisture levels. ",
               ),
 
-              const FeatureItem(
+              FeatureItem(
                 title: "🔔 Notifications",
-                description:
-                    "Stay updated with alerts when soil conditions require attention.",
+                description: isFilipino
+                    ? "Lorem"
+                    : "Stay updated with alerts when soil conditions require attention.",
               ),
 
 // Add the missing closing bracket for the list

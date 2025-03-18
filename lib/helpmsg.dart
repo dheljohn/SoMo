@@ -1,10 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:provider/provider.dart';
+
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/global_switch.dart';
 import 'package:soil_monitoring_app/language_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:soil_monitoring_app/tts_provider.dart';
 
 class HelperMsg extends StatefulWidget {
   const HelperMsg({super.key});
@@ -18,36 +20,35 @@ class _HelperMsgState extends State<HelperMsg> {
 
   // bool isFilipino = globalSwitchController.value; // Toggle state for language
   final FlutterTts flutterTts = FlutterTts(); // Initialize FlutterTts
-  bool _isSpeaking = false; // Flag to track TTS state
+  // final TtsProvider ttsProvider =
+  //     Provider.of<TtsProvider>(context, listen: false);
+  TtsProvider? ttsProvider; // Nullable to prevent initialization errors
+
   List<Map<String, dynamic>> messages = [];
 
   @override
   void initState() {
     super.initState();
     flutterTts.setStartHandler(() {
-      setState(() {
-        _isSpeaking = true;
-      });
+      ttsProvider?.setActive(true); // Use null check to avoid errors
     });
 
     flutterTts.setCompletionHandler(() {
-      setState(() {
-        _isSpeaking = false;
-      });
+      ttsProvider?.setActive(false);
     });
 
     flutterTts.setErrorHandler((msg) {
-      setState(() {
-        _isSpeaking = false;
-      });
+      ttsProvider?.setActive(false);
     });
-
-    //_updateMessages();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    ttsProvider ??=
+        Provider.of<TtsProvider>(context, listen: false); // Initialize once
+
     setState(() {
       _updateMessages();
     });
@@ -65,8 +66,9 @@ class _HelperMsgState extends State<HelperMsg> {
     final moistureS4 = dataProvider?.moistureS4 ?? 0.0;
     final provider = context.read<LanguageProvider>();
     final isFilipino = provider.isFilipino;
+    if (ttsProvider?.isSpeaking == true) return; // Prevent message reset
 
-    messages.clear(); // Clear existing messages
+    messages.clear(); // Clear only if TTS is not active
 
     if (humidityValue <= 30) {
       addMessage(
@@ -84,6 +86,20 @@ class _HelperMsgState extends State<HelperMsg> {
       );
     }
 
+    if (temperatureValue <= 15) {
+      addMessage(
+          isFilipino
+              ? 'Mababang temperatura ang na-detect! Subukang pataasin ang temperatura.\nRekomendasyon: Maglagay ng mga lagayang may tubig malapit sa mga halaman upang mapataas ang kahalumigmigan.'
+              : 'Low Temperature Detected! Consider increasing temperature.\nRecommendation: Expose plants to more sunlight. ❄️',
+          const Color.fromARGB(255, 131, 174, 209));
+    } else if (temperatureValue >= 30) {
+      addMessage(
+          isFilipino
+              ? 'Mataas na temperatura ang nararanasan! Subukang pababain ang temperatura.'
+              : 'High Temperature Detected! Consider decreasing temperature.\nRecommendation: Provide shade, or water plants. 🔥',
+          const Color.fromARGB(255, 253, 133, 124));
+    }
+
     void checkSensor(String sensorName, double moistureValue) {
       if (moistureValue < 15) {
         addMessage(
@@ -94,19 +110,27 @@ class _HelperMsgState extends State<HelperMsg> {
         );
       } else if (moistureValue <= 29) {
         addMessage(
-            '$sensorName: Extremely Dry Soil detected! \nRecommendation: Water the soil as needed. 🌱',
+            isFilipino
+                ? 'Lorem'
+                : '$sensorName: Extremely Dry Soil detected! \nRecommendation: Water the soil as needed. 🌱',
             const Color.fromARGB(255, 253, 133, 124));
       } else if (moistureValue <= 45) {
         addMessage(
-            '$sensorName: Well Drained Soil Detected! \nRecommendation: Considering watering soon. 🌱',
+            isFilipino
+                ? 'Lorem'
+                : '$sensorName: Well Drained Soil Detected! \nRecommendation: Considering watering soon. 🌱',
             const Color.fromARGB(255, 236, 188, 66));
       } else if (moistureValue <= 75) {
         addMessage(
-            '$sensorName: Moist Soil Detected. \nIdeal Moisture Level. 🌱',
+            isFilipino
+                ? 'Lorem'
+                : '$sensorName: Moist Soil Detected. \nIdeal Moisture Level. 🌱',
             const Color.fromARGB(255, 103, 172, 105));
       } else if (moistureValue >= 76) {
         addMessage(
-            '$sensorName: Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰',
+            isFilipino
+                ? 'Lorem'
+                : '$sensorName: Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰',
             const Color.fromARGB(255, 131, 174, 209));
       }
     }
@@ -118,7 +142,8 @@ class _HelperMsgState extends State<HelperMsg> {
   }
 
   void addMessage(String text, Color color) {
-    if (!_isSpeaking) {
+    if (ttsProvider?.isSpeaking == false) {
+      // Null-safe check
       setState(() {
         messages.add({'text': text, 'color': color});
       });
@@ -126,10 +151,10 @@ class _HelperMsgState extends State<HelperMsg> {
   }
 
   Future<void> _speak(String text) async {
-    await flutterTts.stop(); // Stop any ongoing TTS
-    // await flutterTts.setLanguage(isFilipino ? 'fil-PH' : 'en-US');
-    await flutterTts.setPitch(1.0);
+    await flutterTts.stop();
+    ttsProvider?.setActive(true);
     await flutterTts.speak(text);
+    // Keep the current slide while speaking
   }
 
   @override
@@ -188,8 +213,14 @@ class _HelperMsgState extends State<HelperMsg> {
                   options: CarouselOptions(
                     height: 160, // Adjust height based on message length
                     scrollDirection: Axis.vertical,
-                    autoPlay:
-                        !_isSpeaking, // Control autoPlay based on TTS state
+                    autoPlay: !context
+                        .watch<TtsProvider>()
+                        .isSpeaking, // Correct logic
+                    pauseAutoPlayOnTouch: true, // Allow manual interaction
+                    pauseAutoPlayOnManualNavigate:
+                        true, // Pause when manually scrolling
+                    pauseAutoPlayInFiniteScroll: true, // Pause on last slide
+
                     autoPlayInterval: const Duration(seconds: 5),
                     enlargeCenterPage: false,
                     viewportFraction: 1.0,
@@ -219,9 +250,10 @@ class _HelperMsgState extends State<HelperMsg> {
                           Expanded(
                             child: Text(
                               messages[index]['text'],
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.040,
                               ),
                             ),
                           ),
@@ -231,7 +263,6 @@ class _HelperMsgState extends State<HelperMsg> {
                   },
                 ),
         ),
-      
       ],
     );
   }
