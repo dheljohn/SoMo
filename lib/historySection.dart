@@ -9,9 +9,8 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:soil_monitoring_app/global_switch.dart';
-import 'package:soil_monitoring_app/language_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:soil_monitoring_app/language_provider.dart';
 
 String interpretMoisture(double moisture) {
   if (moisture < 30) return "Low (Soil is dry, needs watering)";
@@ -37,8 +36,8 @@ class HistoryDisplay extends StatefulWidget {
 }
 
 class _HistoryDisplayState extends State<HistoryDisplay> {
-  String selectedPlot = "Plot1"; // Default selection
-  final List<String> plots = ["All", "Plot1", "Plot2", "Plot3"];
+  String selectedPlot = "Lettuce"; // Default selection
+  final List<String> plots = ["All", "Lettuce", "Pechay", "Mustard"];
   List<Map<String, dynamic>> sensorData = [];
   StreamSubscription<QuerySnapshot>? _sensorSubscription;
   DateTime? startDate;
