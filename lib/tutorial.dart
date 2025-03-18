@@ -22,27 +22,27 @@ class _TutorialScreenState extends State<TutorialScreen> {
   }
 
   void _initializeVideoPlayer() {
-    _controller = VideoPlayerController.network(
-      'https://www.w3schools.com/html/mov_bbb.mp4',
-    )..initialize().then((_) {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-            _isError = false;
-            _controller.pause(); // Set default state to paused
-          });
-        }
-      }).catchError((error) {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-            _isError = true;
-          });
-        }
-      });
+  _controller = VideoPlayerController.asset('assets/video.mp4')
+    ..initialize().then((_) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _isError = false;
+          _controller.pause();
+        });
+      }
+    }).catchError((error) {
+      print("Video error: $error"); // Debugging log
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _isError = true;
+        });
+      }
+    });
 
-    _controller.setLooping(true);
-  }
+  _controller.setLooping(true);
+}
 
   void _togglePlayPause() {
     setState(() {
@@ -64,9 +64,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
-    final screenHeight = screenSize.height;
+
     final provider = context.read<LanguageProvider>();
     final isFilipino = provider.isFilipino;
 
@@ -97,8 +95,9 @@ class _TutorialScreenState extends State<TutorialScreen> {
                               : _isError
                                   ? Center(
                                       child: Text("Failed to load video.",
-                                          style:
-                                              TextStyle(color: Colors.white)))
+
+                                          style: TextStyle(color: Colors.white)))
+
                                   : AspectRatio(
                                       aspectRatio:
                                           _controller.value.aspectRatio,
@@ -109,7 +108,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                       if (!_isLoading && !_isError)
                         Icon(
                           _isPlaying ? Icons.pause : Icons.play_arrow,
-                          color: Colors.white,
+                          color: const Color.fromARGB(255, 113, 140, 110),
                           size: 50,
                         ),
                     ],
