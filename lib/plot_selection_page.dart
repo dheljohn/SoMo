@@ -44,7 +44,9 @@ class _PlotSelectionState extends State<PlotSelection> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? savedPlot = prefs.getString('selected_plot');
     setState(() {
-      selectedPlot = (savedPlot != null && plots.contains(savedPlot)) ? savedPlot : plots.first;
+      selectedPlot = (savedPlot != null && plots.contains(savedPlot))
+          ? savedPlot
+          : plots.first;
     });
   }
 
@@ -89,7 +91,8 @@ class _PlotSelectionState extends State<PlotSelection> {
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         isExpanded: true,
-                        alignment: Alignment.centerLeft, // Keeps dropdown in one position
+                        alignment: Alignment
+                            .centerLeft, // Keeps dropdown in one position
                         menuMaxHeight: 200, // Limits dropdown height
                         value: selectedPlot,
                         dropdownColor: const Color.fromARGB(255, 139, 169, 130),
@@ -103,7 +106,10 @@ class _PlotSelectionState extends State<PlotSelection> {
                             value: value,
                             child: Row(
                               children: [
-                                Icon(Icons.eco, color: const Color.fromARGB(255, 246, 250, 246), size: screenWidth * 0.05),
+                                Icon(Icons.eco,
+                                    color: const Color.fromARGB(
+                                        255, 246, 250, 246),
+                                    size: screenWidth * 0.05),
                                 SizedBox(width: 8),
                                 Text(value),
                               ],
@@ -131,11 +137,15 @@ class _PlotSelectionState extends State<PlotSelection> {
                       children: [
                         Text(
                           "Recommend",
-                          style: TextStyle(fontSize: screenWidth * 0.035, color: const Color.fromARGB(255, 255, 255, 255)),
+                          style: TextStyle(
+                              fontSize: screenWidth * 0.035,
+                              color: const Color.fromARGB(255, 255, 255, 255)),
                         ),
                         SizedBox(width: 4),
                         Icon(
-                          showRecommendation ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                          showRecommendation
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
                           size: 25,
                           color: const Color.fromARGB(255, 232, 234, 232),
                         ),
@@ -172,7 +182,9 @@ class _PlotSelectionState extends State<PlotSelection> {
               children: [
                 Text(
                   "Recommended for $selectedPlot",
-                  style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: screenWidth * 0.045,
+                      fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 1),
                 Text(

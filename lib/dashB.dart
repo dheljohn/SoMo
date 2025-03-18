@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
@@ -11,6 +11,7 @@ import 'package:soil_monitoring_app/helpmsg.dart';
 import 'package:soil_monitoring_app/language_provider.dart';
 import 'package:soil_monitoring_app/plot_selection_page.dart';
 import 'package:soil_monitoring_app/switch_button.dart';
+import 'package:soil_monitoring_app/tts_provider.dart';
 import 'package:soil_monitoring_app/wifiStat.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -36,7 +37,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-      _requestNotificationPermission();
+    _requestNotificationPermission();
 
     DatabaseReference ref =
         FirebaseDatabase.instance.ref("SelectedPlot/plotName");
@@ -82,46 +83,46 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   }
 
   void _requestNotificationPermission() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
 
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print('User granted permission');
-  } else {
-    print('User declined or has not accepted permission');
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
   }
-}
 // Removed duplicate _requestNotificationPermission method
 
-void _showNotificationDialog() {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) => AlertDialog(
-      title: Text("Enable Notifications"),
-      content: Text("This app requires notifications to function properly. Please allow notifications in settings."),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text("Cancel"),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-            _requestNotificationPermission();
-          },
-          child: Text("Enable"),
-        ),
-      ],
-    ),
-  );
-}
-
+  void _showNotificationDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text("Enable Notifications"),
+        content: Text(
+            "This app requires notifications to function properly. Please allow notifications in settings."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _requestNotificationPermission();
+            },
+            child: Text("Enable"),
+          ),
+        ],
+      ),
+    );
+  }
 
   String _getFormattedDate() {
     String formattedDate = DateFormat(' MMMM d, yyyy').format(DateTime.now());
@@ -292,6 +293,9 @@ void _showNotificationDialog() {
   Widget dashboardMain(DataProvider dataProvider, BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    final languageProvider =
+        Provider.of<LanguageProvider>(context, listen: false);
+    final isSpeaking = context.watch<TtsProvider>().isSpeaking;
 
     // Function to get text color based on value and type
     Color getTextColor(String type, double value) {
@@ -326,9 +330,9 @@ void _showNotificationDialog() {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                              SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: screenHeight * 0.02),
 
-         PlotSelection(),
+                PlotSelection(),
                 // Date Container
                 // Container(
                 //   padding: EdgeInsets.all(screenWidth * 0.04),
@@ -353,7 +357,7 @@ void _showNotificationDialog() {
                 //           crossAxisAlignment: CrossAxisAlignment.start,
                 //           children: [
                 //             // Display WiFi status snackbar
-                          
+
                 //           ],
                 //         ),
                 //       ),
@@ -363,86 +367,91 @@ void _showNotificationDialog() {
                 //   ),
                 // ),
                 // SizedBox(height: screenHeight * 0.02),
-
                 SizedBox(height: screenHeight * 0.02),
+
                 Gauges(dataProvider: dataProvider),
 
                 SizedBox(height: screenHeight * 0.01),
                 Center(
-                  child: Container(
-                    width: screenWidth * 0.85,
-                    padding: EdgeInsets.all(screenWidth * 0.03),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 255, 255, 240),
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 5,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              isFilipino ? 'Halumigmig: ' : 'Humidity: ',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.03,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Container(
+                      width: screenWidth * 0.85,
+                      padding: EdgeInsets.all(screenWidth * 0.03),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 255, 255, 240),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 5,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                isFilipino ? 'Halumigmig: ' : 'Humidity: ',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.03,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '${dataProvider.humidityValue.toInt()}%',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.04,
-                                fontWeight: FontWeight.bold,
+                              Text(
+                                '${dataProvider.humidityValue.toInt()}%',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.04,
+                                  fontWeight: FontWeight.bold,
+                                  color: getTextColor(
+                                      'humidity', dataProvider.humidityValue),
+                                ),
+                              ),
+                              SizedBox(width: screenWidth * 0.01),
+                              Icon(
+                                Icons.water_drop,
                                 color: getTextColor(
                                     'humidity', dataProvider.humidityValue),
+                                size: screenWidth * 0.05,
                               ),
-                            ),
-                            SizedBox(width: screenWidth * 0.01),
-                            Icon(
-                              Icons.water_drop,
-                              color: getTextColor(
-                                  'humidity', dataProvider.humidityValue),
-                              size: screenWidth * 0.05,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              isFilipino ? 'Temperatura: ' : '   Temperature: ',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.03,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                isFilipino
+                                    ? 'Temperatura: '
+                                    : '   Temperature: ',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.03,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '${dataProvider.temperatureValue.toInt()}°C',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.04,
-                                fontWeight: FontWeight.bold,
+                              Text(
+                                '${dataProvider.temperatureValue.toInt()}°C',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.04,
+                                  fontWeight: FontWeight.bold,
+                                  color: getTextColor('temperature',
+                                      dataProvider.temperatureValue),
+                                ),
+                              ),
+                              SizedBox(width: screenWidth * 0.01),
+                              Icon(
+                                Icons.thermostat,
                                 color: getTextColor('temperature',
                                     dataProvider.temperatureValue),
+                                size: screenWidth * 0.05,
                               ),
-                            ),
-                            SizedBox(width: screenWidth * 0.01),
-                            Icon(
-                              Icons.thermostat,
-                              color: getTextColor(
-                                  'temperature', dataProvider.temperatureValue),
-                              size: screenWidth * 0.05,
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -451,7 +460,7 @@ void _showNotificationDialog() {
                   child: Container(
                     color: const Color.fromARGB(255, 247, 246, 237),
                     margin: EdgeInsets.all(screenWidth * 0.02),
-                    height: screenHeight * 0.237,
+                    height: screenHeight * 0.34, //0.237
                     width: double.infinity,
                     child: const HelperMsg(),
                   ),

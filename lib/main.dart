@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:provider/provider.dart'; // Don't forget this
 import 'package:soil_monitoring_app/language_provider.dart';
+import 'package:soil_monitoring_app/tts_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,8 +33,12 @@ void main() async {
               appId: "1:367476307418:web:2cf68b6cba4b8189d1fce3"));
       // await LocalNotification.init();
       runApp(
-        ChangeNotifierProvider(
-          create: (context) => LanguageProvider(),
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => LanguageProvider()),
+            ChangeNotifierProvider(
+                create: (context) => TtsProvider()), // Add this
+          ],
           child: DevicePreview(
             enabled:
                 !kReleaseMode, //comment this line to disable device preview
@@ -58,8 +63,12 @@ void main() async {
       await Firebase.initializeApp();
       // await LocalNotification.init();
       runApp(
-        ChangeNotifierProvider(
-          create: (context) => LanguageProvider(),
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => LanguageProvider()),
+            ChangeNotifierProvider(
+                create: (context) => TtsProvider()), // Add this
+          ],
           child: DevicePreview(
             enabled:
                 !kReleaseMode, //comment this line to disable device preview
