@@ -138,6 +138,38 @@ class _HelperMsgState extends State<HelperMsg> {
 
     return Column(
       children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Image.asset(
+                  'assets/somo.png',
+                  width: 25,
+                  height: 25,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  "SOMO",
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
+                ),
+                IconButton(
+                  icon: Icon(Icons.volume_up,
+                      color: Color.fromARGB(255, 42, 83, 39)),
+                  onPressed: () async {
+                    if (messages.isNotEmpty) {
+                      await _speak(messages[_currentIndex]['text']);
+                    }
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5.0),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5.0),
         ),
@@ -173,9 +205,9 @@ class _HelperMsgState extends State<HelperMsg> {
                       decoration: BoxDecoration(
                         color: messages[index]['color'],
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
+                          topLeft: Radius.circular(0),
                           topRight: Radius.circular(20),
-                          bottomLeft: Radius.circular(0),
+                          bottomLeft: Radius.circular(20),
                           bottomRight: Radius.circular(20),
                         ),
                       ),
@@ -199,35 +231,7 @@ class _HelperMsgState extends State<HelperMsg> {
                   },
                 ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Image.asset(
-                  'assets/somo.png',
-                  width: 25,
-                  height: 25,
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  "SOMO",
-                  style: TextStyle(
-                      color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
-                ),
-                IconButton(
-                  icon: Icon(Icons.volume_up,
-                      color: Color.fromARGB(255, 42, 83, 39)),
-                  onPressed: () async {
-                    if (messages.isNotEmpty) {
-                      await _speak(messages[_currentIndex]['text']);
-                    }
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
+      
       ],
     );
   }

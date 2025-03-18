@@ -326,126 +326,45 @@ void _showNotificationDialog() {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: screenHeight * 0.009),
-                //container ng date
-                Container(
-                  // padding: EdgeInsets.only(
-                  //     left: screenWidth * 0.04,
-                  //     right: screenWidth * 0.0,
-                  //     top: screenWidth * 0.0,
-                  //     bottom: screenWidth * 0),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 138, 167, 136),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 5,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    // Changed from Column to Row for two-column layout
+                              SizedBox(height: screenHeight * 0.02),
 
-                    children: [
-                      // Left Column
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Display WiFi status snackbar
-                            Text(
-                              _getFormattedDate(),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: screenWidth * 0.045,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-
-                            SizedBox(height: screenWidth * 0.00),
-
-                            Text(
-                              _getFormattedWeek(),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: screenWidth * 0.035,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // AdvancedSwitch(
-                      //   //controller: _controller,
-                      //   controller: _controller,
-                      //   activeColor: Color.fromARGB(255, 42, 83, 39),
-                      //   inactiveColor: Color.fromARGB(255, 42, 83, 39),
-                      //   activeChild: Text('Fil'),
-                      //   inactiveChild: Text('Eng'),
-                      //   borderRadius: BorderRadius.circular(15),
-                      //   width: 60,
-                      //   height: 30,
-                      //   //enabled: !_isSpeaking,
-                      // ),
-                      SwitchButton(),
-                      //advanced switch here that will control the language for all dart
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: screenHeight * 0.02),
-
+         PlotSelection(),
                 // Date Container
-                Container(
-                  padding: EdgeInsets.all(screenWidth * 0.04),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 138, 167, 136),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 5,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    // Changed from Column to Row for two-column layout
+                // Container(
+                //   padding: EdgeInsets.all(screenWidth * 0.04),
+                //   decoration: BoxDecoration(
+                //     color: const Color.fromARGB(255, 138, 167, 136),
+                //     borderRadius: BorderRadius.circular(12),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: Colors.black.withOpacity(0.1),
+                //         blurRadius: 5,
+                //         spreadRadius: 2,
+                //       ),
+                //     ],
+                //   ),
+                //   child: Row(
+                //     // Changed from Column to Row for two-column layout
 
-                    children: [
-                      // Left Column
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Display WiFi status snackbar
-                            Text(
-                              DateFormat('MMMM d, yyyy').format(DateTime.now()),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: screenWidth * 0.045,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: screenWidth * 0.00),
-                            Text(
-                              DateFormat('EEEE').format(DateTime.now()),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: screenWidth * 0.05,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                //     children: [
+                //       // Left Column
+                //       Expanded(
+                //         child: Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             // Display WiFi status snackbar
+                          
+                //           ],
+                //         ),
+                //       ),
 
-                      PlotSelection(),
-                    ],
-                  ),
-                ),
+                //       PlotSelection(),
+                //     ],
+                //   ),
+                // ),
                 // SizedBox(height: screenHeight * 0.02),
 
-                SizedBox(height: screenHeight * 0.001),
+                SizedBox(height: screenHeight * 0.02),
                 Gauges(dataProvider: dataProvider),
 
                 SizedBox(height: screenHeight * 0.01),
