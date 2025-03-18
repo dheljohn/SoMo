@@ -13,14 +13,14 @@ class SwitchButton extends StatelessWidget {
         Provider.of<LanguageProvider>(context, listen: false);
 
     return AdvancedSwitch(
-      controller: globalSwitchController, // Use global controller
+      controller: globalSwitchController, 
       activeColor: const Color.fromARGB(255, 42, 83, 39),
       inactiveColor: const Color.fromARGB(255, 42, 83, 39),
-      activeChild: const Text('Fil'),
-      inactiveChild: const Text('Eng'),
-      borderRadius: BorderRadius.circular(15),
-      width: 60,
-      height: 30,
+      activeChild: const Text('Fil', style: TextStyle(fontSize: 18)), 
+      inactiveChild: const Text('Eng', style: TextStyle(fontSize: 18)), 
+      borderRadius: BorderRadius.circular(20), 
+      width: 75, 
+      height: 35, 
       onChanged: (value) {
         languageProvider.toggleLanguage(value);
       },
