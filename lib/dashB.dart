@@ -432,7 +432,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                     child: HelperMsg(
                       key: ValueKey(
                           selectedPlot), // Force rebuild on plot change
-                      dataProvider: dataProvider!,
+                      dataProvider: dataProvider,
                       selectedPlot: selectedPlot!,
                     ),
                   ),

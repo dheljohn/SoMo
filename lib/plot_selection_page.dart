@@ -5,11 +5,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soil_monitoring_app/switch_button.dart' show SwitchButton;
 import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/language_provider.dart';
+import 'package:soil_monitoring_app/tts_provider.dart';
 
 class PlotSelection extends StatefulWidget {
   final Function(String) onPlotChanged; // Notify parent when selection changes
 
-  PlotSelection({required this.onPlotChanged, Key? key}) : super(key: key);
+  const PlotSelection({required this.onPlotChanged, Key? key})
+      : super(key: key);
   @override
   _PlotSelectionState createState() => _PlotSelectionState();
 }
@@ -105,6 +107,7 @@ class _PlotSelectionState extends State<PlotSelection> {
 
     MediaQueryData queryData = MediaQuery.of(context);
     double screenWidth = queryData.size.width;
+    bool isSpeaking = context.watch<TtsProvider>().isSpeaking;
 
     return Column(
       children: [
@@ -135,7 +138,9 @@ class _PlotSelectionState extends State<PlotSelection> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: screenWidth * 0.045,
-                          color: const Color.fromARGB(255, 249, 249, 249),
+                          color: isSpeaking
+                              ? Colors.grey
+                              : Color.fromARGB(255, 249, 249, 249),
                         ),
                         items: plots.map((String value) {
                           return DropdownMenuItem<String>(
@@ -152,15 +157,18 @@ class _PlotSelectionState extends State<PlotSelection> {
                             ),
                           );
                         }).toList(),
-                        onChanged: (newValue) {
-                          if (newValue != null) {
-                            setState(() {
-                              selectedPlot = newValue;
-                            });
-                            _savePlot(newValue);
-                            widget.onPlotChanged(newValue); // Notify parent
-                          }
-                        },
+                        onChanged: isSpeaking
+                            ? null
+                            : (newValue) {
+                                if (newValue != null) {
+                                  setState(() {
+                                    selectedPlot = newValue;
+                                  });
+                                  _savePlot(newValue);
+                                  widget
+                                      .onPlotChanged(newValue); // Notify parent
+                                }
+                              },
                       ),
                     ),
                   ),
