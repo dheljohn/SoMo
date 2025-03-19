@@ -48,15 +48,15 @@ class Gauges extends StatelessWidget {
           : 'Soil Moisture not detected';
     } else if (value <= 29) {
       return isFilipino
-          ? 'Lorem'
+          ? 'Matinding tuyong lupa ang nadetect!\nRekomendasyon: Diligin ang lupa ayon sa pangangailangan. 🌱'
           : ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
     } else if (value < idealRange[0]) {
       return isFilipino
-          ? 'Lorem'
+          ? 'Magandang pag-drain ng lupa ang nadetect!\nRekomendasyon: Ibigay ang tamang pagdidilig.🌱'
           : 'Well Drained Soil!\nRecommendation: Considering watering soon.🌱';
     } else if (value > idealRange[1]) {
       return isFilipino
-          ? 'Lorem'
+          ? 'Napakabasang lupa ang nadetect! \nRekomendasyon: Patayin ang drip line o i-skip ang susunod na schedule na pagdidilig at ayusin ang drainage ng lupa. 🚰'
           : 'Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰';
     } else {
       return isFilipino ? 'Lorem' : 'Moist Soil. \nIdeal Moisture Level. 🌱';
