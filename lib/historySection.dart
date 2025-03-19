@@ -353,7 +353,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
               pw.SizedBox(height: 10),
               pw.Table.fromTextArray(
                 headers: [
-                  "Plot",
+                  "Crop",
                   "Date",
                   "Time",
                   "Avg Moisture",
@@ -419,7 +419,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
 
     List<List<String>> csvData = [
       [
-        "Plot",
+        "Crop",
         "Date",
         "Time",
         "Avg Moisture",
@@ -568,7 +568,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text("Plot: ${sensorData['plot']}"),
+                Text("Crop: ${sensorData['plot']}"),
                 Text(
                     "Timestamp: ${DateFormat('yyyy-MM-dd h:mm a').format(sensorData['timestamp'].toDate())}"),
                 SizedBox(height: 10),

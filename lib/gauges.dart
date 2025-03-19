@@ -22,7 +22,9 @@ class Gauges extends StatelessWidget {
     List<int> idealRange = moistureLevels[selectedPlot] ?? [50, 70];
 
     if (value < 8) {
-      return isFilipino ? 'Hindi pa naka-deploy' : 'Sensor not deployed';
+      return isFilipino
+          ? 'Hindi nakadetek ng basa'
+          : 'Soil Moisture not detected';
     } else if (value <= 29) {
       return isFilipino
           ? 'Matinding pagkatuyo ng Lupa!'
@@ -50,6 +52,7 @@ class Gauges extends StatelessWidget {
           : 'Soil Moisture not detected';
     } else if (value <= 29) {
       return isFilipino
+
           ? 'Matinding Pagkatuyo ng Lupa ang Napansin! \nRekomendasyon: Diligan ang lupa ayon sa pangangailangan. 🌱'
           : ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
     } else if (value < idealRange[0]) {
@@ -59,6 +62,7 @@ class Gauges extends StatelessWidget {
     } else if (value > idealRange[1]) {
       return isFilipino
           ? 'Sobrang Basa ang Lupa! \nRekomendasyon: Huwag munang magdilig, patayin ang drip line, at ayusin ang daluyan ng tubig. 🚰'
+
           : 'Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰';
     } else {
       return isFilipino

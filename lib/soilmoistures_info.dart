@@ -5,7 +5,7 @@ import 'package:soil_monitoring_app/language_provider.dart';
 import 'package:soil_monitoring_app/global_switch.dart';
 
 class SoilMoistureInfo extends StatelessWidget {
-  List<Map<String, dynamic>> getMoistureLevels(bool isFilipino) {
+    List<Map<String, dynamic>> getMoistureLevels(bool isFilipino) {
     return [
       {
         'range': '15-29%',
@@ -38,7 +38,7 @@ class SoilMoistureInfo extends StatelessWidget {
     ];
   }
 
-  List<Map<String, dynamic>> getSoilTypes(bool isFilipino) {
+ List<Map<String, dynamic>> getSoilTypes(bool isFilipino) {
     return [
       {
         'type': isFilipino ? 'Lupang Buhangin' : 'Sand Soil',
@@ -63,6 +63,7 @@ class SoilMoistureInfo extends StatelessWidget {
       },
     ];
   }
+
 
   List<Map<String, dynamic>> humidtyLevels(bool isFilipino) {
     return [
@@ -130,6 +131,7 @@ class SoilMoistureInfo extends StatelessWidget {
     ];
   }
 
+
   @override
   Widget build(BuildContext context) {
     bool isFilipino = context.watch<LanguageProvider>().isFilipino;
@@ -170,7 +172,8 @@ class SoilMoistureInfo extends StatelessWidget {
                 ),
               ),
             ),
-            SliverPadding(
+            
+              SliverPadding(
               padding: const EdgeInsets.all(16.0),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
@@ -257,9 +260,11 @@ class SoilMoistureInfo extends StatelessWidget {
                 ),
               ),
             ),
+
             SliverPadding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+
               sliver: SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,13 +278,16 @@ class SoilMoistureInfo extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     ...humidityLevels.map((humidity) {
+
                       return _buildInfoCard(humidity['range'],
                           humidity['description'], humidity['color']);
+
                     }).toList(),
                   ],
                 ),
               ),
             ),
+
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -301,7 +309,9 @@ class SoilMoistureInfo extends StatelessWidget {
                 ),
               ),
             ),
+
             SliverPadding(
+
               padding: const EdgeInsets.all(16.0),
               sliver: SliverList(
                 delegate: SliverChildListDelegate(
@@ -317,6 +327,7 @@ class SoilMoistureInfo extends StatelessWidget {
                 ),
               ),
             ),
+
             SliverPadding(
               padding: const EdgeInsets.all(16.0),
               sliver: SliverList(
@@ -351,9 +362,42 @@ class SoilMoistureInfo extends StatelessWidget {
                 ),
               ),
             ),
+
             SliverPadding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.all(16.0),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final level = tempLevels[index];
+                    return _buildInfoCard(level['range'], level['description'], level['color']);
+                  },
+                  childCount: tempLevels.length,
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: TextButton(
+                    onPressed: () {
+                      launchUrl(Uri.parse(
+                          'https://weatherspark.com/compare/y/134618~134516/Comparison-of-the-Average-Weather-in-Indang-and-Tanza'));
+                    },
+                    child: const Text(
+                      'Source: Temperature Levels',
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               sliver: SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -367,13 +411,16 @@ class SoilMoistureInfo extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     ...soilTypes.map((soil) {
+
                       return _buildInfoCard(
                           soil['type'], soil['description'], soil['color']);
+
                     }).toList(),
                   ],
                 ),
               ),
             ),
+            
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

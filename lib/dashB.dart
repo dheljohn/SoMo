@@ -266,6 +266,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
     // Function to get text color based on value and type
     Color getTextColor(String type, double value) {
       switch (type) {
+
         case 'humidity':
           return value < 40
               ? const Color.fromARGB(255, 253, 133, 124)
@@ -284,6 +285,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                           ? const Color.fromARGB(255, 253, 133, 124) // Hot
                           : const Color.fromARGB(
                               255, 198, 40, 40); // Very hot (Sweltering)
+
 
         default:
           return Colors.grey;

@@ -85,6 +85,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 100, 122, 99),
                         borderRadius: BorderRadius.circular(20),
+
                       ),
                       padding: EdgeInsets.all(8),
                       child: ClipRRect(
@@ -116,6 +117,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                           ),
                         ),
                       ),
+
                   ],
                 ),
                 SizedBox(height: 20),
