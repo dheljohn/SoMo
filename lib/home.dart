@@ -156,7 +156,8 @@ class _HomeState extends State<Home> {
           moisture_s4 = moisture4;
         });
         if (moisture1 < 40 && moisture1 >= 15) {
-          _showGroupedNotification('Sensor 1 detected dry soil.');
+          _showGroupedNotification(
+              'Sensor 1 detected dry soil. Irrigation may be needed to prevent dehydration.');
         }
         if (moisture2 < 40 && moisture2 >= 15) {
           _showGroupedNotification('Sensor 2 detected dry soil.');
@@ -192,7 +193,8 @@ class _HomeState extends State<Home> {
         // }
         // **Grouped Notifications for Wet Soil**
         if (moisture1 > 75) {
-          _showGroupedNotification('Sensor 1 detected wet soil.');
+          _showGroupedNotification(
+              'Sensor 1 detected wet soil. Stop Iriggation to prevent overwatering.');
         }
         if (moisture2 > 75) {
           _showGroupedNotification('Sensor 2 detected wet soil.');
