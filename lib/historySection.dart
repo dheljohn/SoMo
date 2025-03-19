@@ -357,8 +357,11 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                   "Date",
                   "Time",
                   "Avg Moisture",
+                  "Moisture Description",
                   "Humidity",
-                  "Temperature"
+                  "Humidity Description",
+                  "Temperature",
+                  "Temperature Description"
                 ],
                 data: sensorData.map((data) {
                   DateTime timestamp =
@@ -368,8 +371,11 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
                     DateFormat('MMMM d, yyyy').format(timestamp),
                     DateFormat('h:mm a').format(timestamp),
                     "${data['average_moisture']}%",
+                    interpretMoisture(data['average_moisture']),
                     "${data['humidity']}%",
-                    "${data['temperature']}°C"
+                    interpretHumidity(data['humidity']),
+                    "${data['temperature']}°C",
+                    interpretTemperature(data['temperature'])
                   ];
                 }).toList(),
               ),
