@@ -5,23 +5,32 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class Gauges extends StatelessWidget {
   final DataProvider dataProvider;
+  final String? selectedPlot;
 
-  const Gauges({required this.dataProvider, Key? key}) : super(key: key);
+  Gauges({required this.dataProvider, required this.selectedPlot, Key? key})
+      : super(key: key);
+
+  Map<String, List<int>> moistureLevels = {
+    'Lettuce': [60, 80],
+    'Pechay': [50, 70],
+    'Mustard': [40, 60],
+  };
 
   String getWarningMessage(double value) {
     bool isFilipino =
         globalSwitchController.value; // Get the current language state
+    List<int> idealRange = moistureLevels[selectedPlot] ?? [50, 70];
 
     if (value < 8) {
       return isFilipino ? 'Hindi pa naka-deploy' : 'Sensor not deployed';
     } else if (value <= 29) {
       return isFilipino ? 'Matinding tuyong lupa!' : 'Extremely Dry Soil!';
-    } else if (value < 46) {
+    } else if (value < idealRange[0]) {
       return isFilipino ? 'Magandang pag-drain ng lupa!' : 'Well Drained Soil!';
-    } else if (value <= 75) {
-      return isFilipino ? 'Basang-basa na lupa' : 'Moist Soil';
-    } else {
+    } else if (value > idealRange[1]) {
       return isFilipino ? 'Napakabasang lupa!' : 'Wet Soil';
+    } else {
+      return isFilipino ? 'Basang-basa na lupa' : 'Moist Soil';
     }
   }
 
@@ -29,6 +38,7 @@ class Gauges extends StatelessWidget {
     //Followed less than 8 strat
     bool isFilipino =
         globalSwitchController.value; // Get the current language state
+    List<int> idealRange = moistureLevels[selectedPlot] ?? [50, 70];
 
     if (value < 8) {
       return isFilipino
@@ -38,32 +48,31 @@ class Gauges extends StatelessWidget {
       return isFilipino
           ? 'Lorem'
           : ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
-    } else if (value <= 46) {
+    } else if (value < idealRange[0]) {
       return isFilipino
           ? 'Lorem'
           : 'Well Drained Soil!\nRecommendation: Considering watering soon.🌱';
-    } else if (value <= 75) {
-      return isFilipino ? 'Lorem' : 'Moist Soil. \nIdeal Moisture Level. 🌱';
-    } else {
+    } else if (value > idealRange[1]) {
       return isFilipino
           ? 'Lorem'
           : 'Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰';
+    } else {
+      return isFilipino ? 'Lorem' : 'Moist Soil. \nIdeal Moisture Level. 🌱';
     }
   }
 
   Color getWarningColor(double value) {
+    List<int> idealRange = moistureLevels[selectedPlot] ?? [50, 70];
     if (value < 8) {
       return Colors.grey;
     } else if (value == 15 || value <= 29) {
       return const Color.fromARGB(255, 253, 133, 124);
-    } else if (value == 30 || value < 46) {
+    } else if (value == 30 || value < idealRange[0]) {
       return const Color.fromARGB(255, 236, 188, 66);
-    } else if (value == 46 || value <= 75) {
-      return const Color.fromARGB(255, 103, 172, 105);
-    } else if (value > 75) {
+    } else if (value > idealRange[1]) {
       return const Color.fromARGB(255, 131, 174, 209);
     } else {
-      return Colors.green;
+      return const Color.fromARGB(255, 103, 172, 105);
     }
   }
 

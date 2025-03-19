@@ -7,6 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/language_provider.dart';
 
 class PlotSelection extends StatefulWidget {
+  final Function(String) onPlotChanged; // Notify parent when selection changes
+
+  PlotSelection({required this.onPlotChanged, Key? key}) : super(key: key);
   @override
   _PlotSelectionState createState() => _PlotSelectionState();
 }
@@ -65,6 +68,7 @@ class _PlotSelectionState extends State<PlotSelection> {
     });
 
     await realtimeDB.child("SelectedPlot").set({"plotName": plot});
+    print("Selected plot saved to Firebase: $plot");
   }
 
   String translateDetail(String key, String value, bool isFilipino) {
@@ -154,6 +158,7 @@ class _PlotSelectionState extends State<PlotSelection> {
                               selectedPlot = newValue;
                             });
                             _savePlot(newValue);
+                            widget.onPlotChanged(newValue); // Notify parent
                           }
                         },
                       ),
