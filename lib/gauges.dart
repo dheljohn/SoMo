@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/data_provider.dart';
 import 'package:soil_monitoring_app/global_switch.dart';
-import 'package:soil_monitoring_app/language_provider.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class Gauges extends StatelessWidget {
@@ -33,7 +31,9 @@ class Gauges extends StatelessWidget {
         globalSwitchController.value; // Get the current language state
 
     if (value < 8) {
-      return isFilipino ? 'Hindi pa naka-deploy' : 'Sensor not deployed';
+      return isFilipino
+          ? 'Walang nadetect na moisture'
+          : 'Soil Moisture not detected';
     } else if (value <= 29) {
       return isFilipino
           ? 'Lorem'
