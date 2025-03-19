@@ -13,7 +13,7 @@ class SwitchButton extends StatelessWidget {
     final isSpeaking = context.watch<TtsProvider>().isSpeaking;
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(0.0),
       child: AdvancedSwitch(
         controller: globalSwitchController,
         activeColor: const Color.fromARGB(255, 42, 83, 39),

@@ -3,6 +3,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soil_monitoring_app/switch_button.dart' show SwitchButton;
+import 'package:provider/provider.dart';
+import 'package:soil_monitoring_app/language_provider.dart';
 
 class PlotSelection extends StatefulWidget {
   @override
@@ -65,8 +67,38 @@ class _PlotSelectionState extends State<PlotSelection> {
     await realtimeDB.child("SelectedPlot").set({"plotName": plot});
   }
 
+  String translateDetail(String key, String value, bool isFilipino) {
+    if (!isFilipino) return value;
+    final translations = {
+      'Soil Moisture': 'Halumigmig ng Lupa',
+      'Watering Schedule': 'Iskedyul ng Pag-didilig',
+      'Soil Type': 'Uri ng Lupa',
+      'Daily in the morning': 'Tuwing umaga',
+      'Twice a day': 'Dalawang beses sa isang araw',
+      'Every other day': 'Tuwing ikalawang araw',
+      'Well-draining loamy soil': 'Lupang may maayos na drainage',
+      'Sandy loam with organic matter':
+          'Mabuhanging lupa na may organikong materyal',
+      'Loamy soil with good drainage':
+          'Lupang mabuhaghag na may magandang drainage',
+    };
+    return translations[value] ?? value;
+  }
+
   @override
   Widget build(BuildContext context) {
+    String translatePlotName(String plot, bool isFilipino) {
+      if (!isFilipino) return plot;
+      return {
+            'Lettuce': 'Litsugas',
+            'Pechay': 'Petsay',
+            'Mustard': 'Mustasa',
+          }[plot] ??
+          plot;
+    }
+
+    bool isFilipino = context.watch<LanguageProvider>().isFilipino;
+
     MediaQueryData queryData = MediaQuery.of(context);
     double screenWidth = queryData.size.width;
 
@@ -76,9 +108,9 @@ class _PlotSelectionState extends State<PlotSelection> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensures spacing
           children: [
             Container(
-              width: screenWidth * 0.7,
-              height: 50,
-              padding: EdgeInsets.symmetric(horizontal: 12),
+              width: screenWidth * 0.72,
+              height: screenWidth * 0.15,
+              padding: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 139, 169, 130),
                 border: Border.all(color: Colors.blueGrey, width: 1),
@@ -93,7 +125,7 @@ class _PlotSelectionState extends State<PlotSelection> {
                         isExpanded: true,
                         alignment: Alignment
                             .centerLeft, // Keeps dropdown in one position
-                        menuMaxHeight: 200, // Limits dropdown height
+                        menuMaxHeight: 160, // Limits dropdown height
                         value: selectedPlot,
                         dropdownColor: const Color.fromARGB(255, 139, 169, 130),
                         style: TextStyle(
@@ -110,8 +142,8 @@ class _PlotSelectionState extends State<PlotSelection> {
                                     color: const Color.fromARGB(
                                         255, 246, 250, 246),
                                     size: screenWidth * 0.05),
-                                SizedBox(width: 8),
-                                Text(value),
+                                SizedBox(width: 4),
+                                Text(translatePlotName(value, isFilipino)),
                               ],
                             ),
                           );
@@ -136,12 +168,12 @@ class _PlotSelectionState extends State<PlotSelection> {
                     child: Row(
                       children: [
                         Text(
-                          "Recommend",
+                          isFilipino ? "Rekomendasyon" : "Recommendation",
                           style: TextStyle(
                               fontSize: screenWidth * 0.035,
                               color: const Color.fromARGB(255, 255, 255, 255)),
                         ),
-                        SizedBox(width: 4),
+                        SizedBox(width: 2),
                         Icon(
                           showRecommendation
                               ? Icons.keyboard_arrow_up
@@ -181,23 +213,22 @@ class _PlotSelectionState extends State<PlotSelection> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Recommended for $selectedPlot",
+                  isFilipino
+                      ? "Inirerekomenda para sa ${translatePlotName(selectedPlot!, isFilipino)}"
+                      : "Recommended for ${selectedPlot}",
                   style: TextStyle(
                       fontSize: screenWidth * 0.045,
                       fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 1),
                 Text(
-                  "Soil Moisture: ${cropDetails[selectedPlot]?['moisture'] ?? 'N/A'}",
-                  style: TextStyle(fontSize: screenWidth * 0.035),
+                  "${translateDetail('Soil Moisture', 'Soil Moisture', isFilipino)}: ${translateDetail('Soil Moisture', cropDetails[selectedPlot]?['moisture'] ?? 'N/A', isFilipino)}",
                 ),
                 Text(
-                  "Watering Schedule: ${cropDetails[selectedPlot]?['watering'] ?? 'N/A'}",
-                  style: TextStyle(fontSize: screenWidth * 0.035),
+                  "${translateDetail('Watering Schedule', 'Watering Schedule', isFilipino)}: ${translateDetail('Watering Schedule', cropDetails[selectedPlot]?['watering'] ?? 'N/A', isFilipino)}",
                 ),
                 Text(
-                  "Soil Type: ${cropDetails[selectedPlot]?['soil'] ?? 'N/A'}",
-                  style: TextStyle(fontSize: screenWidth * 0.035),
+                  "${translateDetail('Soil Type', 'Soil Type', isFilipino)}: ${translateDetail('Soil Type', cropDetails[selectedPlot]?['soil'] ?? 'N/A', isFilipino)}",
                 ),
               ],
             ),
