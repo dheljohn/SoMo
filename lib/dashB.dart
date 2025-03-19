@@ -266,18 +266,24 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
     // Function to get text color based on value and type
     Color getTextColor(String type, double value) {
       switch (type) {
-        case 'humidity':
-          return value < 30
-              ? const Color.fromARGB(255, 131, 174, 209)
-              : value > 70
-                  ? Colors.orange
-                  : const Color.fromARGB(255, 103, 172, 105);
-        case 'temperature':
-          return value < 15
-              ? const Color.fromARGB(255, 131, 174, 209)
-              : value > 30
-                  ? const Color.fromARGB(255, 253, 133, 124)
-                  : const Color.fromARGB(255, 103, 172, 105);
+       case 'humidity':
+  return value < 40
+      ?const Color.fromARGB(255, 253, 133, 124)
+      : value > 70
+          ? const Color.fromARGB(255, 131, 174, 209) 
+          : const Color.fromARGB(255, 103, 172, 105); 
+
+      case 'temperature':
+  return value < 18
+      ? const Color.fromARGB(255, 131, 174, 209) // Cold
+      : value >= 18 && value < 23
+          ? const Color.fromARGB(255, 103, 172, 105) // Comfortable
+          : value >= 23 && value < 29
+              ? const Color.fromARGB(255, 255, 183, 77) // Warm
+              : value >= 29 && value < 35
+                  ? const Color.fromARGB(255, 253, 133, 124) // Hot
+                  : const Color.fromARGB(255, 198, 40, 40); // Very hot (Sweltering)
+
         default:
           return Colors.grey;
       }
