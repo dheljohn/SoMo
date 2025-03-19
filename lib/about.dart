@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import 'package:soil_monitoring_app/developer_page.dart';
 import 'package:soil_monitoring_app/soilmoistures_info.dart';
+import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/language_provider.dart';
 
 class AboutPage extends StatelessWidget {
