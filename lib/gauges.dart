@@ -22,7 +22,9 @@ class Gauges extends StatelessWidget {
     List<int> idealRange = moistureLevels[selectedPlot] ?? [50, 70];
 
     if (value < 8) {
-      return isFilipino ? 'Hindi pa naka-deploy' : 'Sensor not deployed';
+      return isFilipino
+          ? 'Hindi nakadetek ng basa'
+          : 'Soil Moisture not detected';
     } else if (value <= 29) {
       return isFilipino ? 'Matinding tuyong lupa!' : 'Extremely Dry Soil!';
     } else if (value < idealRange[0]) {
