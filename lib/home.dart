@@ -19,6 +19,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool showOverlay = true;
+  Set<String> activeNotifications = {};
+
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -114,6 +116,23 @@ class _HomeState extends State<Home> {
       setState(() {
         humidity_v = value;
       });
+      // Check humidity conditions for notifications
+      if (humidity_v < 30) {
+        _showGroupedNotification(
+            'Humidity is too low ($humidity_v%). Increase moisture levels.',
+            'humidity_low');
+      } else {
+        activeNotifications
+            .remove('humidity_low'); // Reset when condition is resolved
+      }
+
+      if (humidity_v > 80) {
+        _showGroupedNotification(
+            'Humidity is too high ($humidity_v%). Ventilation may be needed.',
+            'humidity_high');
+      } else {
+        activeNotifications.remove('humidity_high');
+      }
     });
 
     // Fetch Temperature
@@ -122,6 +141,22 @@ class _HomeState extends State<Home> {
       setState(() {
         temperature_v = value;
       });
+      // Check temperature conditions for notifications
+      if (temperature_v < 15) {
+        _showGroupedNotification(
+            'Temperature is too low ($temperature_v°C). Protect crops from cold.',
+            'temp_low');
+      } else {
+        activeNotifications.remove('temp_low');
+      }
+
+      if (temperature_v > 35) {
+        _showGroupedNotification(
+            'Temperature is too high ($temperature_v°C). Heat stress risk for crops.',
+            'temp_high');
+      } else {
+        activeNotifications.remove('temp_high');
+      }
     });
 
     // Fetch Moisture Average
@@ -155,61 +190,63 @@ class _HomeState extends State<Home> {
           moisture_s3 = moisture3;
           moisture_s4 = moisture4;
         });
-        if (moisture1 < 40 && moisture1 >= 15) {
+        if (moisture_s1 < 40 && moisture_s1 >= 15) {
           _showGroupedNotification(
-              'Sensor 1 detected dry soil. Irrigation may be needed to prevent dehydration.');
+              'Sensor 1 detected dry soil. Irrigation may be needed to prevent dehydration.',
+              'moisture1_low');
+        } else {
+          activeNotifications.remove('moisture1_low');
         }
         if (moisture2 < 40 && moisture2 >= 15) {
-          _showGroupedNotification('Sensor 2 detected dry soil.');
+          _showGroupedNotification(
+              'Sensor 2 detected dry soil. Irrigation may be needed to prevent dehydration.',
+              'moisture2_low');
         }
         if (moisture3 < 40 && moisture3 >= 15) {
-          _showGroupedNotification('Sensor 3 detected dry soil.');
+          _showGroupedNotification(
+              'Sensor 3 detected dry soil. Irrigation may be needed to prevent dehydration.',
+              'moisture3_low');
         }
         if (moisture4 < 40 && moisture4 >= 15) {
-          _showGroupedNotification('Sensor 4 detected dry soil.');
+          _showGroupedNotification(
+              'Sensor 4 detected dry soil. Irrigation may be needed to prevent dehydration.',
+              'moisture4_low');
         }
 
-        //not group. only individual this logic is for individual notification
-        // so if you want to show individual notification then uncomment this code
-        // but this just display the recent changes, so if the sensor are synced then it will show only one notification
-        // Check individual sensor readings
-        // if (moisture1 < 40 && moisture1 >= 15 ||
-        //     moisture2 < 40 && moisture2 >= 15 ||
-        //     moisture3 < 40 && moisture3 >= 15 ||
-        //     moisture4 < 40 && moisture4 >= 15) {
-        //   if (moisture1 < 40 && moisture1 >= 15) {
-        //     _showNotification('Sensor 1 detected dry soil.');
-        //   }
-        //   if (moisture2 < 40 && moisture2 >= 15) {
-        //     _showNotification('Sensor 2 detected dry soil.');
-        //   }
-        //   if (moisture3 < 40 && moisture3 >= 15) {
-        //     _showNotification('Sensor 3 detected dry soil.');
-        //   }
-        //   if (moisture4 < 40 && moisture4 >= 15) {
-        //     _showNotification('Sensor 4 detected dry soil.');
-        //   }
-        //   // _showNotification('One of the sensors detected dry soil.');
-        // }
-        // **Grouped Notifications for Wet Soil**
-        if (moisture1 > 75) {
+        if (moisture_s1 > 75) {
           _showGroupedNotification(
-              'Sensor 1 detected wet soil. Stop Iriggation to prevent overwatering.');
+              'Sensor 1 detected wet soil. Stop Irrigation to prevent overwatering.',
+              'moisture1_high');
+        } else {
+          activeNotifications.remove('moisture1_high');
         }
+
         if (moisture2 > 75) {
-          _showGroupedNotification('Sensor 2 detected wet soil.');
+          _showGroupedNotification(
+              'Sensor 2 detected wet soil. Stop Irrigation to prevent overwatering.',
+              'moisture2_high');
         }
         if (moisture3 > 75) {
-          _showGroupedNotification('Sensor 3 detected wet soil.');
+          _showGroupedNotification(
+              'Sensor 3 detected wet soil. Stop Irrigation to prevent overwatering.',
+              'moisture3_high');
         }
         if (moisture4 > 75) {
-          _showGroupedNotification('Sensor 4 detected wet soil.');
+          _showGroupedNotification(
+              'Sensor 4 detected wet soil. Stop Irrigation to prevent overwatering.',
+              'moisture4_high');
         }
       }
     });
   }
 
-  Future<void> _showGroupedNotification(String message) async {
+  Future<void> _showGroupedNotification(String message, String key) async {
+    if (activeNotifications.contains(key)) {
+      return; // Prevent duplicate notifications
+    }
+
+    activeNotifications.add(key); // Mark this notification as sent
+
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       'soil_monitoring_channel',
