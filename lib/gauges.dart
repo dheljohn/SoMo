@@ -24,13 +24,17 @@ class Gauges extends StatelessWidget {
     if (value < 8) {
       return isFilipino ? 'Hindi pa naka-deploy' : 'Sensor not deployed';
     } else if (value <= 29) {
-      return isFilipino ? 'Matinding tuyong lupa!' : 'Extremely Dry Soil!';
+      return isFilipino
+          ? 'Matinding pagkatuyo ng Lupa!'
+          : 'Extremely Dry Soil!';
     } else if (value < idealRange[0]) {
-      return isFilipino ? 'Magandang pag-drain ng lupa!' : 'Well Drained Soil!';
+      return isFilipino
+          ? 'Maayos ang Daloy ng Tubig sa Lupa!'
+          : 'Well Drained Soil!';
     } else if (value > idealRange[1]) {
-      return isFilipino ? 'Napakabasang lupa!' : 'Wet Soil';
+      return isFilipino ? 'Basang-basa ang Lupa!' : 'Wet Soil';
     } else {
-      return isFilipino ? 'Basang-basa na lupa' : 'Moist Soil';
+      return isFilipino ? 'Mamasa-masang Lupa' : 'Moist Soil';
     }
   }
 
@@ -46,18 +50,20 @@ class Gauges extends StatelessWidget {
           : 'Soil Moisture not detected';
     } else if (value <= 29) {
       return isFilipino
-          ? 'Lorem'
+          ? 'Matinding Pagkatuyo ng Lupa ang Napansin! \nRekomendasyon: Diligan ang lupa ayon sa pangangailangan. 🌱'
           : ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
     } else if (value < idealRange[0]) {
       return isFilipino
-          ? 'Lorem'
+          ? 'Maayos na Natutuyong Lupa! \nRekomendasyon: Isaalang-alang ang pagdidilig sa lalong madaling panahon.🌱'
           : 'Well Drained Soil!\nRecommendation: Considering watering soon.🌱';
     } else if (value > idealRange[1]) {
       return isFilipino
-          ? 'Lorem'
+          ? 'Sobrang Basa ang Lupa! \nRekomendasyon: Huwag munang magdilig, patayin ang drip line, at ayusin ang daluyan ng tubig. 🚰'
           : 'Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰';
     } else {
-      return isFilipino ? 'Lorem' : 'Moist Soil. \nIdeal Moisture Level. 🌱';
+      return isFilipino
+          ? 'Mamasa-masang Lupa.\Ideal na Antas ng Moisture.'
+          : 'Moist Soil. \nIdeal Moisture Level. 🌱';
     }
   }
 
@@ -165,7 +171,7 @@ class Gauges extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  value >= 9 ? "${value.toInt()}%" : "0%",
+                  value > 7 ? "${value.toInt()}%" : "0%",
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.060,
                       fontWeight: FontWeight.bold),

@@ -267,17 +267,24 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
     Color getTextColor(String type, double value) {
       switch (type) {
         case 'humidity':
-          return value < 30
-              ? const Color.fromARGB(255, 131, 174, 209)
+          return value < 40
+              ? const Color.fromARGB(255, 253, 133, 124)
               : value > 70
-                  ? Colors.orange
+                  ? const Color.fromARGB(255, 131, 174, 209)
                   : const Color.fromARGB(255, 103, 172, 105);
+
         case 'temperature':
-          return value < 15
-              ? const Color.fromARGB(255, 131, 174, 209)
-              : value > 30
-                  ? const Color.fromARGB(255, 253, 133, 124)
-                  : const Color.fromARGB(255, 103, 172, 105);
+          return value < 18
+              ? const Color.fromARGB(255, 131, 174, 209) // Cold
+              : value >= 18 && value < 23
+                  ? const Color.fromARGB(255, 103, 172, 105) // Comfortable
+                  : value >= 23 && value < 29
+                      ? const Color.fromARGB(255, 255, 183, 77) // Warm
+                      : value >= 29 && value < 35
+                          ? const Color.fromARGB(255, 253, 133, 124) // Hot
+                          : const Color.fromARGB(
+                              255, 198, 40, 40); // Very hot (Sweltering)
+
         default:
           return Colors.grey;
       }
@@ -362,7 +369,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                           Row(
                             children: [
                               Text(
-                                isFilipino ? 'Halumigmig: ' : 'Humidity: ',
+                                'Humidity: ',
                                 style: TextStyle(
                                   fontSize: screenWidth * 0.03,
                                   fontWeight: FontWeight.bold,
@@ -423,11 +430,13 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                   ),
                 ),
                 Align(
-                  alignment: Alignment.bottomLeft,
+                  alignment: Alignment.topCenter,
                   child: Container(
                     color: const Color.fromARGB(255, 247, 246, 237),
                     margin: EdgeInsets.all(screenWidth * 0.02),
-                    height: screenHeight * 0.34, //0.237
+                    height: isFilipino
+                        ? screenHeight * 0.3
+                        : screenHeight * 0.237, //0.237
                     width: double.infinity,
                     child: HelperMsg(
                       key: ValueKey(

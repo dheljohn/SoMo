@@ -64,12 +64,79 @@ class SoilMoistureInfo extends StatelessWidget {
     ];
   }
 
+  List<Map<String, dynamic>> humidtyLevels(bool isFilipino) {
+    return [
+      {
+        'range': '0-40%',
+        'color': const Color.fromARGB(255, 253, 133, 124),
+        'description': isFilipino
+            ? 'Masyadong tuyo. Maaaring magdulot ng pagkatuyo ng halaman.'
+            : 'Too dry. Can cause plant dehydration.',
+      },
+      {
+        'range': '40-70%',
+        'color': const Color.fromARGB(255, 103, 172, 105),
+        'description': isFilipino
+            ? 'Katanggap-tanggap. Angkop para sa karamihan ng mga halaman.'
+            : 'Accepted. Suitable for most plants.',
+      },
+      {
+        'range': '70-100%',
+        'color': const Color.fromARGB(255, 131, 174, 209),
+        'description': isFilipino
+            ? 'Masyadong mahalumigmig. May panganib ng fungal growth at sobrang pagdidilig.'
+            : 'Too moist. Risk of fungal growth and overwatering.',
+      },
+    ];
+  }
+
+  List<Map<String, dynamic>> temperatureLevels(bool isFilipino) {
+    return [
+      {
+        'range': '0°C - 18°C',
+        'color': Colors.blue[300],
+        'description': isFilipino
+            ? 'Malamig. Panganib ng frost damage. Protektahan ang mga pananim gamit ang takip.'
+            : 'Cold. Risk of frost damage. Protect crops with covers.',
+      },
+      {
+        'range': '18°C - 23°C',
+        'color': Colors.green[400],
+        'description': isFilipino
+            ? 'Komportable. Perpektong temperatura para sa karamihan ng mga pananim.'
+            : 'Comfortable. Ideal temperature for most crops.',
+      },
+      {
+        'range': '23°C - 29°C',
+        'color': Colors.orange[300],
+        'description': isFilipino
+            ? 'Mainit. Magandang kundisyon ng paglago, ngunit bantayan ang moisture ng lupa.'
+            : 'Warm. Good growth conditions, but monitor soil moisture.',
+      },
+      {
+        'range': '29°C - 35°C',
+        'color': Colors.red[300],
+        'description': isFilipino
+            ? 'Napakainit. Maaaring makaranas ng heat stress ang mga pananim. Siguraduhin ang tamang pagdidilig.'
+            : 'Hot. Crops may experience heat stress. Ensure proper irrigation.',
+      },
+      {
+        'range': 'Above 35°C',
+        'color': Colors.red[700],
+        'description': isFilipino
+            ? 'Sobrang init. Mataas ang panganib ng pagkatuyo at pagkasira ng pananim. Magbigay ng lilim at tubig.'
+            : 'Very hot. High risk of dehydration and crop damage. Provide shade and water.',
+      },
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isFilipino = context.watch<LanguageProvider>().isFilipino;
     final moistureLevels = getMoistureLevels(isFilipino);
     final soilTypes = getSoilTypes(isFilipino);
-
+    final humidityLevels = humidtyLevels(isFilipino);
+    final tempLevels = temperatureLevels(isFilipino);
     return Scaffold(
       body: Container(
         color: const Color.fromARGB(255, 247, 246, 237),
@@ -90,16 +157,17 @@ class SoilMoistureInfo extends StatelessWidget {
             SliverPadding(
               padding: const EdgeInsets.all(16.0),
               sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  Text(
-                    isFilipino ? 'Lorem' : 'Soil Moisture Levels',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 100, 122, 99),
+                delegate: SliverChildListDelegate(
+                  [
+                    const Text(
+                      'Soil Moisture Levels',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 100, 122, 99)),
                     ),
-                  ),
-                ]),
+                  ],
+                ),
               ),
             ),
             SliverPadding(
@@ -168,6 +236,27 @@ class SoilMoistureInfo extends StatelessWidget {
                 ),
               ),
             ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: TextButton(
+                    onPressed: () {
+                      launchUrl(Uri.parse(
+                          'https://www.acurite.com/blogs/acurite-in-your-home/soil-moisture-guide-for-plants-and-vegetables#:~:text=It%20is%20important%20to%20note,between%2041%25%20%2D%2080%25.'));
+                    },
+                    child: const Text(
+                      'Source: Soil Moisture Levels',
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
             SliverPadding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -175,64 +264,17 @@ class SoilMoistureInfo extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      isFilipino ? 'LOrem' : 'Soil Types & Moisture Retention',
+                    const Text(
+                      'Relative Humidity Levels',
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 100, 122, 99)),
+                          color: Color.fromARGB(255, 100, 122, 99)),
                     ),
                     const SizedBox(height: 10),
-                    ...soilTypes.map((soil) {
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 2,
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                color: soil['color'],
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    soil['type'],
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    soil['description'],
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 14),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
+                    ...humidityLevels.map((humidity) {
+                      return _buildInfoCard(humidity['range'],
+                          humidity['description'], humidity['color']);
                     }).toList(),
                   ],
                 ),
@@ -245,10 +287,104 @@ class SoilMoistureInfo extends StatelessWidget {
                   child: TextButton(
                     onPressed: () {
                       launchUrl(Uri.parse(
-                          'https://www.acurite.com/blogs/acurite-in-your-home/soil-moisture-guide-for-plants-and-vegetables#:~:text=It%20is%20important%20to%20note,between%2041%25%20%2D%2080%25.')); // Replace with actual link
+                          'https://www.researchgate.net/profile/Mostafa-Momin/publication/288835367/figure/fig1/AS:613906062012420@1523378019166/The-relative-humidity-versus-temperature-graph.png?fbclid=IwY2xjawJH1FlleHRuA2FlbQIxMAABHeTjbS7aH7FCdon-_qPC_e1I1SBoTK3gY4JWIf8f1ZnZXJ7phdMrmMaQqQ_aem_Tve0ayrku3PdjZDaBXRpfw'));
                     },
                     child: const Text(
-                      'Source: Soil Moisture Information',
+                      'Source:Humidity levels',
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(16.0),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    const Text(
+                      'Temperature Levels',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 100, 122, 99)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(16.0),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final level = tempLevels[index];
+                    return _buildInfoCard(
+                        level['range'], level['description'], level['color']);
+                  },
+                  childCount: tempLevels.length,
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: TextButton(
+                    onPressed: () {
+                      launchUrl(Uri.parse(
+                          'https://weatherspark.com/compare/y/134618~134516/Comparison-of-the-Average-Weather-in-Indang-and-Tanza'));
+                    },
+                    child: const Text(
+                      'Source: Temperature Levels',
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Soil Types & Moisture Retention',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 100, 122, 99)),
+                    ),
+                    const SizedBox(height: 10),
+                    ...soilTypes.map((soil) {
+                      return _buildInfoCard(
+                          soil['type'], soil['description'], soil['color']);
+                    }).toList(),
+                  ],
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: TextButton(
+                    onPressed: () {
+                      launchUrl(Uri.parse(
+                          'https://www.noble.org/regenerative-agriculture/soil/soil-and-water-relationships/#:~:text=Soils%20with%20smaller%20particles%20(silt,a%20higher%20water%2Dholding%20capacity.'));
+                    },
+                    child: const Text(
+                      'Source: Soil Types & Moisture Retention',
                       style: TextStyle(
                         fontSize: 17,
                         color: Colors.blue,
@@ -261,6 +397,61 @@ class SoilMoistureInfo extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(String title, String description, Color? color) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 100,
+            height: 60,
+            padding: const EdgeInsets.all(12.0),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  description,
+                  style: const TextStyle(color: Colors.black87, fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -27,7 +27,7 @@ class AboutPage extends StatelessWidget {
               indicatorColor: Colors.white,
               tabs: [
                 const Tab(text: "Soil Moisture \n     Levels"),
-                const Tab(text: "Application"),
+                Tab(text: isFilipino ? "Aplikasyon" : "Application"),
                 Tab(text: isFilipino ? "Mga Gumawa" : "Developers"),
               ],
             ),
@@ -89,7 +89,7 @@ class AboutTab extends StatelessWidget {
               SizedBox(height: 10),
               Text(
                 isFilipino
-                    ? 'Lorem'
+                    ? 'Ang SOMO (Soil Moisture Monitoring) ay isang aplikasyon na tumutulong sa iyo na subaybayan ang kondisyon ng soil moisture ng real-time. Kung ikaw ay isang magsasaka, hardinero, o mahilig sa halaman, nagbibigay ang SOMO ng datos tungkol sa soil moisture, temperatura, at humidity, upang matiyak na nakakakuha ng tamang dami ng tubig ang iyong mga halaman upang lumago nang maayos.'
                     : 'SOMO (Soil Moisture Monitoring) is an application designed to help you keep track of soil moisture conditions in real-time. Whether you are a farmer, gardener, or plant enthusiast, SOMO provides data on soil moisture, temperature, and humidity, ensuring your plants get the right amount of water they need to thrive.',
                 style: TextStyle(fontSize: 16, color: Colors.black54),
                 textAlign: TextAlign.justify,
@@ -99,7 +99,9 @@ class AboutTab extends StatelessWidget {
 
               // Key Features Section
               Text(
-                isFilipino ? "Lorem" : "Key Features", // pa translate
+                isFilipino
+                    ? "Pangunahing Katangian"
+                    : "Key Features", // pa translate
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -112,24 +114,22 @@ class AboutTab extends StatelessWidget {
               FeatureItem(
                 title: "📊 Dashboard",
                 description: isFilipino
-                    ? "Lorem"
+                    ? "Subaybayan ang real-time na soil moisture levels, temperatura, at humidity sa iisang lugar."
                     : "Monitor real-time soil moisture levels, temperature, and humidity all in one place.",
               ),
               FeatureItem(
                 title: "💬 Helper Message",
                 description: isFilipino
-                    ? "LoREM"
+                    ? "Tumanggap ng babala at rekomendasyon sa pagdidilig batay sa antas ng soil moisture levels"
                     : "Receive a warning message and watering recommendation based on soil moisture levels. ",
               ),
 
               FeatureItem(
                 title: "🔔 Notifications",
                 description: isFilipino
-                    ? "Lorem"
+                    ? "Manatiling updated sa mga alerto kapag nangangailangan ng atensyon ang kondisyon ng lupa."
                     : "Stay updated with alerts when soil conditions require attention.",
               ),
-
-// Add the missing closing bracket for the list
             ],
           ),
         ),

@@ -134,25 +134,25 @@ class _HelperMsgState extends State<HelperMsg> {
       } else if (moistureValue <= 29) {
         addMessage(
             isFilipino
-                ? 'Lorem'
+                ? '$sensorName: Lubhang Tuyong Lupa ang Nahanap! \nMungkahi: Magdilig upang mapanatili ang tamang kahalumigmigan. 🌱'
                 : '$sensorName: Extremely Dry Soil detected! \nRecommendation: Water the soil as needed. 🌱',
             const Color.fromARGB(255, 253, 133, 124));
       } else if (moistureValue < idealRange[0]) {
         addMessage(
             isFilipino
-                ? 'Lorem'
+                ? '$sensorName: Maayos na Natutuyong Lupa! \nRekomendasyon: Isaalang-alang ang pagdidilig sa lalong madaling panahon.🌱'
                 : '$sensorName: Well Drained Soil Detected! \nRecommendation: Considering watering soon. 🌱',
             const Color.fromARGB(255, 236, 188, 66));
       } else if (moistureValue > idealRange[1]) {
         addMessage(
             isFilipino
-                ? 'Lorem'
+                ? '$sensorName: Sobrang Basa ang Lupa! \nRekomendasyon: Huwag munang magdilig, patayin ang drip line, at ayusin ang daluyan ng tubig. 🚰'
                 : '$sensorName: Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰',
             const Color.fromARGB(255, 131, 174, 209));
       } else {
         addMessage(
             isFilipino
-                ? 'Lorem'
+                ? '$sensorName: Mamasa-masang Lupa.\Ideal na Antas ng Moisture. 🌱'
                 : '$sensorName: Moist Soil Detected. \nIdeal Moisture Level. 🌱',
             const Color.fromARGB(255, 103, 172, 105));
       }
