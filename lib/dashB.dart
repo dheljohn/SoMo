@@ -32,7 +32,13 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
   bool _showScrollIndicator = true;
-  String? selectedPlot;
+  String? selectedPlot = 'Lettuce'; // Default plot
+
+  void _onPlotChanged(String newPlot) {
+    setState(() {
+      selectedPlot = newPlot; // Update state when plot changes
+    });
+  }
 
   @override
   void initState() {
@@ -219,48 +225,6 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
     }
   }
 
-  void _showPasswordDialog(BuildContext context) {
-    TextEditingController passwordController = TextEditingController();
-    String correctPassword = "12345"; // Set your password here
-
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Prevent closing without input
-      builder: (context) => AlertDialog(
-        title: Text(
-          "Enter Password Before Modifying the Plot",
-        ),
-        content: TextField(
-          controller: passwordController,
-          obscureText: true,
-          decoration: InputDecoration(hintText: "Password"),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context), // Close dialog
-            child: Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () {
-              if (passwordController.text == correctPassword) {
-                Navigator.pop(context); // Close dialog
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PlotSelection()),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Incorrect password!")),
-                );
-              }
-            },
-            child: Text("Submit"),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final dataProvider = DataProvider.of(context);
@@ -274,7 +238,9 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       future: _fApp,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const Text("Something went wrong with firebase");
+          return Text(isFilipino
+              ? "Mayroong problema sa firebase"
+              : "Something went wrong with firebase");
         } else if (snapshot.hasData) {
           return dashboardMain(dataProvider, context);
         } else {
@@ -332,7 +298,7 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
               children: [
                 SizedBox(height: screenHeight * 0.02),
 
-                PlotSelection(),
+                PlotSelection(onPlotChanged: _onPlotChanged),
                 // Date Container
                 // Container(
                 //   padding: EdgeInsets.all(screenWidth * 0.04),
@@ -369,7 +335,8 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                 // SizedBox(height: screenHeight * 0.02),
                 SizedBox(height: screenHeight * 0.02),
 
-                Gauges(dataProvider: dataProvider),
+                // Gauges(dataProvider: dataProvider),
+                Gauges(dataProvider: dataProvider, selectedPlot: selectedPlot),
 
                 SizedBox(height: screenHeight * 0.01),
                 Center(
@@ -462,7 +429,12 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                     margin: EdgeInsets.all(screenWidth * 0.02),
                     height: screenHeight * 0.34, //0.237
                     width: double.infinity,
-                    child: const HelperMsg(),
+                    child: HelperMsg(
+                      key: ValueKey(
+                          selectedPlot), // Force rebuild on plot change
+                      dataProvider: dataProvider!,
+                      selectedPlot: selectedPlot!,
+                    ),
                   ),
                 ),
 

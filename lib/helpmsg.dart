@@ -9,14 +9,25 @@ import 'package:provider/provider.dart';
 import 'package:soil_monitoring_app/tts_provider.dart';
 
 class HelperMsg extends StatefulWidget {
-  const HelperMsg({super.key});
+  final DataProvider dataProvider;
 
+  final String selectedPlot; // Accept selectedPlot
+
+  const HelperMsg(
+      {required this.dataProvider, required this.selectedPlot, Key? key})
+      : super(key: key);
   @override
   State<HelperMsg> createState() => _HelperMsgState();
 }
 
 class _HelperMsgState extends State<HelperMsg> {
   int _currentIndex = 0;
+
+  Map<String, List<int>> moistureLevels = {
+    'Lettuce': [60, 80],
+    'Pechay': [50, 70],
+    'Mustard': [40, 60],
+  };
 
   // bool isFilipino = globalSwitchController.value; // Toggle state for language
   final FlutterTts flutterTts = FlutterTts(); // Initialize FlutterTts
@@ -43,6 +54,14 @@ class _HelperMsgState extends State<HelperMsg> {
   }
 
   @override
+  void didUpdateWidget(covariant HelperMsg oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedPlot != widget.selectedPlot) {
+      setState(() {}); // Refresh UI when plot changes
+    }
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
@@ -66,6 +85,7 @@ class _HelperMsgState extends State<HelperMsg> {
     final moistureS4 = dataProvider?.moistureS4 ?? 0.0;
     final provider = context.read<LanguageProvider>();
     final isFilipino = provider.isFilipino;
+
     if (ttsProvider?.isSpeaking == true) return; // Prevent message reset
 
     messages.clear(); // Clear only if TTS is not active
@@ -101,7 +121,10 @@ class _HelperMsgState extends State<HelperMsg> {
     }
 
     void checkSensor(String sensorName, double moistureValue) {
-      if (moistureValue < 15) {
+      List<int> idealRange =
+          moistureLevels[widget.selectedPlot ?? 'Lettuce'] ?? [50, 70];
+
+      if (moistureValue < 8) {
         addMessage(
           isFilipino
               ? '$sensorName: Hindi pa naka-deploy! ⚠️'
@@ -114,24 +137,24 @@ class _HelperMsgState extends State<HelperMsg> {
                 ? 'Lorem'
                 : '$sensorName: Extremely Dry Soil detected! \nRecommendation: Water the soil as needed. 🌱',
             const Color.fromARGB(255, 253, 133, 124));
-      } else if (moistureValue <= 45) {
+      } else if (moistureValue < idealRange[0]) {
         addMessage(
             isFilipino
                 ? 'Lorem'
                 : '$sensorName: Well Drained Soil Detected! \nRecommendation: Considering watering soon. 🌱',
             const Color.fromARGB(255, 236, 188, 66));
-      } else if (moistureValue <= 75) {
-        addMessage(
-            isFilipino
-                ? 'Lorem'
-                : '$sensorName: Moist Soil Detected. \nIdeal Moisture Level. 🌱',
-            const Color.fromARGB(255, 103, 172, 105));
-      } else if (moistureValue >= 76) {
+      } else if (moistureValue > idealRange[1]) {
         addMessage(
             isFilipino
                 ? 'Lorem'
                 : '$sensorName: Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰',
             const Color.fromARGB(255, 131, 174, 209));
+      } else {
+        addMessage(
+            isFilipino
+                ? 'Lorem'
+                : '$sensorName: Moist Soil Detected. \nIdeal Moisture Level. 🌱',
+            const Color.fromARGB(255, 103, 172, 105));
       }
     }
 
@@ -203,7 +226,7 @@ class _HelperMsgState extends State<HelperMsg> {
               ? Center(
                   child: Text(
                     isFilipino
-                        ? 'Hindi naka-deployed and sensor'
+                        ? 'Walang mga babalang natagpuan!'
                         : 'No warnings detected!',
                     style: TextStyle(color: Colors.green, fontSize: 16),
                   ),
