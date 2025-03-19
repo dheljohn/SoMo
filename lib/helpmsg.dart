@@ -90,35 +90,60 @@ class _HelperMsgState extends State<HelperMsg> {
 
     messages.clear(); // Clear only if TTS is not active
 
-    if (humidityValue <= 30) {
-      addMessage(
-        isFilipino
-            ? 'Mababang kahalumigmigan ang nararanasan! Subukang pataasin ang kahalumigmigan.\nRekomendasyon: Maglagay ng mga lagayang may tubig malapit sa mga halaman upang mapataas ang kahalumigmigan. '
-            : 'Low Humidity Detected! Consider increasing humidity.\nRecommendation: Place water trays near plants to raise humidity. ', //🌵
-        const Color.fromARGB(255, 253, 133, 124),
-      );
-    } else if (humidityValue >= 70) {
-      addMessage(
-        isFilipino
-            ? 'Mataas na kahalumigmigan ang nararanasan! Subukang pababain ang kahalumigmigan.\nRekomendasyon: Pagbutihin ang bentilasyon, o iwasan ang sobrang pagdidilig. ' //💦
-            : 'High Humidity Detected! Consider decreasing humidity.\nRecommendation: Improve ventilation, or avoid overwatering. ',
-        const Color.fromARGB(255, 131, 174, 209),
-      );
-    }
+    if (humidityValue <= 40) {
+  addMessage(
+    isFilipino
+        ? 'Masyadong tuyo. Maaaring magdulot ng pagkatuyo ng halaman.'
+        : 'Too dry. Can cause plant dehydration.',
+    const Color.fromARGB(255, 253, 133, 124),
+  );
+} else if (humidityValue > 40 && humidityValue <= 70) {
+  addMessage(
+    isFilipino
+        ? 'Katanggap-tanggap. Angkop para sa karamihan ng mga halaman.'
+        : 'Accepted. Suitable for most plants.',
+    const Color.fromARGB(255, 103, 172, 105),
+  );
+} else {
+  addMessage(
+    isFilipino
+        ? 'Masyadong mahalumigmig. May panganib ng fungal growth at sobrang pagdidilig.'
+        : 'Too moist. Risk of fungal growth and overwatering.',
+    const Color.fromARGB(255, 131, 174, 209),
+  );
+}
 
-    if (temperatureValue <= 15) {
-      addMessage(
-          isFilipino
-              ? 'Mababang temperatura ang na-detect! Subukang pataasin ang temperatura.\nRekomendasyon: Maglagay ng mga lagayang may tubig malapit sa mga halaman upang mapataas ang kahalumigmigan.'
-              : 'Low Temperature Detected! Consider increasing temperature.\nRecommendation: Expose plants to more sunlight. ❄️',
-          const Color.fromARGB(255, 131, 174, 209));
-    } else if (temperatureValue >= 30) {
-      addMessage(
-          isFilipino
-              ? 'Mataas na temperatura ang nararanasan! Subukang pababain ang temperatura.'
-              : 'High Temperature Detected! Consider decreasing temperature.\nRecommendation: Provide shade, or water plants. 🔥',
-          const Color.fromARGB(255, 253, 133, 124));
-    }
+    if (temperatureValue <= 18) { 
+  addMessage(
+      isFilipino
+          ? 'Malamig. Panganib ng frost damage. Protektahan ang mga pananim gamit ang takip.'
+          : 'Cold. Risk of frost damage. Protect crops with covers.',
+      Colors.blue[300] ?? Colors.blue);
+} else if (temperatureValue > 18 && temperatureValue <= 23) {
+  addMessage(
+      isFilipino
+          ? 'Komportable. Perpektong temperatura para sa karamihan ng mga pananim.'
+          : 'Comfortable. Ideal temperature for most crops.',
+      Colors.green[400] ?? Colors.green);
+} else if (temperatureValue > 23 && temperatureValue <= 29) {
+  addMessage(
+      isFilipino
+          ? 'Mainit. Magandang kundisyon ng paglago, ngunit bantayan ang moisture ng lupa.'
+          : 'Warm. Good growth conditions, but monitor soil moisture.',
+      Colors.orange[300] ?? Colors.orange);
+} else if (temperatureValue > 29 && temperatureValue <= 35) {
+  addMessage(
+      isFilipino
+          ? 'Napakainit. Maaaring makaranas ng heat stress ang mga pananim. Siguraduhin ang tamang pagdidilig.'
+          : 'Hot. Crops may experience heat stress. Ensure proper irrigation.',
+      Colors.red[300] ?? Colors.red);
+} else {
+  addMessage(
+      isFilipino
+          ? 'Sobrang init. Mataas ang panganib ng pagkatuyo at pagkasira ng pananim. Magbigay ng lilim at tubig.'
+          : 'Very hot. High risk of dehydration and crop damage. Provide shade and water.',
+      Colors.red[700] ?? Colors.red);
+}
 
     void checkSensor(String sensorName, double moistureValue) {
       List<int> idealRange =
@@ -215,12 +240,12 @@ class _HelperMsgState extends State<HelperMsg> {
             ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5.0),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5.0),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(vertical: 5.0),
+        // ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(vertical: 5.0),
+        // ),
         Expanded(
           child: messages.isEmpty
               ? Center(
