@@ -85,6 +85,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 100, 122, 99),
                         borderRadius: BorderRadius.circular(20),
+
                       ),
                       padding: EdgeInsets.all(8),
                       child: ClipRRect(
@@ -102,20 +103,20 @@ class _TutorialScreenState extends State<TutorialScreen> {
                       ),
                     ),
                     if (!_isLoading && !_isError)
-                     Positioned(
-  bottom: 5,
-  left: 10,
-  child: FloatingActionButton(
-    backgroundColor: Colors.transparent,
-    elevation: 0,
-    onPressed: _togglePlayPause,
-    child: Icon(
-      _isPlaying ? Icons.pause : Icons.play_arrow,
-      color: const Color.fromARGB(255, 113, 140, 110),
-      size: 40,
-    ),
-  ),
-),
+                      Positioned(
+                        bottom: 5,
+                        left: 10,
+                        child: FloatingActionButton(
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                          onPressed: _togglePlayPause,
+                          child: Icon(
+                            _isPlaying ? Icons.pause : Icons.play_arrow,
+                            color: const Color.fromARGB(255, 113, 140, 110),
+                            size: 40,
+                          ),
+                        ),
+                      ),
 
                   ],
                 ),

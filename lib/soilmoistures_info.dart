@@ -64,72 +64,72 @@ class SoilMoistureInfo extends StatelessWidget {
     ];
   }
 
- List<Map<String, dynamic>> humidtyLevels(bool isFilipino) {
+
+  List<Map<String, dynamic>> humidtyLevels(bool isFilipino) {
     return [
-     {
-    'range': '0-40%',
-    'color': const Color.fromARGB(255, 253, 133, 124),
-    'description': isFilipino
-        ? 'Masyadong tuyo. Maaaring magdulot ng pagkatuyo ng halaman.'
-        : 'Too dry. Can cause plant dehydration.',
-  },
-  {
-    'range': '40-70%',
-    'color': const Color.fromARGB(255, 103, 172, 105),
-    'description': isFilipino
-        ? 'Katanggap-tanggap. Angkop para sa karamihan ng mga halaman.'
-        : 'Accepted. Suitable for most plants.',
-  },
-  {
-    'range': '70-100%',
-    'color': const Color.fromARGB(255, 131, 174, 209),
-    'description': isFilipino
-        ? 'Masyadong mahalumigmig. May panganib ng fungal growth at sobrang pagdidilig.'
-        : 'Too moist. Risk of fungal growth and overwatering.',
-  },
-];
+      {
+        'range': '0-40%',
+        'color': const Color.fromARGB(255, 253, 133, 124),
+        'description': isFilipino
+            ? 'Masyadong tuyo. Maaaring magdulot ng pagkatuyo ng halaman.'
+            : 'Too dry. Can cause plant dehydration.',
+      },
+      {
+        'range': '40-70%',
+        'color': const Color.fromARGB(255, 103, 172, 105),
+        'description': isFilipino
+            ? 'Katanggap-tanggap. Angkop para sa karamihan ng mga halaman.'
+            : 'Accepted. Suitable for most plants.',
+      },
+      {
+        'range': '70-100%',
+        'color': const Color.fromARGB(255, 131, 174, 209),
+        'description': isFilipino
+            ? 'Masyadong mahalumigmig. May panganib ng fungal growth at sobrang pagdidilig.'
+            : 'Too moist. Risk of fungal growth and overwatering.',
+      },
+    ];
   }
 
-List<Map<String, dynamic>> temperatureLevels(bool isFilipino) {
-  return [
-    {
-      'range': '0°C - 18°C',
-      'color': Colors.blue[300],
-      'description': isFilipino
-          ? 'Malamig. Panganib ng frost damage. Protektahan ang mga pananim gamit ang takip.'
-          : 'Cold. Risk of frost damage. Protect crops with covers.',
-    },
-    {
-      'range': '18°C - 23°C',
-      'color': Colors.green[400],
-      'description': isFilipino
-          ? 'Komportable. Perpektong temperatura para sa karamihan ng mga pananim.'
-          : 'Comfortable. Ideal temperature for most crops.',
-    },
-    {
-      'range': '23°C - 29°C',
-      'color': Colors.orange[300],
-      'description': isFilipino
-          ? 'Mainit. Magandang kundisyon ng paglago, ngunit bantayan ang moisture ng lupa.'
-          : 'Warm. Good growth conditions, but monitor soil moisture.',
-    },
-    {
-      'range': '29°C - 35°C',
-      'color': Colors.red[300],
-      'description': isFilipino
-          ? 'Napakainit. Maaaring makaranas ng heat stress ang mga pananim. Siguraduhin ang tamang pagdidilig.'
-          : 'Hot. Crops may experience heat stress. Ensure proper irrigation.',
-    },
-    {
-      'range': 'Above 35°C',
-      'color': Colors.red[700],
-      'description': isFilipino
-          ? 'Sobrang init. Mataas ang panganib ng pagkatuyo at pagkasira ng pananim. Magbigay ng lilim at tubig.'
-          : 'Very hot. High risk of dehydration and crop damage. Provide shade and water.',
-    },
-  ];
-}
-
+  List<Map<String, dynamic>> temperatureLevels(bool isFilipino) {
+    return [
+      {
+        'range': '0°C - 18°C',
+        'color': Colors.blue[300],
+        'description': isFilipino
+            ? 'Malamig. Panganib ng frost damage. Protektahan ang mga pananim gamit ang takip.'
+            : 'Cold. Risk of frost damage. Protect crops with covers.',
+      },
+      {
+        'range': '18°C - 23°C',
+        'color': Colors.green[400],
+        'description': isFilipino
+            ? 'Komportable. Perpektong temperatura para sa karamihan ng mga pananim.'
+            : 'Comfortable. Ideal temperature for most crops.',
+      },
+      {
+        'range': '23°C - 29°C',
+        'color': Colors.orange[300],
+        'description': isFilipino
+            ? 'Mainit. Magandang kundisyon ng paglago, ngunit bantayan ang moisture ng lupa.'
+            : 'Warm. Good growth conditions, but monitor soil moisture.',
+      },
+      {
+        'range': '29°C - 35°C',
+        'color': Colors.red[300],
+        'description': isFilipino
+            ? 'Napakainit. Maaaring makaranas ng heat stress ang mga pananim. Siguraduhin ang tamang pagdidilig.'
+            : 'Hot. Crops may experience heat stress. Ensure proper irrigation.',
+      },
+      {
+        'range': 'Above 35°C',
+        'color': Colors.red[700],
+        'description': isFilipino
+            ? 'Sobrang init. Mataas ang panganib ng pagkatuyo at pagkasira ng pananim. Magbigay ng lilim at tubig.'
+            : 'Very hot. High risk of dehydration and crop damage. Provide shade and water.',
+      },
+    ];
+  }
 
 
   @override
@@ -260,9 +260,11 @@ List<Map<String, dynamic>> temperatureLevels(bool isFilipino) {
                 ),
               ),
             ),
-            
+
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+
               sliver: SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,13 +278,16 @@ List<Map<String, dynamic>> temperatureLevels(bool isFilipino) {
                     ),
                     const SizedBox(height: 10),
                     ...humidityLevels.map((humidity) {
-                      return _buildInfoCard(humidity['range'], humidity['description'], humidity['color']);
+
+                      return _buildInfoCard(humidity['range'],
+                          humidity['description'], humidity['color']);
+
                     }).toList(),
                   ],
                 ),
               ),
             ),
-          
+
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -304,7 +309,9 @@ List<Map<String, dynamic>> temperatureLevels(bool isFilipino) {
                 ),
               ),
             ),
-             SliverPadding(
+
+            SliverPadding(
+
               padding: const EdgeInsets.all(16.0),
               sliver: SliverList(
                 delegate: SliverChildListDelegate(
@@ -320,6 +327,42 @@ List<Map<String, dynamic>> temperatureLevels(bool isFilipino) {
                 ),
               ),
             ),
+
+            SliverPadding(
+              padding: const EdgeInsets.all(16.0),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final level = tempLevels[index];
+                    return _buildInfoCard(
+                        level['range'], level['description'], level['color']);
+                  },
+                  childCount: tempLevels.length,
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: TextButton(
+                    onPressed: () {
+                      launchUrl(Uri.parse(
+                          'https://weatherspark.com/compare/y/134618~134516/Comparison-of-the-Average-Weather-in-Indang-and-Tanza'));
+                    },
+                    child: const Text(
+                      'Source: Temperature Levels',
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
             SliverPadding(
               padding: const EdgeInsets.all(16.0),
               sliver: SliverList(
@@ -368,7 +411,10 @@ List<Map<String, dynamic>> temperatureLevels(bool isFilipino) {
                     ),
                     const SizedBox(height: 10),
                     ...soilTypes.map((soil) {
-                      return _buildInfoCard(soil['type'], soil['description'], soil['color']);
+
+                      return _buildInfoCard(
+                          soil['type'], soil['description'], soil['color']);
+
                     }).toList(),
                   ],
                 ),
