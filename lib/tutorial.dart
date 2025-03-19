@@ -5,6 +5,8 @@ import 'package:soil_monitoring_app/language_provider.dart';
 import 'package:provider/provider.dart';
 
 class TutorialScreen extends StatefulWidget {
+  const TutorialScreen({super.key});
+
   @override
   _TutorialScreenState createState() => _TutorialScreenState();
 }
@@ -22,27 +24,27 @@ class _TutorialScreenState extends State<TutorialScreen> {
   }
 
   void _initializeVideoPlayer() {
-  _controller = VideoPlayerController.asset('assets/video.mp4')
-    ..initialize().then((_) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _isError = false;
-          _controller.pause();
-        });
-      }
-    }).catchError((error) {
-      print("Video error: $error"); // Debugging log
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _isError = true;
-        });
-      }
-    });
+    _controller = VideoPlayerController.asset('assets/video.mp4')
+      ..initialize().then((_) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _isError = false;
+            _controller.pause();
+          });
+        }
+      }).catchError((error) {
+        print("Video error: $error"); // Debugging log
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _isError = true;
+          });
+        }
+      });
 
-  _controller.setLooping(true);
-}
+    _controller.setLooping(true);
+  }
 
   void _togglePlayPause() {
     setState(() {
@@ -64,7 +66,6 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final provider = context.read<LanguageProvider>();
     final isFilipino = provider.isFilipino;
 
@@ -77,42 +78,46 @@ class _TutorialScreenState extends State<TutorialScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GestureDetector(
-                  onTap: _togglePlayPause,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 100, 122, 99),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: EdgeInsets.all(8),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: _isLoading
-                              ? Center(child: CircularProgressIndicator())
-                              : _isError
-                                  ? Center(
-                                      child: Text("Failed to load video.",
-
-                                          style: TextStyle(color: Colors.white)))
-
-                                  : AspectRatio(
-                                      aspectRatio:
-                                          _controller.value.aspectRatio,
-                                      child: VideoPlayer(_controller),
-                                    ),
-                        ),
+                Stack(
+                  alignment: Alignment.bottomLeft,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 100, 122, 99),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      if (!_isLoading && !_isError)
-                        Icon(
-                          _isPlaying ? Icons.pause : Icons.play_arrow,
-                          color: const Color.fromARGB(255, 113, 140, 110),
-                          size: 50,
-                        ),
-                    ],
-                  ),
+                      padding: EdgeInsets.all(8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: _isLoading
+                            ? Center(child: CircularProgressIndicator())
+                            : _isError
+                                ? Center(
+                                    child: Text("Failed to load video.",
+                                        style: TextStyle(color: Colors.white)))
+                                : AspectRatio(
+                                    aspectRatio: _controller.value.aspectRatio,
+                                    child: VideoPlayer(_controller),
+                                  ),
+                      ),
+                    ),
+                    if (!_isLoading && !_isError)
+                     Positioned(
+  bottom: 5,
+  left: 10,
+  child: FloatingActionButton(
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    onPressed: _togglePlayPause,
+    child: Icon(
+      _isPlaying ? Icons.pause : Icons.play_arrow,
+      color: const Color.fromARGB(255, 113, 140, 110),
+      size: 40,
+    ),
+  ),
+),
+
+                  ],
                 ),
                 SizedBox(height: 20),
                 Image.asset(
