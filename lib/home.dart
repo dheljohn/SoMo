@@ -20,6 +20,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool showOverlay = true;
   Set<String> activeNotifications = {};
+  int? _lastAllowedHour;
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -101,6 +102,18 @@ class _HomeState extends State<Home> {
   }
 
   void _fetchDataFromFirebase() {
+    final currentHour = DateTime.now().hour;
+    final isAllowedHour = [8, 11, 15].contains(currentHour);
+
+    if (isAllowedHour) {
+      if (_lastAllowedHour != currentHour) {
+        activeNotifications.clear();
+        _lastAllowedHour = currentHour;
+      }
+    } else {
+      _lastAllowedHour = null;
+    }
+
     DatabaseReference humidityRef =
         FirebaseDatabase.instance.ref().child('Humidity/humidity');
     DatabaseReference temperatureRef =
@@ -241,6 +254,11 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _showGroupedNotification(String message, String key) async {
+    final currentHour = DateTime.now().hour;
+    if (![8, 11, 15].contains(currentHour)) {
+      return;
+    }
+
     if (activeNotifications.contains(key)) {
       return; // Prevent duplicate notifications
     }

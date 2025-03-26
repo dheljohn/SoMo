@@ -10,11 +10,15 @@ import 'package:device_preview/device_preview.dart';
 import 'package:provider/provider.dart'; // Don't forget this
 import 'package:soil_monitoring_app/language_provider.dart';
 import 'package:soil_monitoring_app/tts_provider.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
+
     // DeviceOrientation.portraitDown,
   ]);
 
