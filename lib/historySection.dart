@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -291,14 +292,14 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     final provider = context.read<LanguageProvider>();
     final isFilipino = provider.isFilipino;
     String plotinfo =
-        selectedPlot != "All" ? "Plot: $selectedPlot" : "All Plots";
+        selectedPlot != "All" ? "Crop: $selectedPlot" : "All Crop";
     String filterInfo =
         selectedFilter != "None" ? "Filter: $selectedFilter" : "Filter: None";
     String dateInfo = selectedDate != null
         ? "Date: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}"
         : startDate != null && endDate != null
             ? "Date Range: ${DateFormat('yyyy-MM-dd').format(startDate!)} to ${DateFormat('yyyy-MM-dd').format(endDate!)}"
-            : "No date filter applied";
+            : "Date: No date selected";
 
     showDialog(
       context: context,
@@ -330,6 +331,7 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
   }
 
   //download pdf function
+
   Future<void> _downloadPDF() async {
     var status = await Permission.manageExternalStorage.request();
     if (!status.isGranted) {
@@ -339,51 +341,72 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
       return;
     }
 
-    final pdf = pw.Document();
+    // if (sensorData.isEmpty) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text("No data available to generate PDF")),
+    //   );
+    //   return;
+    // }
 
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text("Sensor Data Report",
+    final pdf = pw.Document();
+    const int rowsPerPage = 10; // Limit rows per page
+    int totalPages = (sensorData.length / rowsPerPage).ceil();
+
+    for (int i = 0; i < totalPages; i++) {
+      int start = i * rowsPerPage;
+      int end = start + rowsPerPage;
+      List<Map<String, dynamic>> pageData = sensorData.sublist(
+        start,
+        end > sensorData.length ? sensorData.length : end,
+      );
+
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4.landscape,
+          build: (pw.Context context) {
+            return pw.Column(
+              children: [
+                pw.Text(
+                  "Sensor Data Report (Page ${i + 1} of $totalPages)",
                   style: pw.TextStyle(
-                      fontSize: 24, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 10),
-              pw.Table.fromTextArray(
-                headers: [
-                  "Crop",
-                  "Date",
-                  "Time",
-                  "Avg Moisture",
-                  "Moisture Description",
-                  "Humidity",
-                  "Humidity Description",
-                  "Temperature",
-                  "Temperature Description"
-                ],
-                data: sensorData.map((data) {
-                  DateTime timestamp =
-                      (data['timestamp'] as Timestamp).toDate();
-                  return [
-                    data['plot'] ?? "Unknown",
-                    DateFormat('MMMM d, yyyy').format(timestamp),
-                    DateFormat('h:mm a').format(timestamp),
-                    "${data['average_moisture']}%",
-                    interpretMoisture(data['average_moisture']),
-                    "${data['humidity']}%",
-                    interpretHumidity(data['humidity']),
-                    "${data['temperature']}°C",
-                    interpretTemperature(data['temperature'])
-                  ];
-                }).toList(),
-              ),
-            ],
-          );
-        },
-      ),
-    );
+                      fontSize: 18, fontWeight: pw.FontWeight.bold),
+                ),
+                pw.SizedBox(height: 10),
+                pw.TableHelper.fromTextArray(
+                  headers: [
+                    "Crop",
+                    "Date",
+                    "Time",
+                    "Avg Moisture",
+                    "Moisture Description",
+                    "Humidity",
+                    "Humidity Description",
+                    "Temperature",
+                    "Temperature Description"
+                  ],
+                  data: pageData.map((data) {
+                    if (data['timestamp'] == null) return [];
+                    DateTime timestamp =
+                        (data['timestamp'] as Timestamp).toDate();
+                    return [
+                      data['plot'] ?? "Unknown",
+                      DateFormat('MMMM d, yyyy').format(timestamp),
+                      DateFormat('h:mm a').format(timestamp),
+                      "${data['average_moisture']}%",
+                      interpretMoisture(data['average_moisture']),
+                      "${data['humidity']}%",
+                      interpretHumidity(data['humidity']),
+                      "${data['temperature']}°C",
+                      interpretTemperature(data['temperature'])
+                    ];
+                  }).toList(),
+                ),
+              ],
+            );
+          },
+        ),
+      );
+    }
 
     Directory? directory = await getExternalStorageDirectory();
     if (directory == null) {
@@ -391,18 +414,17 @@ class _HistoryDisplayState extends State<HistoryDisplay> {
     }
 
     String fileName = selectedPlot == "All"
-        ? "all_plots_sensor_data.pdf"
+        ? "all_crop_sensor_data.pdf" // Default filename from plot to crop
         : "${selectedPlot}_sensor_data.pdf";
     String filePath = "${directory.path}/$fileName";
     File file = File(filePath);
 
     await file.writeAsBytes(await pdf.save());
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("PDF saved: $filePath"),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("PDF saved: $filePath")),
+    );
 
-    // Open the file after download
     OpenFile.open(filePath);
   }
 

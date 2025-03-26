@@ -352,40 +352,40 @@ class SoilMoistureInfo extends StatelessWidget {
                 ),
               ),
             ),
-            SliverPadding(
-              padding: const EdgeInsets.all(16.0),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final level = tempLevels[index];
-                    return _buildInfoCard(
-                        level['range'], level['description'], level['color']);
-                  },
-                  childCount: tempLevels.length,
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Center(
-                  child: TextButton(
-                    onPressed: () {
-                      launchUrl(Uri.parse(
-                          'https://weatherspark.com/compare/y/134618~134516/Comparison-of-the-Average-Weather-in-Indang-and-Tanza'));
-                    },
-                    child: const Text(
-                      'Source: Temperature Levels',
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // SliverPadding(
+            //   padding: const EdgeInsets.all(16.0),
+            //   sliver: SliverList(
+            //     delegate: SliverChildBuilderDelegate(
+            //       (context, index) {
+            //         final level = tempLevels[index];
+            //         return _buildInfoCard(
+            //             level['range'], level['description'], level['color']);
+            //       },
+            //       childCount: tempLevels.length,
+            //     ),
+            //   ),
+            // ),
+            // SliverToBoxAdapter(
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(16.0),
+            //     child: Center(
+            //       child: TextButton(
+            //         onPressed: () {
+            //           launchUrl(Uri.parse(
+            //               'https://weatherspark.com/compare/y/134618~134516/Comparison-of-the-Average-Weather-in-Indang-and-Tanza'));
+            //         },
+            //         child: const Text(
+            //           'Source: Temperature Levels',
+            //           style: TextStyle(
+            //             fontSize: 17,
+            //             color: Colors.blue,
+            //             decoration: TextDecoration.underline,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             SliverPadding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
