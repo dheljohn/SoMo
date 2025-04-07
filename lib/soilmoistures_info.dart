@@ -11,7 +11,7 @@ class SoilMoistureInfo extends StatelessWidget {
         'range': '15-29%',
         'color': const Color.fromARGB(255, 253, 133, 124),
         'description': isFilipino
-            ? 'Matinding tuyong lupa!'
+            ? 'Matinding tuyong lupa! Kailangan madiligan kaagad. Maaaring matuyo at magka-pinsala ang mga halaman.'
             : 'Extremely dry soil. Immediate watering required. Plants may wilt and suffer damage.',
       },
       {
@@ -197,7 +197,7 @@ class SoilMoistureInfo extends StatelessWidget {
                             children: [
                               Container(
                                 width: 100,
-                                height: 60,
+                                height: 80,
                                 padding: const EdgeInsets.all(12.0),
                                 decoration: BoxDecoration(
                                   color: level['color'],
@@ -227,8 +227,8 @@ class SoilMoistureInfo extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        const Divider(thickness: 1, color: Colors.grey),
-                        const SizedBox(height: 8),
+                        // const Divider(thickness: 1, color: Colors.grey),
+                        //const SizedBox(height: 8),
                       ],
                     );
                   },
@@ -257,6 +257,7 @@ class SoilMoistureInfo extends StatelessWidget {
                 ),
               ),
             ),
+
             SliverPadding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -264,6 +265,7 @@ class SoilMoistureInfo extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const Divider(thickness: 1, color: Colors.grey),
                     const Text(
                       'Relative Humidity Levels',
                       style: TextStyle(
@@ -271,7 +273,7 @@ class SoilMoistureInfo extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           color: Color.fromARGB(255, 100, 122, 99)),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 30),
                     ...humidityLevels.map((humidity) {
                       return _buildInfoCard(humidity['range'],
                           humidity['description'], humidity['color']);
@@ -306,6 +308,7 @@ class SoilMoistureInfo extends StatelessWidget {
               sliver: SliverList(
                 delegate: SliverChildListDelegate(
                   [
+                    const Divider(thickness: 1, color: Colors.grey),
                     const Text(
                       'Temperature Levels',
                       style: TextStyle(
@@ -331,6 +334,7 @@ class SoilMoistureInfo extends StatelessWidget {
                 ),
               ),
             ),
+
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -393,6 +397,7 @@ class SoilMoistureInfo extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const Divider(thickness: 1, color: Colors.grey),
                     const Text(
                       'Soil Types & Moisture Retention',
                       style: TextStyle(
@@ -400,7 +405,7 @@ class SoilMoistureInfo extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           color: Color.fromARGB(255, 100, 122, 99)),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 30),
                     ...soilTypes.map((soil) {
                       return _buildInfoCard(
                           soil['type'], soil['description'], soil['color']);
