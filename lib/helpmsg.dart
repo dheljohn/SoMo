@@ -91,59 +91,59 @@ class _HelperMsgState extends State<HelperMsg> {
     messages.clear(); // Clear only if TTS is not active
 
     if (humidityValue <= 40) {
-  addMessage(
-    isFilipino
-        ? 'Masyadong tuyo. Maaaring magdulot ng pagkatuyo ng halaman.'
-        : 'Too dry. Can cause plant dehydration.',
-    const Color.fromARGB(255, 253, 133, 124),
-  );
-} else if (humidityValue > 40 && humidityValue <= 70) {
-  addMessage(
-    isFilipino
-        ? 'Katanggap-tanggap. Angkop para sa karamihan ng mga halaman.'
-        : 'Accepted. Suitable for most plants.',
-    const Color.fromARGB(255, 103, 172, 105),
-  );
-} else {
-  addMessage(
-    isFilipino
-        ? 'Masyadong mahalumigmig. May panganib ng fungal growth at sobrang pagdidilig.'
-        : 'Too moist. Risk of fungal growth and overwatering.',
-    const Color.fromARGB(255, 131, 174, 209),
-  );
-}
+      addMessage(
+        isFilipino
+            ? 'Masyadong tuyo. Maaaring magdulot ng pagkatuyo ng halaman.'
+            : 'Too dry. Can cause plant dehydration.',
+        const Color.fromARGB(255, 253, 133, 124),
+      );
+    } else if (humidityValue > 40 && humidityValue <= 70) {
+      addMessage(
+        isFilipino
+            ? 'Katanggap-tanggap. Angkop para sa karamihan ng mga halaman.'
+            : 'Accepted. Suitable for most plants.',
+        const Color.fromARGB(255, 103, 172, 105),
+      );
+    } else {
+      addMessage(
+        isFilipino
+            ? 'Masyadong mahalumigmig. May panganib ng fungal growth at sobrang pagdidilig.'
+            : 'Too moist. Risk of fungal growth and overwatering.',
+        const Color.fromARGB(255, 131, 174, 209),
+      );
+    }
 
-    if (temperatureValue <= 18) { 
-  addMessage(
-      isFilipino
-          ? 'Malamig. Panganib ng frost damage. Protektahan ang mga pananim gamit ang takip.'
-          : 'Cold. Risk of frost damage. Protect crops with covers.',
-      Colors.blue[300] ?? Colors.blue);
-} else if (temperatureValue > 18 && temperatureValue <= 23) {
-  addMessage(
-      isFilipino
-          ? 'Komportable. Perpektong temperatura para sa karamihan ng mga pananim.'
-          : 'Comfortable. Ideal temperature for most crops.',
-      Colors.green[400] ?? Colors.green);
-} else if (temperatureValue > 23 && temperatureValue <= 29) {
-  addMessage(
-      isFilipino
-          ? 'Mainit. Magandang kundisyon ng paglago, ngunit bantayan ang moisture ng lupa.'
-          : 'Warm. Good growth conditions, but monitor soil moisture.',
-      Colors.orange[300] ?? Colors.orange);
-} else if (temperatureValue > 29 && temperatureValue <= 35) {
-  addMessage(
-      isFilipino
-          ? 'Napakainit. Maaaring makaranas ng heat stress ang mga pananim. Siguraduhin ang tamang pagdidilig.'
-          : 'Hot. Crops may experience heat stress. Ensure proper irrigation.',
-      Colors.red[300] ?? Colors.red);
-} else {
-  addMessage(
-      isFilipino
-          ? 'Sobrang init. Mataas ang panganib ng pagkatuyo at pagkasira ng pananim. Magbigay ng lilim at tubig.'
-          : 'Very hot. High risk of dehydration and crop damage. Provide shade and water.',
-      Colors.red[700] ?? Colors.red);
-}
+    if (temperatureValue <= 18) {
+      addMessage(
+          isFilipino
+              ? 'Malamig. Panganib ng frost damage. Protektahan ang mga pananim gamit ang takip.'
+              : 'Cold. Risk of frost damage. Protect crops with covers.',
+          Colors.blue[300] ?? Colors.blue);
+    } else if (temperatureValue > 18 && temperatureValue <= 23) {
+      addMessage(
+          isFilipino
+              ? 'Komportable. Perpektong temperatura para sa karamihan ng mga pananim.'
+              : 'Comfortable. Ideal temperature for most crops.',
+          Colors.green[400] ?? Colors.green);
+    } else if (temperatureValue > 23 && temperatureValue <= 29) {
+      addMessage(
+          isFilipino
+              ? 'Mainit. Magandang kundisyon ng paglago, ngunit bantayan ang moisture ng lupa.'
+              : 'Warm. Good growth conditions, but monitor soil moisture.',
+          Colors.orange[300] ?? Colors.orange);
+    } else if (temperatureValue > 29 && temperatureValue <= 35) {
+      addMessage(
+          isFilipino
+              ? 'Napakainit. Maaaring makaranas ng heat stress ang mga pananim. Siguraduhin ang tamang pagdidilig.'
+              : 'Hot. Crops may experience heat stress. Ensure proper irrigation.',
+          Colors.red[300] ?? Colors.red);
+    } else {
+      addMessage(
+          isFilipino
+              ? 'Sobrang init. Mataas ang panganib ng pagkatuyo at pagkasira ng pananim. Magbigay ng lilim at tubig.'
+              : 'Very hot. High risk of dehydration and crop damage. Provide shade and water.',
+          Colors.red[700] ?? Colors.red);
+    }
 
     void checkSensor(String sensorName, double moistureValue) {
       List<int> idealRange =
@@ -213,23 +213,28 @@ class _HelperMsgState extends State<HelperMsg> {
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
               children: [
                 Image.asset(
                   'assets/somo.png',
-                  width: 25,
-                  height: 25,
+                  width: MediaQuery.of(context).size.width * 0.07,
+                  height: MediaQuery.of(context).size.width * 0.07,
+                  // width: 25,
+                  // height: 25,
                 ),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   "SOMO",
                   style: TextStyle(
-                      color: Color.fromARGB(255, 125, 171, 124), fontSize: 17),
+                      color: Color.fromARGB(255, 125, 171, 124),
+                      fontSize: MediaQuery.of(context).size.width * 0.045),
                 ),
                 IconButton(
                   icon: Icon(Icons.volume_up,
-                      color: Color.fromARGB(255, 42, 83, 39)),
+                      color: Color.fromARGB(255, 42, 83, 39),
+                      size: MediaQuery.of(context).size.width * 0.050),
                   onPressed: () async {
                     if (messages.isNotEmpty) {
                       await _speak(messages[_currentIndex]['text']);
@@ -246,7 +251,7 @@ class _HelperMsgState extends State<HelperMsg> {
         // Padding(
         //   padding: const EdgeInsets.symmetric(vertical: 5.0),
         // ),
-        Expanded(
+        Flexible(
           child: messages.isEmpty
               ? Center(
                   child: Text(
@@ -256,57 +261,65 @@ class _HelperMsgState extends State<HelperMsg> {
                     style: TextStyle(color: Colors.green, fontSize: 16),
                   ),
                 )
-              : CarouselSlider.builder(
-                  itemCount: messages.length,
-                  options: CarouselOptions(
-                    height: 160, // Adjust height based on message length
-                    scrollDirection: Axis.vertical,
-                    autoPlay: !context
-                        .watch<TtsProvider>()
-                        .isSpeaking, // Correct logic
-                    pauseAutoPlayOnTouch: true, // Allow manual interaction
-                    pauseAutoPlayOnManualNavigate:
-                        true, // Pause when manually scrolling
-                    pauseAutoPlayInFiniteScroll: true, // Pause on last slide
-
-                    autoPlayInterval: const Duration(seconds: 5),
-                    enlargeCenterPage: false,
-                    viewportFraction: 1.0,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _currentIndex = index;
-                      });
-                    },
-                  ),
-                  itemBuilder: (context, index, realIndex) {
-                    return Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: messages[index]['color'],
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(0),
-                          topRight: Radius.circular(20),
-                          bottomLeft: Radius.circular(20),
-                          bottomRight: Radius.circular(20),
-                        ),
+              : LayoutBuilder(
+                  builder: (context, constraints) {
+                    return CarouselSlider.builder(
+                      itemCount: messages.length,
+                      options: CarouselOptions(
+                        scrollDirection: Axis.vertical,
+                        autoPlay: !context.watch<TtsProvider>().isSpeaking,
+                        pauseAutoPlayOnTouch: true,
+                        pauseAutoPlayOnManualNavigate: true,
+                        pauseAutoPlayInFiniteScroll: true,
+                        autoPlayInterval: const Duration(seconds: 5),
+                        enlargeCenterPage: false,
+                        viewportFraction: 1.0,
+                        enableInfiniteScroll: true,
+                        scrollPhysics: ClampingScrollPhysics(),
+                        padEnds: false,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            _currentIndex = index;
+                          });
+                        },
                       ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.warning,
-                              color: Color.fromARGB(255, 247, 213, 163)),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              messages[index]['text'],
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.040,
+                      itemBuilder: (context, index, realIndex) {
+                        return SizedBox.expand(
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              // width: double.infinity,
+
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: messages[index]['color'],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(Icons.warning,
+                                      color:
+                                          Color.fromARGB(255, 247, 213, 163)),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      messages[index]['text'],
+                                      style: TextStyle(
+                                        height: 1.2,
+                                        color: Colors.white,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.040,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     );
                   },
                 ),
