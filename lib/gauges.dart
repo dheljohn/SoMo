@@ -26,9 +26,7 @@ class Gauges extends StatelessWidget {
           ? 'Hindi nakadetek ng basa'
           : 'Soil Moisture not detected';
     } else if (value <= 29) {
-      return isFilipino
-          ? 'Matinding pagkatuyo ng Lupa!'
-          : 'Extremely Dry Soil!';
+      return isFilipino ? 'Matinding tuyong lupa!' : 'Extremely Dry Soil!';
     } else if (value < idealRange[0]) {
       return isFilipino
           ? 'Maayos ang Daloy ng Tubig sa Lupa!'
@@ -52,8 +50,7 @@ class Gauges extends StatelessWidget {
           : 'Soil Moisture not detected';
     } else if (value <= 29) {
       return isFilipino
-
-          ? 'Matinding Pagkatuyo ng Lupa ang Napansin! \nRekomendasyon: Diligan ang lupa ayon sa pangangailangan. 🌱'
+          ? 'Matinding tuyong lupa! \nRekomendasyon: Diligan ang lupa ayon sa pangangailangan. 🌱'
           : ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
     } else if (value < idealRange[0]) {
       return isFilipino
@@ -62,11 +59,10 @@ class Gauges extends StatelessWidget {
     } else if (value > idealRange[1]) {
       return isFilipino
           ? 'Sobrang Basa ang Lupa! \nRekomendasyon: Huwag munang magdilig, patayin ang drip line, at ayusin ang daluyan ng tubig. 🚰'
-
           : 'Wet Soil Detected! \nRecommendation: Turn Off the Drip line or Skip the next scheduled watering and improve soil drainage. 🚰';
     } else {
       return isFilipino
-          ? 'Mamasa-masang Lupa.\Ideal na Antas ng Moisture.'
+          ? 'Mamasa-masang Lupa.\nIdeal na Antas ng Moisture.'
           : 'Moist Soil. \nIdeal Moisture Level. 🌱';
     }
   }
@@ -220,15 +216,16 @@ class Gauges extends StatelessWidget {
               flex: 2,
               child: Text(
                 getWarningMessage(value),
-
                 style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width * 0.029,
                   fontWeight: FontWeight.bold,
                   color: getWarningColor(value),
+                  height: 1,
                 ),
-                softWrap: true, // ✅ Allows text to wrap instead of cutting off
-                overflow: TextOverflow.visible, // ✅ Ensures text is readable
+                softWrap: true, //  Allows text to wrap instead of cutting off
+                overflow: TextOverflow.visible, //  Ensures text is readable
                 maxLines: 2,
+                textAlign: TextAlign.center,
               ),
             ),
           ],

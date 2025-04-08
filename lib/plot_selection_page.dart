@@ -129,10 +129,13 @@ class _PlotSelectionState extends State<PlotSelection> {
                   Expanded(
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
-                        isExpanded: true,
+                        menuWidth: screenWidth * 0.34,
+                        iconSize: screenWidth * 0.07,
+                        isExpanded: false,
                         alignment: Alignment
                             .centerLeft, // Keeps dropdown in one position
-                        menuMaxHeight: 160, // Limits dropdown height
+                        menuMaxHeight:
+                            screenWidth * 0.45, // Limits dropdown height
                         value: selectedPlot,
                         dropdownColor: const Color.fromARGB(255, 139, 169, 130),
                         style: TextStyle(

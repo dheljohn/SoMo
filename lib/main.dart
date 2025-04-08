@@ -44,13 +44,13 @@ void main() async {
                 create: (context) => TtsProvider()), // Add this
           ],
           child: DevicePreview(
-            enabled: kReleaseMode, //comment this line to disable device preview
+            enabled: false, //comment this line to disable device preview
             builder: (context) => MaterialApp(
               useInheritedMediaQuery: true,
               locale: DevicePreview.locale(context),
               builder: DevicePreview.appBuilder,
               home: SplashScreen(), //undo comment to enable splash screen
-              // home: Home(), //comment for debugging
+              //home: Home(), //comment for debugging
               debugShowCheckedModeBanner: false,
             ),
           ),
@@ -73,13 +73,13 @@ void main() async {
                 create: (context) => TtsProvider()), // Add this
           ],
           child: DevicePreview(
-            enabled: kReleaseMode, //comment this line to disable device preview
+            enabled: false, //comment this line to disable device preview
             builder: (context) => MaterialApp(
               useInheritedMediaQuery: true,
               locale: DevicePreview.locale(context),
               builder: DevicePreview.appBuilder,
               home: SplashScreen(), //undo comment to enable splash screen
-              // home: Home(), //comment for debugging
+              //home: Home(), //comment for debugging
               debugShowCheckedModeBanner: false,
             ),
           ),

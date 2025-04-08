@@ -266,7 +266,6 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
     // Function to get text color based on value and type
     Color getTextColor(String type, double value) {
       switch (type) {
-
         case 'humidity':
           return value < 40
               ? const Color.fromARGB(255, 253, 133, 124)
@@ -285,7 +284,6 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                           ? const Color.fromARGB(255, 253, 133, 124) // Hot
                           : const Color.fromARGB(
                               255, 198, 40, 40); // Very hot (Sweltering)
-
 
         default:
           return Colors.grey;
@@ -308,41 +306,8 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                 SizedBox(height: screenHeight * 0.02),
 
                 PlotSelection(onPlotChanged: _onPlotChanged),
-                // Date Container
-                // Container(
-                //   padding: EdgeInsets.all(screenWidth * 0.04),
-                //   decoration: BoxDecoration(
-                //     color: const Color.fromARGB(255, 138, 167, 136),
-                //     borderRadius: BorderRadius.circular(12),
-                //     boxShadow: [
-                //       BoxShadow(
-                //         color: Colors.black.withOpacity(0.1),
-                //         blurRadius: 5,
-                //         spreadRadius: 2,
-                //       ),
-                //     ],
-                //   ),
-                //   child: Row(
-                //     // Changed from Column to Row for two-column layout
 
-                //     children: [
-                //       // Left Column
-                //       Expanded(
-                //         child: Column(
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           children: [
-                //             // Display WiFi status snackbar
-
-                //           ],
-                //         ),
-                //       ),
-
-                //       PlotSelection(),
-                //     ],
-                //   ),
-                // ),
-                // SizedBox(height: screenHeight * 0.02),
-                SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: screenHeight * 0.01),
 
                 // Gauges(dataProvider: dataProvider),
                 Gauges(dataProvider: dataProvider, selectedPlot: selectedPlot),
@@ -432,14 +397,18 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
                   ),
                 ),
                 Align(
-                  alignment: Alignment.topCenter,
+                  alignment: Alignment.topLeft,
                   child: Container(
                     color: const Color.fromARGB(255, 247, 246, 237),
                     margin: EdgeInsets.all(screenWidth * 0.02),
-                    height: isFilipino
-                        ? screenHeight * 0.3
-                        : screenHeight * 0.237, //0.237
+
+                    // Adjust height for larger screens
+                    //height: screenHeight * .32, // around 35% of screen height
                     width: double.infinity,
+                    height: screenHeight > 700
+                        ? screenHeight * 0.28
+                        : screenHeight * 0.35,
+
                     child: HelperMsg(
                       key: ValueKey(
                           selectedPlot), // Force rebuild on plot change
