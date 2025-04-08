@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -96,6 +97,7 @@ class _HelperMsgState extends State<HelperMsg> {
             ? 'Masyadong tuyo. Maaaring magdulot ng pagkatuyo ng halaman.'
             : 'Too dry. Can cause plant dehydration.',
         const Color.fromARGB(255, 253, 133, 124),
+        Icons.water_drop_outlined,
       );
     } else if (humidityValue > 40 && humidityValue <= 70) {
       addMessage(
@@ -103,6 +105,7 @@ class _HelperMsgState extends State<HelperMsg> {
             ? 'Katanggap-tanggap. Angkop para sa karamihan ng mga halaman.'
             : 'Accepted. Suitable for most plants.',
         const Color.fromARGB(255, 103, 172, 105),
+        Icons.check_circle_outline,
       );
     } else {
       addMessage(
@@ -110,39 +113,50 @@ class _HelperMsgState extends State<HelperMsg> {
             ? 'Masyadong mahalumigmig. May panganib ng fungal growth at sobrang pagdidilig.'
             : 'Too moist. Risk of fungal growth and overwatering.',
         const Color.fromARGB(255, 131, 174, 209),
+        Icons.water_drop_outlined,
       );
     }
 
     if (temperatureValue <= 18) {
       addMessage(
-          isFilipino
-              ? 'Malamig. Panganib ng frost damage. Protektahan ang mga pananim gamit ang takip.'
-              : 'Cold. Risk of frost damage. Protect crops with covers.',
-          Colors.blue[300] ?? Colors.blue);
+        isFilipino
+            ? 'Malamig. Panganib ng frost damage. Protektahan ang mga pananim gamit ang takip.'
+            : 'Cold. Risk of frost damage. Protect crops with covers.',
+        Colors.blue[300] ?? Colors.blue,
+        Icons.thermostat,
+      );
     } else if (temperatureValue > 18 && temperatureValue <= 23) {
       addMessage(
-          isFilipino
-              ? 'Komportable. Perpektong temperatura para sa karamihan ng mga pananim.'
-              : 'Comfortable. Ideal temperature for most crops.',
-          Colors.green[400] ?? Colors.green);
+        isFilipino
+            ? 'Komportable. Perpektong temperatura para sa karamihan ng mga pananim.'
+            : 'Comfortable. Ideal temperature for most crops.',
+        Colors.green[400] ?? Colors.green,
+        Icons.check_circle_outline,
+      );
     } else if (temperatureValue > 23 && temperatureValue <= 29) {
       addMessage(
-          isFilipino
-              ? 'Mainit. Magandang kundisyon ng paglago, ngunit bantayan ang moisture ng lupa.'
-              : 'Warm. Good growth conditions, but monitor soil moisture.',
-          Colors.orange[300] ?? Colors.orange);
+        isFilipino
+            ? 'Mainit. Magandang kundisyon ng paglago, ngunit bantayan ang moisture ng lupa.'
+            : 'Warm. Good growth conditions, but monitor soil moisture.',
+        Colors.orange[300] ?? Colors.orange,
+        Icons.thermostat,
+      );
     } else if (temperatureValue > 29 && temperatureValue <= 35) {
       addMessage(
-          isFilipino
-              ? 'Napakainit. Maaaring makaranas ng heat stress ang mga pananim. Siguraduhin ang tamang pagdidilig.'
-              : 'Hot. Crops may experience heat stress. Ensure proper irrigation.',
-          Colors.red[300] ?? Colors.red);
+        isFilipino
+            ? 'Napakainit. Maaaring makaranas ng heat stress ang mga pananim. Siguraduhin ang tamang pagdidilig.'
+            : 'Hot. Crops may experience heat stress. Ensure proper irrigation.',
+        Colors.red[300] ?? Colors.red,
+        Icons.thermostat,
+      );
     } else {
       addMessage(
-          isFilipino
-              ? 'Sobrang init. Mataas ang panganib ng pagkatuyo at pagkasira ng pananim. Magbigay ng lilim at tubig.'
-              : 'Very hot. High risk of dehydration and crop damage. Provide shade and water.',
-          Colors.red[700] ?? Colors.red);
+        isFilipino
+            ? 'Sobrang init. Mataas ang panganib ng pagkatuyo at pagkasira ng pananim. Magbigay ng lilim at tubig.'
+            : 'Very hot. High risk of dehydration and crop damage. Provide shade and water.',
+        Colors.red[700] ?? Colors.red,
+        Icons.thermostat,
+      );
     }
 
     void checkSensor(String sensorName, double moistureValue) {
@@ -176,10 +190,12 @@ class _HelperMsgState extends State<HelperMsg> {
             const Color.fromARGB(255, 131, 174, 209));
       } else {
         addMessage(
-            isFilipino
-                ? '$sensorName: Mamasa-masang Lupa.\Ideal na Antas ng Moisture. 🌱'
-                : '$sensorName: Moist Soil Detected. \nIdeal Moisture Level. 🌱',
-            const Color.fromARGB(255, 103, 172, 105));
+          isFilipino
+              ? '$sensorName: Mamasa-masang Lupa.\nIdeal na Antas ng Moisture. 🌱'
+              : '$sensorName: Moist Soil Detected. \nIdeal Moisture Level. 🌱',
+          const Color.fromARGB(255, 103, 172, 105),
+          Icons.check_circle_outline,
+        );
       }
     }
 
@@ -189,11 +205,10 @@ class _HelperMsgState extends State<HelperMsg> {
     checkSensor(isFilipino ? 'Pang-apat na sensor' : 'Sensor 4', moistureS4);
   }
 
-  void addMessage(String text, Color color) {
+  void addMessage(String text, Color color, [IconData? icon = Icons.warning]) {
     if (ttsProvider?.isSpeaking == false) {
-      // Null-safe check
       setState(() {
-        messages.add({'text': text, 'color': color});
+        messages.add({'text': text, 'color': color, 'icon': icon});
       });
     }
   }
@@ -298,9 +313,10 @@ class _HelperMsgState extends State<HelperMsg> {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(Icons.warning,
-                                      color:
-                                          Color.fromARGB(255, 247, 213, 163)),
+                                  Icon(
+                                    messages[index]['icon'] ?? Icons.warning,
+                                    color: Color.fromARGB(255, 247, 213, 163),
+                                  ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
