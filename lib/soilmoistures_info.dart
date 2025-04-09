@@ -11,21 +11,21 @@ class SoilMoistureInfo extends StatelessWidget {
         'range': '15-29%',
         'color': const Color.fromARGB(255, 253, 133, 124),
         'description': isFilipino
-            ? 'Matinding tuyong lupa! Kailangan madiligan kaagad. Maaaring matuyo at magka-pinsala ang mga halaman.'
+            ? 'Matinding tuyong lupa. Kailangan madiligan kaagad. Maaaring matuyo at magka-pinsala ang mga halaman.'
             : 'Extremely dry soil. Immediate watering required. Plants may wilt and suffer damage.',
       },
       {
         'range': '30-45%',
         'color': const Color.fromARGB(255, 236, 188, 66),
         'description': isFilipino
-            ? 'Tuyong lupa / maayos ang drainage. Pag-isipang diligan sa lalong madaling panahon.'
-            : 'Dry / well-drained soil. Consider watering soon. Some drought-tolerant plants can survive.',
+            ? 'Malapit na matuyong Lupa. Isaalang-alang na ang pagdidilig. Ang ibang halaman ay matibay sa tagtuyot at maaaring makaligtas.'
+            : 'Almost dry soil/Well-drained soil. Consider watering soon. Some drought-tolerant plants can survive.',
       },
       {
         'range': '46-75%',
         'color': const Color.fromARGB(255, 103, 172, 105),
         'description': isFilipino
-            ? 'Basang lupa. Perpektong kondisyon para sa karamihan ng mga halaman.'
+            ? 'Basang lupa. Perpektong kondisyon para sa karamihan ng mga halaman. Tiyak ang maayus na paglago.'
             : 'Moist soil. Ideal condition for most plants. Ensures healthy growth.',
       },
       {

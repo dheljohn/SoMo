@@ -91,7 +91,7 @@ class _HelperMsgState extends State<HelperMsg> {
 
     messages.clear(); // Clear only if TTS is not active
 
-    if (humidityValue <= 40) {
+    if (humidityValue <= 39) {
       addMessage(
         isFilipino
             ? 'Masyadong tuyo. Maaaring magdulot ng pagkatuyo ng halaman.'
@@ -99,7 +99,7 @@ class _HelperMsgState extends State<HelperMsg> {
         const Color.fromARGB(255, 253, 133, 124),
         Icons.water_drop_outlined,
       );
-    } else if (humidityValue > 40 && humidityValue <= 70) {
+    } else if (humidityValue >= 40 && humidityValue <= 70) {
       addMessage(
         isFilipino
             ? 'Katanggap-tanggap. Angkop para sa karamihan ng mga halaman.'
@@ -110,22 +110,22 @@ class _HelperMsgState extends State<HelperMsg> {
     } else {
       addMessage(
         isFilipino
-            ? 'Masyadong mahalumigmig. May panganib ng fungal growth at sobrang pagdidilig.'
-            : 'Too moist. Risk of fungal growth and overwatering.',
+            ? 'Mataas ang humidity. May panganib ng fungal growth at sobrang pagdidilig.'
+            : 'High humidity. Risk of fungal growth and overwatering.',
         const Color.fromARGB(255, 131, 174, 209),
         Icons.water_drop_outlined,
       );
     }
 
-    if (temperatureValue <= 18) {
+    if (temperatureValue < 18) {
       addMessage(
         isFilipino
-            ? 'Malamig. Panganib ng frost damage. Protektahan ang mga pananim gamit ang takip.'
+            ? 'Malamig. Panganib ng frost damage. Protektahan ang mga pananim gamit ang angkop na cover.'
             : 'Cold. Risk of frost damage. Protect crops with covers.',
-        Colors.blue[300] ?? Colors.blue,
+        const Color.fromARGB(255, 131, 174, 209),
         Icons.thermostat,
       );
-    } else if (temperatureValue > 18 && temperatureValue <= 23) {
+    } else if (temperatureValue >= 18 && temperatureValue <= 23) {
       addMessage(
         isFilipino
             ? 'Komportable. Perpektong temperatura para sa karamihan ng mga pananim.'
@@ -152,7 +152,7 @@ class _HelperMsgState extends State<HelperMsg> {
     } else {
       addMessage(
         isFilipino
-            ? 'Sobrang init. Mataas ang panganib ng pagkatuyo at pagkasira ng pananim. Magbigay ng lilim at tubig.'
+            ? 'Sobrang init. Mataas ang panganib ng pagkatuyo at pagkasira ng pananim. Magbigay ng lilim at dilig.'
             : 'Very hot. High risk of dehydration and crop damage. Provide shade and water.',
         Colors.red[700] ?? Colors.red,
         Icons.thermostat,
@@ -179,8 +179,8 @@ class _HelperMsgState extends State<HelperMsg> {
       } else if (moistureValue < idealRange[0]) {
         addMessage(
             isFilipino
-                ? '$sensorName: Maayos na Natutuyong Lupa! \nRekomendasyon: Isaalang-alang ang pagdidilig sa lalong madaling panahon.🌱'
-                : '$sensorName: Well Drained Soil Detected! \nRecommendation: Considering watering soon. 🌱',
+                ? '$sensorName: Malapit ng Matuyo ang Lupa! \nRekomendasyon: Isaalang-alang ang pagdidilig sa lalong madaling panahon.🌱'
+                : '$sensorName: Almost Dry Soil! \nRecommendation: Considering watering soon. 🌱',
             const Color.fromARGB(255, 236, 188, 66));
       } else if (moistureValue > idealRange[1]) {
         addMessage(

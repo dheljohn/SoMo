@@ -28,9 +28,7 @@ class Gauges extends StatelessWidget {
     } else if (value <= 29) {
       return isFilipino ? 'Matinding tuyong lupa!' : 'Extremely Dry Soil!';
     } else if (value < idealRange[0]) {
-      return isFilipino
-          ? 'Maayos ang Daloy ng Tubig sa Lupa!'
-          : 'Well Drained Soil!';
+      return isFilipino ? 'Malapit na matuyong lupa!' : 'Almost Dry Soil!';
     } else if (value > idealRange[1]) {
       return isFilipino ? 'Basang-basa ang Lupa!' : 'Wet Soil';
     } else {
@@ -54,8 +52,8 @@ class Gauges extends StatelessWidget {
           : ' Extremely Dry Soil Detected! \nRecommendation: Water the soil as needed. 🌱';
     } else if (value < idealRange[0]) {
       return isFilipino
-          ? 'Maayos na Natutuyong Lupa! \nRekomendasyon: Isaalang-alang ang pagdidilig sa lalong madaling panahon.🌱'
-          : 'Well Drained Soil!\nRecommendation: Considering watering soon.🌱';
+          ? 'Malapit na Matuyong Lupa! \nRekomendasyon: Isaalang-alang ang pagdidilig sa lalong madaling panahon.🌱'
+          : 'Almost Dry Soil!\nRecommendation: Considering watering soon.🌱';
     } else if (value > idealRange[1]) {
       return isFilipino
           ? 'Sobrang Basa ang Lupa! \nRekomendasyon: Huwag munang magdilig, patayin ang drip line, at ayusin ang daluyan ng tubig. 🚰'
@@ -71,7 +69,7 @@ class Gauges extends StatelessWidget {
     List<int> idealRange = moistureLevels[selectedPlot] ?? [50, 70];
     if (value < 8) {
       return Colors.grey;
-    } else if (value == 15 || value <= 29) {
+    } else if (value == 8 || value <= 29) {
       return const Color.fromARGB(255, 253, 133, 124);
     } else if (value == 30 || value < idealRange[0]) {
       return const Color.fromARGB(255, 236, 188, 66);
@@ -189,7 +187,7 @@ class Gauges extends StatelessWidget {
                         maximum: 100,
                         pointers: <GaugePointer>[
                           RangePointer(
-                            value: value > 14
+                            value: value > 7
                                 ? value
                                 : 0, // Show 0% if not deployed
                             color: getWarningColor(value),
