@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,12 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool showOverlay = true;
   Set<String> activeNotifications = {};
-  int? _lastAllowedHour;
+  // Inside _HomeState class in home.dart
+  final Map<String, List<int>> moistureLevels = {
+    'Lettuce': [60, 80],
+    'Pechay': [50, 70],
+    'Mustard': [40, 60],
+  };
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -56,6 +62,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _initializeNotifications();
+    _scheduleWaterReminders();
     _startTimer();
   }
 
@@ -101,45 +108,33 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _fetchDataFromFirebase() {
-    final currentHour = DateTime.now().hour;
-    final isAllowedHour = [8, 11, 15].contains(currentHour);
+  void _fetchDataFromFirebase() async {
+    // Fetch selected plot from Firebase
+    DatabaseReference selectedPlotRef =
+        FirebaseDatabase.instance.ref().child('SelectedPlot');
+    DataSnapshot plotSnapshot = await selectedPlotRef.get();
+    String selectedPlot =
+        (plotSnapshot.value as Map?)?['plotName']?.toString() ?? 'Lettuce';
 
-    if (isAllowedHour) {
-      if (_lastAllowedHour != currentHour) {
-        activeNotifications.clear();
-        _lastAllowedHour = currentHour;
-      }
-    } else {
-      _lastAllowedHour = null;
-    }
-
-    DatabaseReference humidityRef =
-        FirebaseDatabase.instance.ref().child('Humidity/humidity');
-    DatabaseReference temperatureRef =
-        FirebaseDatabase.instance.ref().child('Temperature/temperature');
-    DatabaseReference moistureAvgRef =
-        FirebaseDatabase.instance.ref().child('Moisture/Average');
-    DatabaseReference moistureDataRef =
-        FirebaseDatabase.instance.ref().child('Moisture');
+    // Get moisture range for selected crop
+    List<int> idealRange = moistureLevels[selectedPlot] ?? [60, 80];
+    int minMoisture = idealRange[0];
+    int maxMoisture = idealRange[1];
 
     // Fetch Humidity
+    DatabaseReference humidityRef =
+        FirebaseDatabase.instance.ref().child('Humidity/humidity');
     humidityRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
-      setState(() {
-        humidity_v = value;
-      });
-      // Check humidity conditions for notifications
-      if (humidity_v < 30) {
+      setState(() => humidity_v = value);
+      if (humidity_v < 41) {
         _showGroupedNotification(
             'Humidity is too low ($humidity_v%). Increase moisture levels.',
             'humidity_low');
       } else {
-        activeNotifications
-            .remove('humidity_low'); // Reset when condition is resolved
+        activeNotifications.remove('humidity_low');
       }
-
-      if (humidity_v > 80) {
+      if (humidity_v > 69) {
         _showGroupedNotification(
             'Humidity is too high ($humidity_v%). Ventilation may be needed.',
             'humidity_high');
@@ -149,23 +144,25 @@ class _HomeState extends State<Home> {
     });
 
     // Fetch Temperature
+    DatabaseReference temperatureRef =
+        FirebaseDatabase.instance.ref().child('Temperature/temperature');
     temperatureRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
-      setState(() {
-        temperature_v = value;
-      });
-      // Check temperature conditions for notifications
-      if (temperature_v < 15) {
+      setState(() => temperature_v = value);
+      if (temperature_v < 18) {
         _showGroupedNotification(
             'Temperature is too low ($temperature_v°C). Protect crops from cold.',
             'temp_low');
       } else {
         activeNotifications.remove('temp_low');
       }
-
-      if (temperature_v > 35) {
+      if (temperature_v > 28 && temperature_v < 34) {
         _showGroupedNotification(
-            'Temperature is too high ($temperature_v°C). Heat stress risk for crops.',
+            'Temperature is hot at ($temperature_v°C). Heat stress risk for crops.',
+            'temp_high');
+      } else if (temperature_v > 34) {
+        _showGroupedNotification(
+            'Temperature is too hot ($temperature_v°C). Heat stress risk for crops.',
             'temp_high');
       } else {
         activeNotifications.remove('temp_high');
@@ -173,14 +170,16 @@ class _HomeState extends State<Home> {
     });
 
     // Fetch Moisture Average
+    DatabaseReference moistureAvgRef =
+        FirebaseDatabase.instance.ref().child('Moisture/Average');
     moistureAvgRef.once().then((event) {
       double value = double.tryParse(event.snapshot.value.toString()) ?? 0.0;
-      setState(() {
-        moisture_a = value;
-      });
+      setState(() => moisture_a = value);
     });
 
-    // Fetch Moisture Data
+    // Fetch Moisture Data with dynamic thresholds
+    DatabaseReference moistureDataRef =
+        FirebaseDatabase.instance.ref().child('Moisture');
     moistureDataRef.once().then((event) {
       final value = event.snapshot.value as Map?;
       if (value != null) {
@@ -203,62 +202,117 @@ class _HomeState extends State<Home> {
           moisture_s3 = moisture3;
           moisture_s4 = moisture4;
         });
-        if (moisture_s1 < 40 && moisture_s1 >= 15) {
-          _showGroupedNotification(
-              'Sensor 1 detected dry soil. Irrigation may be needed to prevent dehydration.',
-              'moisture1_low');
-        } else {
-          activeNotifications.remove('moisture1_low');
-        }
-        if (moisture2 < 40 && moisture2 >= 15) {
-          _showGroupedNotification(
-              'Sensor 2 detected dry soil. Irrigation may be needed to prevent dehydration.',
-              'moisture2_low');
-        }
-        if (moisture3 < 40 && moisture3 >= 15) {
-          _showGroupedNotification(
-              'Sensor 3 detected dry soil. Irrigation may be needed to prevent dehydration.',
-              'moisture3_low');
-        }
-        if (moisture4 < 40 && moisture4 >= 15) {
-          _showGroupedNotification(
-              'Sensor 4 detected dry soil. Irrigation may be needed to prevent dehydration.',
-              'moisture4_low');
+
+        // Helper function for moisture checks
+        void checkMoisture(double value, String sensorNumber) {
+          if (value < 8) return; // Sensor not deployed
+          if (value <= 29) {
+            _showGroupedNotification(
+                'Sensor $sensorNumber detected Extremely Dry Soil. Irrigate immediately!',
+                'moisture${sensorNumber}_low');
+          } else if (value < minMoisture) {
+            _showGroupedNotification(
+                'Sensor $sensorNumber detected dry soil. Irrigation may be needed to prevent dehydration.',
+                'moisture${sensorNumber}_low');
+          } else if (value > maxMoisture) {
+            _showGroupedNotification(
+                'Sensor $sensorNumber detected wet soil. Stop Irrigation to prevent overwatering.',
+                'moisture${sensorNumber}_high');
+          } else {
+            activeNotifications.remove('moisture${sensorNumber}_low');
+            activeNotifications.remove('moisture${sensorNumber}_high');
+          }
         }
 
-        if (moisture_s1 > 75) {
-          _showGroupedNotification(
-              'Sensor 1 detected wet soil. Stop Irrigation to prevent overwatering.',
-              'moisture1_high');
-        } else {
-          activeNotifications.remove('moisture1_high');
-        }
-
-        if (moisture2 > 75) {
-          _showGroupedNotification(
-              'Sensor 2 detected wet soil. Stop Irrigation to prevent overwatering.',
-              'moisture2_high');
-        }
-        if (moisture3 > 75) {
-          _showGroupedNotification(
-              'Sensor 3 detected wet soil. Stop Irrigation to prevent overwatering.',
-              'moisture3_high');
-        }
-        if (moisture4 > 75) {
-          _showGroupedNotification(
-              'Sensor 4 detected wet soil. Stop Irrigation to prevent overwatering.',
-              'moisture4_high');
-        }
+        // Check all sensors
+        checkMoisture(moisture_s1, '1');
+        checkMoisture(moisture_s2, '2');
+        checkMoisture(moisture_s3, '3');
+        checkMoisture(moisture_s4, '4');
       }
     });
   }
 
-  Future<void> _showGroupedNotification(String message, String key) async {
-    final currentHour = DateTime.now().hour;
-    if (![8, 11, 15].contains(currentHour)) {
-      return;
-    }
+  final List<String> morningGreetings = [
+    "Magandang umaga! It's a fresh start—check your plants and give them a boost of water!",
+    "Good morning! A little care goes a long way. Your plants are waiting for their morning sip!",
+    "Rise and shine! Don't forget to water your greens and help them grow strong today.",
+    "New day, new growth! Check your soil and give your plants the morning care they need.",
+    "Good morning po! Baka kailangan na ng konting dilig ang mga halaman natin.",
+  ];
 
+  final List<String> middayReminders = [
+    "☀️ Midday check! Mainit na, your plants might be thirsty.",
+    "Time for a midday refresh! Check the soil and give a quick water boost if needed.",
+    "Lunch break? Check your plants too, baka tuyô na sila.",
+    "🌞 Don’t let the heat dry them out! Check your garden now.",
+    "Midday alert! A little water now can keep your plants happy all afternoon.",
+  ];
+
+  final List<String> afternoonReminders = [
+    "🌇 Before sunset, check your plants one last time today.",
+    "Golden hour is a great time to water your plants!",
+    "Don't forget to hydrate your greens before evening sets in.",
+    "Last reminder of the day: Make sure your plants are comfy for the night.",
+    "Before you rest, make sure your plants aren't thirsty!",
+  ];
+
+  void _scheduleWaterReminders() {
+    Timer.periodic(const Duration(minutes: 1), (timer) {
+      final now = DateTime.now();
+      final currentHour = now.hour;
+
+      if ([8, 11, 15].contains(currentHour) && now.minute == 0) {
+        String reminderMessage;
+        final random = Random();
+
+        switch (currentHour) {
+          case 8:
+            reminderMessage =
+                morningGreetings[random.nextInt(morningGreetings.length)];
+            break;
+          case 11:
+            reminderMessage =
+                middayReminders[random.nextInt(middayReminders.length)];
+            break;
+          case 15:
+            reminderMessage =
+                afternoonReminders[random.nextInt(afternoonReminders.length)];
+            break;
+          default:
+            reminderMessage = "Time to check your plants!";
+        }
+
+        _showReminderNotification(reminderMessage);
+      }
+    });
+  }
+
+  Future<void> _showReminderNotification(String message) async {
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+      'reminder_channel',
+      'Watering Reminders',
+      importance: Importance.high,
+      priority: Priority.high,
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound('notif_sound'),
+      groupKey: null,
+    );
+
+    const NotificationDetails platformDetails =
+        NotificationDetails(android: androidDetails);
+
+    int uniqueId = DateTime.now().millisecondsSinceEpoch.remainder(100000);
+    await flutterLocalNotificationsPlugin.show(
+      uniqueId,
+      'Irrigation Reminder',
+      message,
+      platformDetails,
+    );
+  }
+
+  Future<void> _showGroupedNotification(String message, String key) async {
     if (activeNotifications.contains(key)) {
       return; // Prevent duplicate notifications
     }

@@ -103,127 +103,6 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
       print('User declined or has not accepted permission');
     }
   }
-// Removed duplicate _requestNotificationPermission method
-
-  void _showNotificationDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text("Enable Notifications"),
-        content: Text(
-            "This app requires notifications to function properly. Please allow notifications in settings."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _requestNotificationPermission();
-            },
-            child: Text("Enable"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _getFormattedDate() {
-    String formattedDate = DateFormat(' MMMM d, yyyy').format(DateTime.now());
-
-    if (isFilipino) {
-      formattedDate = _translateMonth(formattedDate);
-    }
-
-    return formattedDate;
-  }
-
-  String _getFormattedWeek() {
-    String formattedWeek = DateFormat('EEEE').format(DateTime.now());
-
-    if (isFilipino) {
-      formattedWeek = _translateWeek(formattedWeek);
-    }
-
-    return formattedWeek;
-  }
-
-  String _translateMonth(String date) {
-    return date.replaceAllMapped(
-      RegExp(
-          r'January|February|March|April|May|June|July|August|September|October|November|December'),
-      (match) {
-        return {
-          'January': 'Enero',
-          'February': 'Pebrero',
-          'March': 'Marso',
-          'April': 'Abril',
-          'May': 'Mayo',
-          'June': 'Hunyo',
-          'July': 'Hulyo',
-          'August': 'Agosto',
-          'September': 'Setyembre',
-          'October': 'Oktubre',
-          'November': 'Nobyembre',
-          'December': 'Disyembre',
-        }[match[0]]!;
-      },
-    );
-  }
-
-  String _translateWeek(String date) {
-    return date.replaceAllMapped(
-      RegExp(r'Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday'),
-      (match) {
-        return {
-          'Monday': 'Lunes',
-          'Tuesday': 'Martes',
-          'Wednesday': 'Miyerkules',
-          'Thursday': 'Huwebes',
-          'Friday': 'Biyernes',
-          'Saturday': 'Sabado',
-          'Sunday': 'Linggo',
-        }[match[0]]!;
-      },
-    );
-  }
-
-  String _getWeatherDescription(int weatherCode) {
-    switch (weatherCode) {
-      case 0:
-        return 'Clear Sky ☀️';
-      case 1:
-      case 2:
-      case 3:
-        return 'Partly Cloudy 🌤️';
-      case 45:
-      case 48:
-        return 'Foggy 🌫️';
-      case 51:
-      case 53:
-      case 55:
-        return 'Drizzle 🌧️';
-      case 61:
-      case 63:
-      case 65:
-        return 'Rainy 🌧️';
-      case 66:
-      case 67:
-        return 'Freezing Rain ❄️';
-      case 71:
-      case 73:
-      case 75:
-        return 'Snowfall ❄️';
-      case 95:
-        return 'Thunderstorm ⛈️';
-      case 99:
-        return 'Heavy Thunderstorm 🌩️';
-      default:
-        return 'Unknown Weather';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -276,11 +155,11 @@ class _DashBState extends State<DashB> with TickerProviderStateMixin {
         case 'temperature':
           return value < 18
               ? const Color.fromARGB(255, 131, 174, 209) // Cold
-              : value >= 18 && value < 23
+              : value >= 18 && value <= 23
                   ? const Color.fromARGB(255, 103, 172, 105) // Comfortable
-                  : value >= 23 && value < 29
+                  : value > 23 && value <= 29
                       ? const Color.fromARGB(255, 255, 183, 77) // Warm
-                      : value >= 29 && value < 35
+                      : value >= 30 && value <= 35
                           ? const Color.fromARGB(255, 253, 133, 124) // Hot
                           : const Color.fromARGB(
                               255, 198, 40, 40); // Very hot (Sweltering)
