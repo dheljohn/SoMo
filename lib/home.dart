@@ -336,10 +336,28 @@ class _HomeState extends State<Home> {
 
     int uniqueId = DateTime.now().millisecondsSinceEpoch.remainder(100000);
     await flutterLocalNotificationsPlugin.show(
-      uniqueId, // Unique ID per notification
+      uniqueId,
       'Soil Moisture Alert',
       message,
       platformChannelSpecifics,
+    );
+
+    // Add group summary
+    await flutterLocalNotificationsPlugin.show(
+      99999, // Fixed ID for summary
+      'Soil Monitoring Alerts',
+      'Grouped alerts for your crops',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'soil_monitoring_channel',
+          'Soil Monitoring Alerts',
+          importance: Importance.high,
+          priority: Priority.high,
+          playSound: false,
+          groupKey: 'soil_alerts_group',
+          setAsGroupSummary: true, // This enables proper grouping
+        ),
+      ),
     );
   }
 
