@@ -41,8 +41,8 @@ const char* wifiList[][3] PROGMEM = {
 };
 const int numNetworks = sizeof(wifiList) / sizeof(wifiList[0]);
 
-#define API_KEY "AIzaSyA_lQLKsXD_SGL4QyEVO3HEFUgJUcQW0sQ"
-#define DATABASE_URL "https://test-monitor-reui-default-rtdb.asia-southeast1.firebasedatabase.app/"
+#define API_KEY "API_KEY"
+#define DATABASE_URL "DATABASE_URL"
 
 //Define Firebase Data object
 FirebaseData fbdo;
