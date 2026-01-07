@@ -1,22 +1,22 @@
 {
   "project_info": {
-    "project_number": "367476307418",
-    "firebase_url": "https://test-monitor-reui-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "test-monitor-reui",
-    "storage_bucket": "test-monitor-reui.firebasestorage.app"
+    "project_number": "YOUR_PROJECT_NUMBER",
+    "firebase_url": "https://YOUR_PROJECT_ID.firebaseio.com",
+    "project_id": "YOUR_PROJECT_ID",
+    "storage_bucket": "YOUR_PROJECT_ID.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:367476307418:android:7e093e0301b1f8a0d1fce3",
+        "mobilesdk_app_id": "YOUR_MOBILESDK_APP_ID",
         "android_client_info": {
-          "package_name": "com.example.monitor_soil"
+          "package_name": "com.example.YOUR_PACKAGE_NAME"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAW8HCZpZEu3g_daEnojpBIHTqt_kAPMrs"
+          "current_key": "YOUR_API_KEY"
         }
       ],
       "services": {
@@ -27,15 +27,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:367476307418:android:4a7cdba6b506d879d1fce3",
+        "mobilesdk_app_id": "YOUR_MOBILESDK_APP_ID_2",
         "android_client_info": {
-          "package_name": "com.example.soil_monitoring_app"
+          "package_name": "com.example.YOUR_PACKAGE_NAME_2"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAW8HCZpZEu3g_daEnojpBIHTqt_kAPMrs"
+          "current_key": "YOUR_API_KEY_2"
         }
       ],
       "services": {
